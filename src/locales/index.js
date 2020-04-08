@@ -29,11 +29,9 @@ export const setup = lang => {
       lang = DEFAULT_LANG;
     }
   }
-  window.localStorage.setItem(LOCALE_KEY, lang);
+  Vue.ls.set(LOCALE_KEY, lang);
   Vue.config.lang = lang;
   i18n.locale = lang;
 };
-
-setup();
 
 export default i18n;
