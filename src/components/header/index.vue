@@ -16,7 +16,7 @@
       </a-button>
     </div>
     <div class="right">
-      <a-button type="link">登录</a-button>
+      <a-button type="link" @click="goPath('login')">登录</a-button>
       <a-button type="link">注册</a-button>
       <a-button type="link">下载</a-button>
       <a-dropdown :trigger="['click']">
@@ -80,10 +80,14 @@ export default {
     ...mapGetters(['deviceType']),
   },
   methods: {
+    goPath(path) {
+      this.$router.push(path);
+    },
     chooseLocale(val) {
       this.local = val.key;
     },
     chooseMenu(val) {
+      console.log(val);
       this.collapsed = false;
     },
     drawerClose() {
