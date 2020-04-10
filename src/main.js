@@ -8,8 +8,8 @@ import Storage from 'vue-ls';
 
 import { setup } from '@/locales';
 
-import './assets/global.css';
-import './assets/antReset.scss';
+import './assets/css/global.css';
+import './assets/css/antReset.scss';
 import 'ant-design-vue/dist/antd.css';
 
 const options = {

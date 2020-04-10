@@ -4,8 +4,9 @@
     .form
       a-form(:form="form" @submit="register")
         a-form-item
-          a-input(v-decorator="['tel',{ rules: [{ required: true, message: 'Please input your tel!' }] },]" placeholder="电话号码")
-            span.country(slot="addonBefore") +86
+          a-input(v-decorator="['userName',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
+            span.country(slot="addonBefore" @click="countrySelect('/country')") {{country.number}}
+            a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
         a-form-item
           a-input(v-decorator="['password',{ rules: [{ required: true, message: 'Please input your Password!' }] },]" placeholder="Password" type="password" autocomplete="off")
         a-form-item
@@ -20,18 +21,33 @@
             .contact 我已阅读
               a(href="javascript:;") 《用户协议》
             span.login 已有账号
-              a(href="javascript:;" @click="goPath('/user/login')") 登录
+              router-link(to="/user/login")
+                a(href="javascript:;") 登录
           a-button.register_btn(type="primary" html-type="submit") 注册
+    a-modal(v-model="visbile" :footer="null" :closable="false" wrapClassName="countryWrap")
+      Country(@close="visbile=false")
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+import Country from './country';
 export default {
+  components: { Country },
+  computed: {
+    ...mapGetters(['country', 'deviceType']),
+  },
   data() {
-    return {};
+    return {
+      visbile: false,
+    };
   },
   methods: {
-    goPath(path) {
-      this.$router.push(path);
+    countrySelect(path) {
+      if (this.deviceType === 'mobile') {
+        this.$router.push(path);
+        return;
+      }
+      this.visbile = true;
     },
     register(e) {
       e.preventDefault();
@@ -49,7 +65,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #register {
   background: #fff;
   width: 100%;
@@ -58,7 +74,7 @@ export default {
     text-align: center;
     font-weight: 400;
     color: rgba(38, 38, 38, 1);
-    font-size: 28px;
+    font-size: 18px;
     line-height: 60px;
   }
   .form {

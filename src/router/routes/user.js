@@ -29,11 +29,11 @@ export default [
         name: 'forgetThree',
         component: () => import('@/views/login/forget_pass_three'),
       },
+      {
+        path: '/country',
+        name: 'country',
+        component: () => import('@/views/login/country'),
+      },
     ],
-  },
-  {
-    path: '/country',
-    name: 'country',
-    component: () => import('@/views/login/country'),
   },
 ];

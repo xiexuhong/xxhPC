@@ -1,23 +1,31 @@
 <template lang="pug">
-  #user
+  #user(:class="{mobileUserLayout: deviceType==='mobile'}")
     router-view
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {};
+  },
+  computed: {
+    ...mapGetters(['deviceType']),
   },
   methods: {},
   created() {},
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #user {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
+  height: calc(100vh - 350px);
+  padding: 10px;
+}
+.mobileUserLayout {
+  height: calc(100vh - 68px) !important;
 }
 </style>
