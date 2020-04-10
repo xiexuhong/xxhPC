@@ -36,7 +36,6 @@ export default {
     .ant-layout-content {
       width: 100%;
       box-sizing: border-box;
-      padding: 10px;
     }
   }
 }

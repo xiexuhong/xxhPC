@@ -1,44 +1,70 @@
-<template lang="pug">
-  #header
-    .left
-      .desktop(v-if="deviceType === 'desktop'")
-        .logo logo展位
-        ul.menu
-          li 首页
-          li 算力市场
-          li 资讯
-          li 帮助中心
-          li 关于我们
-      a-button(v-else type="primary" @click="toggleCollapsed")
-        a-icon(:type="collapsed ? 'menu-unfold' : 'menu-fold'" )
-    .right
-      a-button(type="link" @click="goPath('/user/login')") 登录
-      a-button(type="link") 注册
-      a-button(type="link") 下载
-      a-dropdown(:trigger="['click']")
-        a-menu(slot="overlay" @click="chooseLocale")
-          a-menu-item(key="zh_cn") 简体
-          a-menu-item(key="zh_tw") 繁体
-          a-menu-item(key="en_us") EN
-        a-button(type="link") {{localesEumn[lang]}}
-          a-icon(type="down")
-    a-drawer(v-if="deviceType !== 'desktop'" placement="left" :closable="false" :visible="collapsed" @close="drawerClose" wrapClassName="menuDrawer")
-      a-menu(:defaultSelectedKeys="['1']" mode="inline" theme="dark" @click="chooseMenu")
-        a-menu-item(key="1")
-          a-icon(type="pie-chart")
-          span 首页
-        a-menu-item(key="2")
-          a-icon(type="desktop")
-          span 算力市场
-        a-menu-item(key="3")
-          a-icon(type="inbox")
-          span 资讯
-        a-menu-item(key="4")
-          a-icon(type="pie-chart")
-          span 帮助中心
-        a-menu-item(key="5")
-          a-icon(type="pie-chart")
-          span 关于我们
+<template>
+  <div id="header">
+    <div class="left">
+      <div class="desktop" v-if="deviceType === 'desktop'">
+        <div class="logo">logo展位</div>
+        <ul class="menu">
+          <li>首页</li>
+          <!-- 算力市场路由跳转 -->
+          <li @click="goPath('/hashrateMarket')">算力市场</li>
+          <li>资讯</li>
+          <li>帮助中心</li>
+          <li>关于我们</li>
+        </ul>
+      </div>
+      <a-button v-else type="primary" @click="toggleCollapsed">
+        <a-icon :type="collapsed ? 'menu-unfold' : 'menu-fold'" />
+      </a-button>
+    </div>
+    <div class="right">
+      <a-button type="link" @click="goPath('login')">登录</a-button>
+      <a-button type="link">注册</a-button>
+      <a-button type="link">下载</a-button>
+      <a-dropdown :trigger="['click']">
+        <a-menu slot="overlay" @click="chooseLocale">
+          <a-menu-item key="zh">简体</a-menu-item>
+          <a-menu-item key="tw">繁体</a-menu-item>
+          <a-menu-item key="en">EN</a-menu-item>
+        </a-menu>
+        <a-button type="link">
+          {{localesEumn[local]}}
+          <a-icon type="down" />
+        </a-button>
+      </a-dropdown>
+    </div>
+    <a-drawer
+      v-if="deviceType !== 'desktop'"
+      placement="left"
+      :closable="false"
+      :visible="collapsed"
+      @close="drawerClose"
+      wrapClassName="menuDrawer"
+    >
+      <a-menu :defaultSelectedKeys="['1']" mode="inline" theme="dark" @click="chooseMenu">
+        <a-menu-item key="1">
+          <a-icon type="pie-chart" />
+          <span>首页</span>
+        </a-menu-item>
+        <!-- 算力市场路由跳转 -->
+        <a-menu-item key="2" @click="goPath('/hashrateMarket')">
+          <a-icon type="desktop" />
+          <span>算力市场</span>
+        </a-menu-item>
+        <a-menu-item key="3">
+          <a-icon type="inbox" />
+          <span>资讯</span>
+        </a-menu-item>
+        <a-menu-item key="4">
+          <a-icon type="inbox" />
+          <span>帮助中心</span>
+        </a-menu-item>
+        <a-menu-item key="5">
+          <a-icon type="inbox" />
+          <span>关于我们</span>
+        </a-menu-item>
+      </a-menu>
+    </a-drawer>
+  </div>
 </template>
 
 <script>
@@ -50,6 +76,7 @@ export default {
     return {
       localesEumn: localesEumn,
       collapsed: false,
+      _this: this,
     };
   },
   computed: {
