@@ -1,23 +1,23 @@
 <template lang="pug">
-  #login {{$t('home.hello')}}
-    button(@click="changeLang") click
+  #user
+    router-view
 </template>
 
 <script>
-import { setup } from '@/locales';
 export default {
   data() {
     return {};
   },
-  methods: {
-    changeLang() {
-      setup('en');
-    },
-  },
-  created() {
-    console.log(this.$route.query);
-  },
+  methods: {},
+  created() {},
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+#user {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+</style>

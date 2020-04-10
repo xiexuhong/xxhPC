@@ -20,11 +20,6 @@ const routes = [
     // },
     children: childrenRoute,
   },
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('@/views/login'),
-  },
 ];
 
 const router = new VueRouter({

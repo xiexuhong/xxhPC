@@ -12,15 +12,15 @@
       a-button(v-else type="primary" @click="toggleCollapsed")
         a-icon(:type="collapsed ? 'menu-unfold' : 'menu-fold'" )
     .right
-      a-button(type="link" @click="goPath('login')") 登录
+      a-button(type="link" @click="goPath('/user/login')") 登录
       a-button(type="link") 注册
       a-button(type="link") 下载
       a-dropdown(:trigger="['click']")
         a-menu(slot="overlay" @click="chooseLocale")
-          a-menu-item(key="zh") 简体
-          a-menu-item(key="tw") 繁体
-          a-menu-item(key="en") EN
-        a-button(type="link") {{localesEumn[local]}}
+          a-menu-item(key="zh_cn") 简体
+          a-menu-item(key="zh_tw") 繁体
+          a-menu-item(key="en_us") EN
+        a-button(type="link") {{localesEumn[lang]}}
           a-icon(type="down")
     a-drawer(v-if="deviceType !== 'desktop'" placement="left" :closable="false" :visible="collapsed" @close="drawerClose" wrapClassName="menuDrawer")
       a-menu(:defaultSelectedKeys="['1']" mode="inline" theme="dark" @click="chooseMenu")
@@ -44,23 +44,23 @@
 <script>
 import { localesEumn } from '@/locales';
 import { mapGetters } from 'vuex';
+import { setup } from '@/locales';
 export default {
   data() {
     return {
-      local: 'zh',
       localesEumn: localesEumn,
       collapsed: false,
     };
   },
   computed: {
-    ...mapGetters(['deviceType']),
+    ...mapGetters(['deviceType', 'lang']),
   },
   methods: {
     goPath(path) {
       this.$router.push(path);
     },
     chooseLocale(val) {
-      this.local = val.key;
+      setup(val.key);
     },
     chooseMenu(val) {
       console.log(val);
