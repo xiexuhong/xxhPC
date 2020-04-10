@@ -65,7 +65,7 @@
             <template v-else>{{fragment}}</template>
           </template>
         </span>
-        <template v-else>{{text}}</template>
+        <span v-else>{{text}}</span>
       </template>
     </a-table>
   </div> 

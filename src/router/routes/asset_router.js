@@ -4,24 +4,16 @@ export default [
     {
         path: 'usercenter',
         name: 'Usercenter',
-        // component: BasicLayout,
         meta: { title: '个人中心' },
         component:()=>import('@/views/asset/index'),
         children: [
           // asset
           {
-           
             path: 'asset/assetoverview',
             name: 'Assetoverview',
             component: () => import('@/views/asset/asset_overview'),
             meta: { title: '资产总览', keepAlive: false, permission: [ 'asset' ] }
           },
-          // 外部链接
-        //   {
-        //     path: 'https://www.baidu.com/',
-        //     name: 'Monitor',
-        //     meta: { title: '监控页（外部）', target: '_blank' }
-        //   },
           {
             path: 'asset/assetbills',
             name: 'Assetbills',
