@@ -6,28 +6,41 @@ export default [ //我的资产
         name: 'Asset',
         component:()=>import('@/views/asset/index'),
         children: [
-          // asset
-          {
+          {// 资产总览
             path: 'assetoverview',
             name: 'Assetoverview',
             component: () => import('@/views/asset/asset_overview'),
           },
-          {
+          {// 资产账单
             path: 'assetbills',
             name: 'Assetbills',
             component: () => import('@/views/asset/assets_bills'),
           },
-          {
+          {// 可用资产
             path: 'available_assets',
             name: 'Availableassets',
             component: () => import('@/views/asset/available_assets'),
           },
-          {
+          {// 数字货币
             path: 'digiccy',
             name: 'Digiccy',
             component: () => import('@/views/asset/digiccy'),
-          }
-            
+          },
+          {// 充值
+            path: 'recharge',
+            name: 'Recharge',
+            component: () => import('@/components/userCenter/asset/recharge'),
+          },
+          {// 对公转账
+            path: 'publictransfer',
+            name: 'Publictransfer',
+            component: () => import('@/components/userCenter/asset/publictransfer'),
+          },
+          {// 充值
+            path: 'withdraw',
+            name: 'Withdraw',
+            component: () => import('@/components/userCenter/asset/withdraw'),
+          },
         ]
       },
     //   {

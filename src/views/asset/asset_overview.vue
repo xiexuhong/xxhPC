@@ -30,10 +30,10 @@
           </div>
         </template>
         <div class="button_area">
-          <a-button @click="recharge()">充值</a-button>
-          <a-button>提现</a-button>
-          <a-button>提币</a-button>
-          <a-button>账单</a-button>
+          <a-button><router-link to="/asset/recharge">充值</router-link></a-button>
+          <a-button><router-link to="/asset/withdraw">提现</router-link></a-button>
+          <a-button><router-link to="/asset/recharge">提币</router-link></a-button>
+          <a-button><router-link to="/asset/recharge">账单</router-link></a-button>
         </div>
         <br />
       </div>
