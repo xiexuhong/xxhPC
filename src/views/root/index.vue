@@ -39,9 +39,7 @@ export default {
     justify-content: center;
     .ant-layout-content {
       width: 100%;
-      max-width: 1200px;
       box-sizing: border-box;
-      padding: 10px;
     }
   }
 }

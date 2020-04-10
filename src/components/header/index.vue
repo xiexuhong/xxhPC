@@ -5,7 +5,8 @@
         <div class="logo">logo展位</div>
         <ul class="menu">
           <li>首页</li>
-          <li>算力市场</li>
+          <!-- 算力市场路由跳转 -->
+          <li @click="goPath('hashrateMarket')">算力市场</li>
           <li>资讯</li>
           <li>帮助中心</li>
           <li>关于我们</li>
@@ -44,7 +45,8 @@
           <a-icon type="pie-chart" />
           <span>首页</span>
         </a-menu-item>
-        <a-menu-item key="2">
+        <!-- 算力市场路由跳转 -->
+        <a-menu-item key="2" @click="goPath('hashrateMarket')">
           <a-icon type="desktop" />
           <span>算力市场</span>
         </a-menu-item>
@@ -74,6 +76,7 @@ export default {
       local: 'zh',
       localesEumn: localesEumn,
       collapsed: false,
+      _this: this,
     };
   },
   computed: {
