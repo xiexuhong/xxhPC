@@ -56,7 +56,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #country {
   max-width: 1200px;
   margin: 0 auto;

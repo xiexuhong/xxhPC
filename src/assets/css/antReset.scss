@@ -1,0 +1,14 @@
+.countryWrap {
+  .ant-modal-content {
+    background-color: #f0f2f5;
+    max-height: 70vh;
+    overflow: hidden;
+    overflow-y: scroll;
+  }
+}
+.ant-btn-primary {
+  background: linear-gradient(-90deg, rgba(255, 163, 65, 1), rgba(247, 192, 72, 1)) !important;
+  box-shadow: 0px 4px 27px 0px rgba(255, 164, 65, 0.33) !important;
+  border-radius: 2px !important;
+  border-color: rgba(247, 192, 72, 1) !important;
+}

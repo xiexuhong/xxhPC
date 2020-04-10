@@ -1,1 +1,1 @@
-export const getCountry = url => import(`@/assets/country.${url}.json`);
+export const getCountry = url => import(`@/assets/json/country.${url}.json`);

@@ -5,14 +5,16 @@
     .content
       a-layout-content
         router-view
-    //- a-layout-footer footer{{ deviceType }}
+    a-layout-footer(v-if="deviceType==='desktop'")
+      Footer
 </template>
 
 <script>
 import Header from '@/components/header';
+import Footer from '@/components/footer';
 import { mapGetters } from 'vuex';
 export default {
-  components: { Header },
+  components: { Header, Footer },
   data() {
     return {};
   },
@@ -25,7 +27,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #root {
   .mobileHeader {
     padding: 0 20px;
@@ -36,8 +38,11 @@ export default {
     .ant-layout-content {
       width: 100%;
       box-sizing: border-box;
-      padding: 10px;
     }
+  }
+  .ant-layout-footer {
+    background: #202833;
+    padding: 0;
   }
 }
 </style>

@@ -54,7 +54,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #forgetPassOne {
   background: #fff;
   width: 100%;
@@ -63,7 +63,7 @@ export default {
     text-align: center;
     font-weight: 400;
     color: rgba(38, 38, 38, 1);
-    font-size: 28px;
+    font-size: 18px;
     line-height: 60px;
   }
   .form {
@@ -75,7 +75,7 @@ export default {
       background: #fff;
       border-color: #d9d9d9;
       & > p {
-        color: #000;
+        color: #fff;
         padding: 0 20px;
         margin: 0;
       }
