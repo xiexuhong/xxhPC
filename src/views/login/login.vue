@@ -5,29 +5,41 @@
       a-form(:form="form" @submit="login")
         a-form-item
           a-input(v-decorator="['userName',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
-            span.country(slot="addonBefore" @click="goPath('/country')") +86
+            span.country(slot="addonBefore" @click="countrySelect('/country')") {{country.number}}
             a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
         a-form-item
           a-input(v-decorator="['password',{ rules: [{ required: true, message: 'Please input your Password!' }] },]" placeholder="Password" type="password" autocomplete="off")
             a-icon(slot="prefix" type="lock" style="color: rgba(0,0,0,.25)")
         a-form-item
-          a.forgetpass(href="javascript:;" @click="goPath('/user/forgetOne')") 忘记密码
-          a.register(href="javascript:;" @click="goPath('/user/register')") 注册
+          router-link(to="/user/forgetOne")
+            a.forgetpass(href="javascript:;") 忘记密码
+          router-link(to="/user/register")
+            a.register(href="javascript:;") 注册
           a-button.login_btn(type="primary" html-type="submit") 登录
+    a-modal(v-model="visbile" :footer="null" :closable="false" wrapClassName="countryWrap")
+      Country(@close="visbile=false")
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import Country from './country';
 export default {
+  components: { Country },
   data() {
-    return {};
+    return {
+      visbile: false,
+    };
   },
   computed: {
-    ...mapGetters(['country']),
+    ...mapGetters(['country', 'deviceType']),
   },
   methods: {
-    goPath(path) {
-      this.$router.push(path);
+    countrySelect(path) {
+      if (this.deviceType === 'mobile') {
+        this.$router.push(path);
+        return;
+      }
+      this.visbile = true;
     },
     login(e) {
       e.preventDefault();

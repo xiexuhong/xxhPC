@@ -5,7 +5,7 @@
     .content
       a-layout-content
         router-view
-    a-layout-footer footer{{ deviceType }}
+    //- a-layout-footer footer{{ deviceType }}
 </template>
 
 <script>

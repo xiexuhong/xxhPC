@@ -5,26 +5,41 @@
       a-form(:form="form" @submit="login")
         a-form-item
           a-input(v-decorator="['userName',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
+            span.country(slot="addonBefore" @click="countrySelect('/country')") {{country.number}}
             a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
         a-form-item
           a-input-search(v-decorator="['code',{ rules: [{ required: true, message: 'Please input your code!' }] },]" placeholder="code")
             p(slot="enterButton") 3525
         a-form-item
           a-button.login_btn(type="primary" html-type="submit") 下一步
+    a-modal(v-model="visbile" :footer="null" :closable="false" wrapClassName="countryWrap")
+      Country(@close="visbile=false")
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+import Country from './country';
 export default {
+  components: { Country },
   data() {
-    return {};
+    return {
+      visbile: false,
+    };
+  },
+  computed: {
+    ...mapGetters(['country', 'deviceType']),
   },
   methods: {
-    goPath(path) {
-      this.$router.push(path);
+    countrySelect(path) {
+      if (this.deviceType === 'mobile') {
+        this.$router.push(path);
+        return;
+      }
+      this.visbile = true;
     },
     login(e) {
       e.preventDefault();
-      this.goPath('/user/forgetTwo');
+      this.$router.push('/user/forgetTwo');
       this.form.validateFields((err, values) => {
         if (!err) {
           console.log('Received values of form: ', values);

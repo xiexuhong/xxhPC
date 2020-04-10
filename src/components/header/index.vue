@@ -12,8 +12,10 @@
       a-button(v-else type="primary" @click="toggleCollapsed")
         a-icon(:type="collapsed ? 'menu-unfold' : 'menu-fold'" )
     .right
-      a-button(type="link" @click="goPath('/user/login')") 登录
-      a-button(type="link") 注册
+      router-link(to="/user/login")
+        a-button(type="link") 登录
+      router-link(to="/user/register")
+        a-button(type="link") 注册
       a-button(type="link") 下载
       a-dropdown(:trigger="['click']")
         a-menu(slot="overlay" @click="chooseLocale")
@@ -56,9 +58,6 @@ export default {
     ...mapGetters(['deviceType', 'lang']),
   },
   methods: {
-    goPath(path) {
-      this.$router.push(path);
-    },
     chooseLocale(val) {
       setup(val.key);
     },
