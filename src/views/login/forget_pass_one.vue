@@ -1,0 +1,70 @@
+<template lang="pug">
+  #forgetPassOne
+    .title 重置密码
+    .form
+      a-form(:form="form" @submit="login")
+        a-form-item
+          a-input(v-decorator="['userName',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
+            a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
+        a-form-item
+          a-input-search(v-decorator="['code',{ rules: [{ required: true, message: 'Please input your code!' }] },]" placeholder="code")
+            p(slot="enterButton") 3525
+        a-form-item
+          a-button.login_btn(type="primary" html-type="submit") 下一步
+</template>
+
+<script>
+export default {
+  data() {
+    return {};
+  },
+  methods: {
+    goPath(path) {
+      this.$router.push(path);
+    },
+    login(e) {
+      e.preventDefault();
+      this.goPath('/user/forgetTwo');
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          console.log('Received values of form: ', values);
+        }
+      });
+    },
+  },
+  beforeCreate() {
+    this.form = this.$form.createForm(this, { name: 'forgetOne' });
+  },
+  created() {},
+};
+</script>
+
+<style lang="scss">
+#forgetPassOne {
+  background: #fff;
+  width: 100%;
+  max-width: 512px;
+  .title {
+    text-align: center;
+    font-weight: 400;
+    color: rgba(38, 38, 38, 1);
+    font-size: 28px;
+    line-height: 60px;
+  }
+  .form {
+    padding: 0 20px;
+    .login_btn {
+      width: 100%;
+    }
+    .ant-input-search-button {
+      background: #fff;
+      border-color: #d9d9d9;
+      & > p {
+        color: #000;
+        padding: 0 20px;
+        margin: 0;
+      }
+    }
+  }
+}
+</style>

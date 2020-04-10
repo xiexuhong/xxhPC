@@ -1,15 +1,11 @@
-<template>
-  <a-layout id="root">
-    <a-layout-header :class="{mobileHeader: deviceType !== 'desktop'}">
-      <Header></Header>
-    </a-layout-header>
-    <div class="content">
-      <a-layout-content>
-        <router-view></router-view>
-      </a-layout-content>
-    </div>
-    <a-layout-footer>footer{{deviceType}}</a-layout-footer>
-  </a-layout>
+<template lang="pug">
+  a-layout(id="root")
+    a-layout-header(:class="{ mobileHeader: deviceType !== 'desktop' }")
+      Header
+    .content
+      a-layout-content
+        router-view
+    a-layout-footer footer{{ deviceType }}
 </template>
 
 <script>
@@ -39,9 +35,7 @@ export default {
     justify-content: center;
     .ant-layout-content {
       width: 100%;
-      max-width: 1200px;
       box-sizing: border-box;
-      padding: 10px;
     }
   }
 }

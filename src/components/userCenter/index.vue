@@ -3,10 +3,10 @@
     <a-menu mode="inline" :openKeys="openKeys" @openChange="onOpenChange" :class="{mobileHeader: deviceType !== 'desktop'}">
       <a-sub-menu key="sub1">
         <span slot="title"><a-icon type="user" />我的资产</span>
-            <a-menu-item key="1"><router-link to="/usercenter/asset/assetoverview">资产总览</router-link></a-menu-item>
-            <a-menu-item key="2"><router-link to="/usercenter/asset/available_assets">可用资产</router-link></a-menu-item>
-            <a-menu-item key="3"><router-link to="/usercenter/asset/digiccy">数字货币</router-link></a-menu-item>
-            <a-menu-item key="4"><router-link to="/usercenter/asset/assetbills">资产账单</router-link></a-menu-item>
+            <a-menu-item key="1"><router-link to="/asset/assetoverview">资产总览</router-link></a-menu-item>
+            <a-menu-item key="2"><router-link to="/asset/available_assets">可用资产</router-link></a-menu-item>
+            <a-menu-item key="3"><router-link to="/asset/digiccy">数字货币</router-link></a-menu-item>
+            <a-menu-item key="4"><router-link to="/asset/assetbills">资产账单</router-link></a-menu-item>
       </a-sub-menu>
       <a-sub-menu key="sub2">
         <span slot="title"><a-icon type="laptop" />算力合约</span>

@@ -1,36 +1,31 @@
 // eslint-disable-next-line
 
-export default [
+export default [ //我的资产
     {
-        path: 'usercenter',
-        name: 'Usercenter',
-        meta: { title: '个人中心' },
+        path: '/asset',
+        name: 'Asset',
         component:()=>import('@/views/asset/index'),
         children: [
           // asset
           {
-            path: 'asset/assetoverview',
+            path: 'assetoverview',
             name: 'Assetoverview',
             component: () => import('@/views/asset/asset_overview'),
-            meta: { title: '资产总览', keepAlive: false, permission: [ 'asset' ] }
           },
           {
-            path: 'asset/assetbills',
+            path: 'assetbills',
             name: 'Assetbills',
             component: () => import('@/views/asset/assets_bills'),
-            meta: { title: '资产账单', keepAlive: true, permission: [ 'asset' ] }
           },
           {
-            path: 'asset/available_assets',
+            path: 'available_assets',
             name: 'Availableassets',
             component: () => import('@/views/asset/available_assets'),
-            meta: { title: '可用资产', keepAlive: true, permission: [ 'asset' ] }
           },
           {
-            path: 'asset/digiccy',
+            path: 'digiccy',
             name: 'Digiccy',
             component: () => import('@/views/asset/digiccy'),
-            meta: { title: '可用资产', keepAlive: true, permission: [ 'asset' ] }
           }
             
         ]

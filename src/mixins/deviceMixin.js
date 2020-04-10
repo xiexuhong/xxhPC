@@ -4,9 +4,6 @@ export const AppDeviceEnquire = {
     const { $store } = this;
     deviceEnquire(deviceType => {
       switch (deviceType) {
-        case DEVICE_TYPE.TABLET:
-          $store.commit('changeDeviceType', DEVICE_TYPE.TABLET);
-          break;
         case DEVICE_TYPE.MOBILE:
           $store.commit('changeDeviceType', DEVICE_TYPE.MOBILE);
           break;

@@ -31,6 +31,7 @@ export default {
   display: flex;
   flex-direction:row;
   max-width: 1200px;
+  margin:15px auto;
   .content {
     background-color: #fff;
     display: flex;
