@@ -26,6 +26,6 @@ export default {
   padding: 10px;
 }
 .mobileUserLayout {
-  height: calc(100vh - 68px) !important;
+  height: calc(100vh - 147px) !important;
 }
 </style>

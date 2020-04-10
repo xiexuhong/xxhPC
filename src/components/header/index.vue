@@ -75,7 +75,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #header {
   height: 100%;
   color: #fff;
@@ -105,14 +105,6 @@ export default {
   }
   .right {
     height: 100%;
-  }
-}
-.menuDrawer {
-  .ant-drawer-wrapper-body {
-    background: #001529;
-    .ant-drawer-body {
-      padding: 0;
-    }
   }
 }
 </style>

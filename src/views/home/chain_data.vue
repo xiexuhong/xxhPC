@@ -9,6 +9,11 @@
         span 安全运营
         span.big 3年
         span ,服务百万用户
+    .records
+        .item
+            .top
+                img(src="@/assets/image/record1.png")
+                span 分币记录
 </template>
 
 <script>
@@ -29,7 +34,6 @@ export default {
 #recommend {
   background: rgba(249, 249, 250, 1);
   padding: 76px 0 80px;
-
   .title {
     display: flex;
     justify-content: center;
@@ -60,6 +64,10 @@ export default {
     margin-bottom: 61px;
     & > .big {
       font-size: 36px;
+    }
+  }
+  .records {
+    .item {
     }
   }
 }
