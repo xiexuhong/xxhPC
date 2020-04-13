@@ -6,7 +6,7 @@
         <ul class="menu">
           <li>首页</li>
           <!-- 算力市场路由跳转 -->
-          <li @click="goPath('hashrateMarket')">算力市场</li>
+          <li @click="goPath('/hashrateMarket')">算力市场</li>
           <li>资讯</li>
           <li>帮助中心</li>
           <li>关于我们</li>
@@ -46,7 +46,7 @@
           <span>首页</span>
         </a-menu-item>
         <!-- 算力市场路由跳转 -->
-        <a-menu-item key="2" @click="goPath('hashrateMarket')">
+        <a-menu-item key="2" @click="goPath('/hashrateMarket')">
           <a-icon type="desktop" />
           <span>算力市场</span>
         </a-menu-item>
