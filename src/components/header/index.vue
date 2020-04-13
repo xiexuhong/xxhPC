@@ -5,7 +5,8 @@
         .logo logo展位
         ul.menu
           li 首页
-          li 算力市场
+          li 
+            router-link(to="/hashrateMarket") 算力市场
           li 资讯
           li 帮助中心
           li 关于我们
@@ -31,7 +32,8 @@
           span 首页
         a-menu-item(key="2")
           a-icon(type="desktop")
-          span 算力市场
+          span 
+            router-link(to="/hashrateMarket") 算力市场
         a-menu-item(key="3")
           a-icon(type="inbox")
           span 资讯

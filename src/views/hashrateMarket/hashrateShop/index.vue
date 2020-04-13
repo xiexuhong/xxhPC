@@ -19,19 +19,19 @@
           <a-col :span="8">
             <ul>
               <li>单份价格</li>
-              <li style="color:#ffab32">123134521231.0000</li>
+              <li style="color:#ffab32">425.00USD=425.00USDT</li>
             </ul>
           </a-col>
           <a-col :span="8">
             <ul>
               <li>单份合约算力</li>
-              <li>1+2+5+5+5</li>
+              <li>1T+130%+(0-25)%</li>
             </ul>
           </a-col>
           <a-col :span="8">
             <ul>
               <li>日挖矿收益</li>
-              <li>约0.18hds</li>
+              <li>约0.18USD/份</li>
             </ul>
           </a-col>
         </a-row>
@@ -51,7 +51,7 @@
           <a-col :span="8">
             <ul>
               <li>开挖时间</li>
-              <li>19/02/2020</li>
+              <li>19/02/2020 00:00:00</li>
             </ul>
           </a-col>
         </a-row>
@@ -59,16 +59,15 @@
       <a-col :span="6">
         <a-row class="showDetail">
           <a-col :span="24">
-            <a href="#">查看详情 ></a>
+            <!-- <a href="#">查看详情 ></a> -->
+            <router-link to="/hashrateMarket/hashrateShop/contractDetail">查看详情 ></router-link>
           </a-col>
         </a-row>
         <a-row class="charge">
           <a-col :span="24">
-            <ul>
-              <li>
-                <a-button size="large" block>立即购买</a-button>
-              </li>
-            </ul>
+            <a-button size="large" block>
+              <router-link to="/hashrateMarket/hashrateShop/orderDetail">立即购买</router-link>
+            </a-button>
           </a-col>
         </a-row>
       </a-col>
@@ -223,18 +222,31 @@ export default {};
   flex-direction: column;
   align-items: center;
   margin-top: 40%;
-  ul {
-    margin: 0px;
-  }
   .ant-btn {
     background-color: #ffab32;
     border-radius: 2px;
     color: #ffffff;
   }
 }
-@media all and (max-width: 1000px) {
+@media screen and (max-width: 1000px) {
   .hashContent {
     width: 90%;
+  }
+}
+@media screen and (max-width: 700px) {
+  .hashContent {
+    width: 100%;
+    .charge {
+      margin-top: 74%;
+    }
+  }
+}
+@media screen and (max-width: 500px) {
+  .hashContent {
+    width: 100%;
+    .charge {
+      margin-top: 130%;
+    }
   }
 }
 </style>
