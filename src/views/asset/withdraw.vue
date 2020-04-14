@@ -55,6 +55,7 @@
 </template>
   
 <script>
+import { setup } from '@/locales';
 export default {
   data() {
     return {
@@ -76,6 +77,9 @@ export default {
       this.form.setFieldsValue({
         note: `Hi, ${value === 'male' ? 'man' : 'lady'}!`,
       });
+    },
+    handleMenuClick(e) {
+      console.log('click', e);
     },
   },
 };

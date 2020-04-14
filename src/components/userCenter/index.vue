@@ -43,7 +43,6 @@ export default {
     ...mapGetters(['deviceType']),
   },
   methods: {
-    
     onOpenChange(openKeys) {
         const latestOpenKey = openKeys.find(key => this.openKeys.indexOf(key) === -1);
         if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {

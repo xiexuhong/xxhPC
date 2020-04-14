@@ -4,13 +4,12 @@
       <header>
         <span>法币资产</span>
         <a-dropdown>
-          <a-menu slot="overlay" @click="handleMenuClick">
-            <a-menu-item key="1"><a-icon type="user" />CNY</a-menu-item>
-            <a-menu-item key="2"><a-icon type="user" />USD</a-menu-item>
-            <a-menu-item key="3"><a-icon type="user" />other</a-menu-item>
+          <a-menu slot="overlay">
+              <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
           </a-menu>
-          <a-button style="margin-left: 8px"> CNY <a-icon type="down" /> </a-button>
+          <a-button style="margin-left: 8px" >{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
         </a-dropdown>
+      </header>
       </header>
       <section>
         <p>总资产（估值）：<span>48541515</span></p>
@@ -70,6 +69,7 @@
 
 <script>
 import { setup } from '@/locales';
+import {mapState} from 'vuex'
 const columns = [
   {
     dataIndex: 'name',
@@ -233,10 +233,23 @@ export default {
         },
       ],
       filterText:"",
-      isHide:false
+      isHide:false,
+      coin:""
     };
   },
+  computed: 
+    mapState({
+        list(e){
+          return e.asset.currencylist;
+        },
+        defaultcurrency(e){
+          return e.asset.defaultcurrency;
+        },
+    }),
   methods: {
+    checkcurrency(index) {
+      this.coin = this.list[index];
+    }, 
     handleSearch(selectedKeys, confirm, dataIndex) {
       confirm();
       this.searchText = selectedKeys[0];

@@ -29,18 +29,30 @@ export default [ //我的资产
           {// 充值
             path: 'recharge',
             name: 'Recharge',
-            component: () => import('@/components/userCenter/asset/recharge'),
+            component: () => import('@/views/asset/recharge'),
           },
           {// 对公转账
             path: 'publictransfer',
             name: 'Publictransfer',
-            component: () => import('@/components/userCenter/asset/publictransfer'),
+            component: () => import('@/views/asset/publictransfer'),
           },
           {// 充值
             path: 'withdraw',
             name: 'Withdraw',
-            component: () => import('@/components/userCenter/asset/withdraw'),
+            component: () => import('@/views/asset/withdraw'),
           },
+          {//提币
+            path: 'extractcoin',
+            name: 'Extractcoin',
+            component: () => import('@/views/asset/extractcoin'),
+            children:[
+              {//提币地址管理
+                path: 'extractcoinaddress',
+                name: 'Extractcoinaddress',
+                component: () => import('@/views/asset/extractcoinaddress'),
+              }
+            ]
+          }
         ]
       },
     //   {
