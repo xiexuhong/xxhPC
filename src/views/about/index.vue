@@ -7,18 +7,21 @@
         a-tab-pane(tab="RRMine平台" key="1")
             Platform
         a-tab-pane(tab="平台优势" key="2")
-            div 2
+            Advantage
         a-tab-pane(tab="发展历程" key="3")
-            div 3
+            History
         a-tab-pane(tab="平台荣誉" key="4")
-            div 4
+            Honor
 </template>
 
 <script>
 import Platform from './platform';
+import Advantage from './advantage';
+import History from './history';
+import Honor from './honor';
 import { mapGetters } from 'vuex';
 export default {
-  components: { Platform },
+  components: { Platform, Advantage, History, Honor },
   data() {
     return {};
   },

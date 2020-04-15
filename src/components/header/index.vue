@@ -41,7 +41,7 @@
         a-menu-item(key="4")
           a-icon(type="pie-chart")
           span 帮助中心
-        a-menu-item(key="5")
+        a-menu-item(key="/about")
           a-icon(type="pie-chart")
           span 关于我们
 </template>
