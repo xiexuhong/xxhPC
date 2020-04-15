@@ -24,37 +24,35 @@
               <li>
                 <span class="key">單份价格:</span>
                 <span style="color:#ffab32; fontSize:22px">425.00USD=425.00USDT</span>
-              </li>|
+              </li>
               <li>
                 <span class="key">單份合約算力:</span>
                 <span class="value">1T+130%+(0-25)%</span>
-              </li>|
+              </li>
               <li>
                 <span class="key">日挖礦收益:</span>
                 <span class="value">约0.18USD/份</span>
-              </li>|
+              </li>
               <li>
                 <span class="key">剩餘算力:</span>
                 <span class="value">48T</span>
               </li>
-            </ul>
-            <ul>
               <li>
                 <span class="key">單次下單限額:</span>
                 <span class="value">5T</span>
-              </li>|
+              </li>
               <li>
                 <span class="key">基礎算力:</span>
                 <span class="value">1.00T</span>
-              </li>|
+              </li>
               <li>
                 <span class="key">獎勵算力:</span>
                 <span class="value">1.30T</span>
-              </li>|
+              </li>
               <li>
                 <span class="key">開挖時間:</span>
                 <span class="value">19/02/2020 00:00:00</span>
-              </li>|
+              </li>
               <li>
                 <span class="key">發放方式:</span>
                 <span class="value">日结，次日发放至账户</span>
@@ -121,7 +119,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .detailContainer {
   display: flex;
   flex-direction: column;
@@ -130,6 +128,7 @@ export default {
 
 .detailContent {
   width: 60%;
+  margin-bottom: 20px;
   .ant-breadcrumb {
     color: #ffab32;
     margin: 10px;
@@ -147,7 +146,7 @@ export default {
         height: 27px;
         width: 27px;
         position: relative;
-        top: -12px;
+        top: -5px;
       }
       li:nth-child(2) {
         font-size: 24px;
@@ -168,17 +167,16 @@ export default {
     }
     .detailBody {
       font-size: 16px;
-      ul {
-        margin-left: -15px;
-        li {
-          display: inline;
-          margin: 0 10px;
-          span {
-            margin: 0 6px;
-          }
-          .key {
-            font-weight: bold;
-          }
+      ul li {
+        display: inline-block;
+        margin: 5px 5px;
+        padding-right: 5px;
+        border-right: 1px solid #999999;
+        span {
+          margin: 0 6px;
+        }
+        .key {
+          font-weight: bold;
         }
       }
     }
@@ -223,8 +221,43 @@ export default {
 @media screen and (max-width: 700px) {
   .detailContent {
     width: 100%;
-    .detailContentBody .detailBody ul li {
-      display: block;
+    .detailContentBody {
+      .detailHeader {
+        li:nth-child(2) {
+          font-size: 15px;
+        }
+        li:nth-child(3) {
+          font-size: 8px;
+        }
+        li:nth-child(4) {
+          font-size: 8px;
+        }
+      }
+      .detailBody ul {
+        margin: 0;
+        li {
+          width: 100%;
+          font-size: 13px;
+          border: none;
+        }
+      }
+      .charge .ant-btn {
+        width: 50%;
+      }
+      .detailIntro li {
+        margin-bottom: 10px;
+        font-size: 10px;
+        p {
+          margin: 5px 0;
+          span {
+            font-size: 10px;
+            font-weight: bold;
+          }
+          span:nth-child(1) {
+            font-weight: bold;
+          }
+        }
+      }
     }
   }
 }

@@ -15,15 +15,15 @@
                   <span class="contentTitle">名稱:</span>
                   <span>BTC 30天算力包</span>
                 </a-col>
-                <a-col :span="7">
+                <a-col :span="6">
                   <span class="contentTitle">基礎算力:</span>
                   <span>1.30 T</span>
                 </a-col>
-                <a-col :span="7">
+                <a-col :span="6">
                   <span class="contentTitle">浮動算力:</span>
                   <span>1.30 T</span>
                 </a-col>
-                <a-col :span="3">
+                <a-col :span="5">
                   <span class="contentTitle">達標算力:</span>
                   <span>1.30 T</span>
                 </a-col>
@@ -35,15 +35,15 @@
                   <span class="contentTitle">期貨算力:</span>
                   <span>1.30 T</span>
                 </a-col>
-                <a-col :span="7">
+                <a-col :span="6">
                   <span class="contentTitle">定期算力:</span>
                   <span>1.30 T</span>
                 </a-col>
-                <a-col :span="7">
+                <a-col :span="6">
                   <span class="contentTitle">單價:</span>
                   <span>425.0000 USDT</span>
                 </a-col>
-                <a-col :span="3">
+                <a-col :span="5">
                   <span class="contentTitle">合約類型:</span>
                   <span>BTC</span>
                 </a-col>
@@ -55,15 +55,15 @@
                   <span class="contentTitle">合約期限:</span>
                   <span>30天</span>
                 </a-col>
-                <a-col :span="7">
+                <a-col :span="6">
                   <span class="contentTitle">開挖時間:</span>
                   <span>19/02/2020 00:00:00</span>
                 </a-col>
-                <a-col :span="7">
+                <a-col :span="6">
                   <span class="contentTitle">算力來源:</span>
                   <span>京都資本</span>
                 </a-col>
-                <a-col :span="3"></a-col>
+                <a-col :span="5"></a-col>
               </a-row>
             </a-list-item>
             <div class="choiceInfo">
@@ -106,9 +106,9 @@
                 <span>
                   到手总算力
                   <a-popover
-                    trigger="hover"
-                    :visible="hovered"
-                    @visibleChange="handleHoverChange"
+                    trigger="click"
+                    :visible="clicked"
+                    @visibleChange="handleClickChange"
                     placement="rightTop"
                   >
                     <div slot="content">
@@ -135,38 +135,7 @@
                         </li>
                       </ul>
                     </div>
-                    <a-popover
-                      trigger="click"
-                      :visible="clicked"
-                      @visibleChange="handleClickChange"
-                      placement="rightTop"
-                    >
-                      <div slot="content">
-                        <ul class="hashratePopover">
-                          <li>
-                            <span>基础算力</span>
-                            <span>5.00T</span>
-                          </li>
-                          <li>
-                            <span>浮动算力</span>
-                            <span>6.50T</span>
-                          </li>
-                          <li>
-                            <span>达标算力</span>
-                            <span>0.00T</span>
-                          </li>
-                          <li>
-                            <span>期货算力</span>
-                            <span>0.00T</span>
-                          </li>
-                          <li>
-                            <span>定期算力</span>
-                            <span>0.00T</span>
-                          </li>
-                        </ul>
-                      </div>
-                      <span class="infoIcon">!</span>
-                    </a-popover>
+                    <span class="infoIcon">!</span>
                   </a-popover>
                   <span class="totalNum">11.50 T</span>
                 </span>
@@ -193,6 +162,7 @@
                   v-model="chargeVisible"
                   okText="提交"
                   cancelText="取消"
+                  width="350px"
                   @ok="() => (chargeVisible = false)"
                 >
                   <p>交易密码</p>
@@ -215,22 +185,15 @@ export default {
   data() {
     return {
       clicked: false, //点击气泡卡隐藏/显示
-      hovered: false, //鼠标经过气泡卡隐藏/显示
       chargeVisible: false, //点击弹窗隐藏/显示
       value: 'USDT', //单选框初始值
       indeterminate: false, //设置协议复选框选中状态样式
     };
   },
   methods: {
-    handleHoverChange(visible) {
-      //鼠标经过气泡卡隐藏/显示
-      this.clicked = false;
-      this.hovered = visible;
-    },
     handleClickChange(visible) {
       //点击气泡卡隐藏/显示
       this.clicked = visible;
-      this.hovered = false;
     },
     taggleIndeterminate() {
       //设置协议复选框选中状态样式
@@ -240,13 +203,14 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .orderDetailContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   .orderDetailContent {
     width: 60%;
+    margin-bottom: 20px;
     .ant-breadcrumb {
       color: #ffab32;
       margin: 10px;
@@ -325,12 +289,12 @@ export default {
             font-weight: bold;
             font-style: italic;
             color: #cfcfcf;
-            text-indent: 0.4em;
             cursor: pointer;
+            text-indent: 0.5em;
           }
         }
       }
-      .hashrateAgreement {
+      /deep/.hashrateAgreement {
         .ant-checkbox-inner,
         .ant-checkbox-wrapper:hover .ant-checkbox-inner,
         .ant-checkbox:hover .ant-checkbox-inner,
@@ -355,17 +319,15 @@ export default {
   }
 }
 .ant-popover-inner {
-  width: 150%;
   .ant-popover-inner-content {
-    color: #898989;
     .hashratePopover {
-      width: 120%;
       li {
-        height: 2em;
+        width: 130px;
+        display: flex;
+        justify-content: space-between;
         span {
           display: inline-block;
-          width: 50%;
-          text-align: center;
+          width: 45%;
         }
       }
     }
@@ -376,9 +338,62 @@ export default {
     width: 90%;
   }
 }
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 500px) {
   .orderDetailContainer .orderDetailContent {
     width: 100%;
+    .orderDetailContentBody {
+      .title {
+        font-size: 15px;
+        margin-bottom: 5px;
+      }
+      .content {
+        span {
+          font-size: 10px;
+          &.contentTitle {
+            display: block;
+          }
+        }
+      }
+      .choiceInfo {
+        width: 100%;
+        margin: 5px 0;
+        font-size: 10px;
+        .ant-input-number {
+          width: 90%;
+        }
+        .chargeAmount {
+          font-weight: bold;
+        }
+        .ant-radio-group {
+          width: 100%;
+        }
+        .ant-radio-button-wrapper {
+          text-align: center;
+          border-radius: 2px;
+          width: 40%;
+          margin-right: 1em;
+        }
+      }
+      .hashrateTotal {
+        margin-bottom: 1em;
+        div {
+          padding: 5px;
+          .totalNum {
+            font-size: 1em;
+            margin-left: 5px;
+          }
+          .infoIcon {
+            width: 15px;
+            height: 18px;
+            font-size: 10px;
+            text-indent: 0.2em;
+          }
+        }
+      }
+      .hashrateAgreement .ant-btn {
+        width: 100%;
+      }
+    }
   }
 }
 </style>

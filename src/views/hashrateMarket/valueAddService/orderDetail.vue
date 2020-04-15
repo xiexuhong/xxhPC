@@ -2,8 +2,8 @@
   <div class="detailContainer">
     <div class="detailContent">
       <a-breadcrumb separator=">">
-        <a-breadcrumb-item>算力商城</a-breadcrumb-item>
-        <a-breadcrumb-item>合约详情</a-breadcrumb-item>
+        <a-breadcrumb-item>增值服务</a-breadcrumb-item>
+        <a-breadcrumb-item>订单总览</a-breadcrumb-item>
       </a-breadcrumb>
       <div class="detailContentBody">
         <a-row>
@@ -208,7 +208,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .detailContainer {
   width: 100%;
   display: flex;
@@ -221,6 +221,7 @@ export default {
   }
   .detailContent {
     width: 60%;
+    margin-bottom: 20px;
     .detailContentBody {
       background-color: #ffffff;
       padding: 20px;
@@ -347,7 +348,7 @@ export default {
             margin: 25px 0 35px 0;
           }
         }
-        .hashrateAgreement {
+        /deep/.hashrateAgreement {
           .ant-checkbox-inner,
           .ant-checkbox-wrapper:hover .ant-checkbox-inner,
           .ant-checkbox:hover .ant-checkbox-inner,
@@ -377,14 +378,97 @@ export default {
     width: 90%;
   }
 }
-@media screen and (max-width: 700px) {
-  .detailContainer .detailContent {
-    width: 100%;
-  }
-}
 @media screen and (max-width: 500px) {
-  .detailContainer .detailContent {
-    width: 100%;
+  .detailContainer {
+    .detailContent {
+      width: 100%;
+      margin-bottom: 10px;
+      .detailContentBody {
+        padding: 5px;
+        font-size: 10px;
+        .chooseLeft {
+          padding-right: 5px;
+          .leftTitle {
+            width: 100%;
+            margin: 10px 0 10px 0;
+            .leftTitleLeft {
+              font-size: 15px;
+            }
+            .leftTitleRight {
+              float: left;
+              width: 100%;
+              font-size: 10px;
+              padding: 3px 0 5px 0;
+            }
+          }
+          .leftBody {
+            .leftBodyIntro {
+              font-size: 10px;
+            }
+            .leftBodyCards {
+              font-size: 10px;
+              width: 100%;
+              .ant-card {
+                margin-bottom: 10px;
+                .ant-card-body {
+                  padding: 0 10px 0 10px;
+                  span {
+                    display: block;
+                  }
+                  .leftInfoLeft {
+                    width: 100%;
+                  }
+                  .leftInfoRight {
+                    width: 100%;
+                  }
+                  .leftInfoTitle {
+                    width: 100%;
+                  }
+                  .leftInfoRightTitle {
+                    width: 100%;
+                  }
+                }
+              }
+            }
+          }
+        }
+        .orderRight {
+          padding-left: 5px;
+          .rightTitle {
+            margin: 10px 0 0 0;
+            font-size: 15px;
+          }
+          .rightInfo {
+            font-size: 10px;
+            p {
+              padding: 5px 0;
+            }
+            span {
+              display: inline-block;
+            }
+            .rightInfoLeft {
+              width: 100%;
+            }
+          }
+          .interactMode {
+            .interModeLabelTile {
+              font-size: 10px;
+              margin: 5px 0 10px 0;
+            }
+            .ant-radio-button-wrapper {
+              padding: 0px;
+              text-align: center;
+              border-radius: 2px;
+              width: 42%;
+            }
+            p {
+              font-size: 10px;
+              margin: 10px 0 15px 0;
+            }
+          }
+        }
+      }
+    }
   }
 }
 </style>
