@@ -14,9 +14,32 @@
     overflow-y: scroll;
   }
 }
+/**
+* primary button 样式
+*/
 .ant-btn-primary {
   background: linear-gradient(-90deg, rgba(255, 163, 65, 1), rgba(247, 192, 72, 1)) !important;
   box-shadow: 0px 4px 27px 0px rgba(255, 164, 65, 0.33) !important;
   border-radius: 2px !important;
   border-color: rgba(247, 192, 72, 1) !important;
+}
+/**
+* tabbar样式
+*/
+.ant-tabs-nav-scroll {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .ant-tabs-nav .ant-tabs-tab-active {
+    color: #ffab32;
+  }
+}
+.ant-tabs-ink-bar {
+  background-color: #ffab32 !important;
+}
+
+@media screen and (max-width: 768px) {
+  .ant-tabs-nav-scroll {
+    justify-content: flex-start;
+  }
 }

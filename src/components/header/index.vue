@@ -2,19 +2,22 @@
   #header
     .left
       .desktop(v-if="deviceType === 'desktop'")
-        .logo logo展位
+        .logo
+          img(src="@/assets/image/logo.png")
         ul.menu
-          li 首页
+          router-link(to="/")
+            li 首页
           li 算力市场
-          li 资讯
+          li 平台动态
           li 帮助中心
-          li 关于我们
+          router-link(to="/about")
+            li 关于我们
       a-button(v-else type="primary" @click="toggleCollapsed")
         a-icon(:type="collapsed ? 'menu-unfold' : 'menu-fold'" )
     .right
-      router-link(to="/user/login")
+      router-link(to="/login/login")
         a-button(type="link") 登录
-      router-link(to="/user/register")
+      router-link(to="/login/register")
         a-button(type="link") 注册
       a-button(type="link") 下载
       a-dropdown(:trigger="['click']")
@@ -26,7 +29,7 @@
           a-icon(type="down")
     a-drawer(v-if="deviceType !== 'desktop'" placement="left" :closable="false" :visible="collapsed" @close="drawerClose" wrapClassName="menuDrawer")
       a-menu(:defaultSelectedKeys="['1']" mode="inline" theme="dark" @click="chooseMenu")
-        a-menu-item(key="1")
+        a-menu-item(key="/")
           a-icon(type="pie-chart")
           span 首页
         a-menu-item(key="2")
@@ -63,6 +66,7 @@ export default {
     },
     chooseMenu(val) {
       console.log(val);
+      this.$router.push(val.key);
       this.collapsed = false;
     },
     drawerClose() {
@@ -92,7 +96,14 @@ export default {
       .logo {
         width: 120px;
         height: 100%;
-        background: forestgreen;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-right: 20px;
+        & > img {
+          display: block;
+          width: 100%;
+        }
       }
       .menu {
         display: flex;

@@ -18,10 +18,10 @@
           a-input(placeholder="邀请码" type="text")
         a-form-item
           .between
-            .contact 我已阅读
+            a-checkbox.contact 我已阅读
               a(href="javascript:;") 《用户协议》
             span.login 已有账号
-              router-link(to="/user/login")
+              router-link(to="/login/login")
                 a(href="javascript:;") 登录
           a-button.register_btn(type="primary" html-type="submit") 注册
     a-modal(v-model="visbile" :footer="null" :closable="false" wrapClassName="countryWrap")
