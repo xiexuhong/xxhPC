@@ -48,6 +48,9 @@ export default {
     padding: 0;
     margin: 0;
   }
+  .fontcolor{
+    color: #FFAB32;
+  }
 }
 
 </style>

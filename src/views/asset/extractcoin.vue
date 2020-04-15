@@ -7,48 +7,33 @@
             </a-breadcrumb>
         </header>
         <template>
-        <a-form
-            id="components-form-demo-validate-other"
-            :form="form"
-            @submit="handleSubmit"
-        >
-            <a-form-item label="选择提币类型">
-                <a-radio-group v-decorator="['radio-button']">
-                    <a-radio-button value="a">
-                    BTC
-                    </a-radio-button>
-                    <a-radio-button value="b">
-                    BHP
-                    </a-radio-button>
-                    <a-radio-button value="c">
-                    USDT
-                    </a-radio-button>
+        <a-form-model  :form="form">
+            <a-form-model-item label="选择提币类型">
+                <a-radio-group v-model="form.coin" buttonStyle="solid">
+                    <a-radio-button value="BTC">BTC</a-radio-button>
+                    <a-radio-button value="BHP">BHP</a-radio-button>
+                    <a-radio-button value="USDT">USDT</a-radio-button>
                 </a-radio-group>
-            </a-form-item>
+            </a-form-model-item>
 
-            <a-form-item label="提币数量">
-                <a-input-number v-decorator="['input-number', { initialValue: '' }]" :min="1" :max="10" />
+            <a-form-model-item label="提币数量">
+                <a-input-number v-model="form.amount" :min='0' :max='10000' />
                 <span class="ant-form-text">
-                    可用余额
+                    可用余额:
                 </span>
-                <a-radio-button value="c">
+                <span class="ant-form-text">
+                   {{form.coin}}
+                </span>
+                <span class="ant-form-text fontcolor">
                     全部
-                </a-radio-button>
-            </a-form-item>
-            <a-form-item label="提币地址">
+                </span>
+            </a-form-model-item>
+            <a-form-model-item label="提币地址">
                 <a-select
-                    v-decorator="[
-                    'select-multiple',
-                    {
-                        rules: [
-                        { required: true, message: 'Please select your favourite colors!', type: 'array' },
-                        ],
-                    },
-                    ]"
-                    mode="multiple"
+                    v-model="form.address"
                     placeholder="Please select favourite colors"
                 >
-                    <a-select-option value="red">
+                    <a-select-option value="red" >
                     Red
                     </a-select-option>
                     <a-select-option value="green">
@@ -58,83 +43,44 @@
                     Blue
                     </a-select-option>
                 </a-select>
-                 <a-radio-button value="c">
-                   <router-link to="/asset/extractcoin/extractcoinaddress">提币地址管理</router-link>
-                </a-radio-button>
-            </a-form-item>
+                <span class="ant-form-text">
+                   <router-link to="/asset/extractcoin/extractcoinaddress" class="fontcolor">提币地址管理</router-link>
+                </span>
+            </a-form-model-item>
 
-            <a-form-item label="手续费">
-                <a-input-number readOnly v-model="fee"/>
-            </a-form-item>
+            <a-form-model-item label="手续费">
+                <a-input readOnly :value="form.fee"/>
+                <span class="ant-form-text">
+                   {{form.coin}}
+                </span>
+            </a-form-model-item>
 
-            <a-form-item label="选择提币方式">
-                <a-radio-group v-decorator="['radio-group']">
-                    <a-radio value="a">
+            <a-form-model-item label="选择提币方式">
+                <a-radio-group v-model="form.type">
+                    <a-radio value="BHPay">
                     我的BHPay钱包（无需手续费）
                     </a-radio>
-                    <a-radio value="b">
+                    <a-radio value="other">
                     其他数字钱包
                     </a-radio>
                 </a-radio-group>
-            </a-form-item>
+            </a-form-model-item>
 
             
-            <a-form-item label="提示">
+            <a-form-model-item label="提示">
                 <p>信息1</p>
                 <p>信息2</p>
                 <p>信息3</p>
                 <p>信息4</p>
-            </a-form-item>
+            </a-form-model-item>
 
-            <a-form-item label="Upload" extra="longgggggggggggggggggggggggggggggggggg">
-                <a-upload
-                    v-decorator="[
-                    'upload',
-                    {
-                        valuePropName: 'fileList',
-                        getValueFromEvent: normFile,
-                    },
-                    ]"
-                    name="logo"
-                    action="/upload.do"
-                    list-type="picture"
-                >
-                    <a-button> <a-icon type="upload" /> Click to upload </a-button>
-                </a-upload>
-            </a-form-item>
-
-            <a-form-item label="Dragger">
-                <div class="dropbox">
-                    <a-upload-dragger
-                    v-decorator="[
-                        'dragger',
-                        {
-                        valuePropName: 'fileList',
-                        getValueFromEvent: normFile,
-                        },
-                    ]"
-                    name="files"
-                    action="/upload.do"
-                    >
-                    <p class="ant-upload-drag-icon">
-                        <a-icon type="inbox" />
-                    </p>
-                    <p class="ant-upload-text">
-                        Click or drag file to this area to upload
-                    </p>
-                    <p class="ant-upload-hint">
-                        Support for a single or bulk upload.
-                    </p>
-                    </a-upload-dragger>
-                </div>
-            </a-form-item>
-
-            <a-form-item :wrapper-col="{ span: 12, offset: 6 }">
-            <a-button type="primary" html-type="submit">
-                Submit
-            </a-button>
-            </a-form-item>
-        </a-form>
+            
+             <a-form-model-item>
+                <a-button type="primary">
+                    申请提币
+                </a-button>
+            </a-form-model-item>
+        </a-form-model>
         </template>
         
     </div>
@@ -145,20 +91,18 @@ import { setup } from '@/locales';
 export default {
     data(){
         return  {
-            fee:'0.0008BTC'
+            form: {
+                coin:'BTC',
+                amount: '1',
+                address:'red',
+                fee:'0.0008',
+                type: 'BHPay',
+            },
         }
     },
-    beforeCreate() {
-        this.form = this.$form.createForm(this, { name: 'validate_other' });
-    },
     methods: {
-        handleSubmit(e) {
-            e.preventDefault();
-            this.form.validateFields((err, values) => {
-                if (!err) {
-                console.log('Received values of form: ', values);
-                }
-            });
+        changeCoin(coin){
+            this.form.coin = coin;
         },
         normFile(e) {
             console.log('Upload event:', e);
@@ -173,9 +117,38 @@ export default {
 <style lang="scss" scoped>
     #extractcoin{
         padding: 10px;
-        max-width: 360px;
         header{
             margin: 10px 0;
+        }
+        form{
+            .ant-select{
+                width: 50%;
+                margin-right: 8px;
+            }
+            .ant-input{
+                width: 120px;
+                margin-right: 8px;
+            }
+            .ant-radio-button-wrapper{
+                background-color:#F8F8F8;
+                margin-right: 10px;
+                border-radius: 5px;
+            }
+            .ant-radio-button-wrapper:hover{
+                color: #000
+            }
+            .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {                
+                border-color: #FFAB32;
+                color: #FFAB32;
+                box-shadow: -1px 0 0 0 #FFAB32;
+            }
+            .ant-input-number:hover {
+                border-color: #ffab32;
+            }
+            .ant-select-selection:hover {
+                border-color: #ffab32;
+                border-right-width: 1px !important;
+            }
         }
     }
 </style>

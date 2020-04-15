@@ -2,7 +2,7 @@
   <div id="availableassets">
     <a-card>
       <header>
-        <span>数字资产账户</span>
+        <span>数字资产</span>
         <a-dropdown>
           <a-menu slot="overlay">
               <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>

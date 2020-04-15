@@ -45,13 +45,11 @@ export default [ //我的资产
             path: 'extractcoin',
             name: 'Extractcoin',
             component: () => import('@/views/asset/extractcoin'),
-            children:[
-              {//提币地址管理
-                path: 'extractcoinaddress',
-                name: 'Extractcoinaddress',
-                component: () => import('@/views/asset/extractcoinaddress'),
-              }
-            ]
+          },
+          {//提币地址管理
+            path: 'extractcoin/extractcoinaddress',
+            name: 'Extractcoinaddress',
+            component: () => import('@/views/asset/extractcoinaddress'),
           }
         ]
       },
