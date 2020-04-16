@@ -33,4 +33,23 @@ export default {
     font-weight: lighter;
   }
 }
+
+@media screen and (max-width: 700px) {
+  .hashHeader {
+    height: 7rem;
+    width: 100%;
+    background-color: #000000;
+    text-align: center;
+    padding-top: 6%;
+    .msgTit {
+      color: #ffffff;
+      font-weight: bolder;
+      font-size: 1.2em;
+    }
+    .msgDet {
+      color: #ffffff;
+      font-weight: lighter;
+    }
+  }
+}
 </style>

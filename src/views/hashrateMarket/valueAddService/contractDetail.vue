@@ -18,25 +18,25 @@
               </a-col>
             </a-row>
             <a-row class="detailBody">
-              <a-col :span="12">
+              <a-col :span="24">
                 <ul>
                   <li>起购金额（每T）</li>
                   <li style="color:#ffab32">0.7704usd/0.7704usd</li>
                 </ul>
               </a-col>
-              <a-col :span="4">
+              <a-col :span="8">
                 <ul>
                   <li>剩余份额</li>
                   <li>352分</li>
                 </ul>
               </a-col>
-              <a-col :span="4">
+              <a-col :span="8">
                 <ul>
                   <li>止损率</li>
                   <li>90%</li>
                 </ul>
               </a-col>
-              <a-col :span="4">
+              <a-col :span="8">
                 <ul>
                   <li>止赢率</li>
                   <li>200%</li>
@@ -108,6 +108,7 @@ export default {};
   }
   .detailContent {
     width: 60%;
+    margin-bottom: 20px;
     .detailContentBody {
       background-color: #ffffff;
       padding: 20px;
@@ -180,19 +181,54 @@ export default {};
     width: 90%;
   }
 }
-@media screen and (max-width: 700px) {
-  .detailContainer .detailContent {
-    width: 100%;
-    .charge {
-      margin-top: 60%;
-    }
-  }
-}
 @media screen and (max-width: 500px) {
-  .detailContainer .detailContent {
-    width: 100%;
-    .charge {
-      margin-top: 130%;
+  .detailContainer {
+    .detailContent {
+      width: 100%;
+      margin-bottom: 10px;
+      .detailContentBody {
+        padding: 5px;
+        font-size: 10px;
+        .detailHeader {
+          li:nth-child(1) {
+            font-size: 15px;
+          }
+          li:nth-child(2) {
+            font-size: 8px;
+            padding: 2px;
+          }
+          li:nth-child(3) {
+            font-size: 8px;
+            padding: 2px;
+          }
+        }
+        .detailBody ul li {
+          padding: 2px;
+          width: 100%;
+        }
+        .detailBody ul li:nth-child(1) {
+          font-size: 10px;
+        }
+        .detailBody ul li:nth-child(2) {
+          font-size: 15px;
+        }
+        .charge {
+          margin-top: 80%;
+          .ant-btn {
+            font-size: 10px;
+          }
+        }
+        .detailIntro li {
+          margin-bottom: 10px;
+          p {
+            margin: 5px 0;
+            span {
+              font-size: 15px;
+              margin-right: 5px;
+            }
+          }
+        }
+      }
     }
   }
 }

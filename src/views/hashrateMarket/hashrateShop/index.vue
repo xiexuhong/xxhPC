@@ -2,7 +2,7 @@
   <!-- 算力市场/算力商城首页 -->
   <div class="hashContainer">
     <a-row class="hashContent" type="flex" justify="center" align="top">
-      <a-col :span="18">
+      <a-col :span="19">
         <a-row>
           <a-col :span="24">
             <ul class="hashHeader">
@@ -56,7 +56,7 @@
           </a-col>
         </a-row>
       </a-col>
-      <a-col :span="6">
+      <a-col :span="5">
         <a-row class="showDetail">
           <a-col :span="24">
             <!-- <a href="#">查看详情 ></a> -->
@@ -65,9 +65,10 @@
         </a-row>
         <a-row class="charge">
           <a-col :span="24">
-            <a-button size="large" block>
+            <a-button v-show="unSellOut" size="large" block>
               <router-link to="/hashrateMarket/hashrateShop/orderDetail">立即购买</router-link>
             </a-button>
+            <a-button v-show="!unSellOut" class="disabled" size="large" block disabled>已售罄</a-button>
           </a-col>
         </a-row>
       </a-col>
@@ -148,7 +149,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      unSellOut: true, //算力是否售罄，默认未售罄
+    };
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -218,14 +225,19 @@ export default {};
 }
 .charge {
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  // display: flex;
+  // flex-direction: column;
+  // align-items: center;
   margin-top: 40%;
   .ant-btn {
+    display: inline-block;
     background-color: #ffab32;
     border-radius: 2px;
     color: #ffffff;
+    justify-content: center;
+  }
+  .disabled {
+    background-color: #cfcfcf;
   }
 }
 @media screen and (max-width: 1000px) {
@@ -233,19 +245,39 @@ export default {};
     width: 90%;
   }
 }
-@media screen and (max-width: 700px) {
-  .hashContent {
-    width: 100%;
-    .charge {
-      margin-top: 74%;
-    }
-  }
-}
 @media screen and (max-width: 500px) {
   .hashContent {
     width: 100%;
-    .charge {
-      margin-top: 130%;
+    padding: 5px;
+  }
+  .hashHeader {
+    li:nth-child(1) img {
+      top: 0;
+    }
+    li:nth-child(2) {
+      font-size: 15px;
+      padding-right: 80px;
+    }
+    li:nth-child(3) {
+      font-size: 8px;
+      padding: 3px;
+      margin-left: 40px;
+    }
+    li:nth-child(4) {
+      font-size: 8px;
+      padding: 3px;
+    }
+  }
+  .hashBody ul li:nth-child(1) {
+    font-size: 10px;
+  }
+  .hashBody ul li:nth-child(2) {
+    font-size: 10px;
+  }
+  .charge {
+    margin-top: 100%;
+    .ant-btn {
+      font-size: 10px;
     }
   }
 }

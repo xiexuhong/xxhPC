@@ -38,19 +38,19 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #frame {
   width: 100%;
-  .ant-tabs-nav {
+  /deep/.ant-tabs-nav {
     color: #999999;
-    .ant-tabs-tab-active {
+    /deep/.ant-tabs-tab-active {
       color: #262626;
     }
-    .ant-tabs-tab:hover {
+    /deep/.ant-tabs-tab:hover {
       color: #ffab32;
     }
   }
-  .ant-tabs-ink-bar {
+  /deep/.ant-tabs-ink-bar {
     background-color: #ffab32;
   }
 }
