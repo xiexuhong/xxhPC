@@ -49,7 +49,7 @@ export default {
     padding: 0 20px;
   }
   .ant-layout-header {
-    background: rgba(32, 40, 51, 0.3);
+    background: rgba(32, 40, 51, 1);
     position: fixed;
     top: 0;
     left: 0;
@@ -62,6 +62,7 @@ export default {
   .content {
     display: flex;
     justify-content: center;
+    padding-top: 64px;
     .ant-layout-content {
       width: 100%;
       box-sizing: border-box;
