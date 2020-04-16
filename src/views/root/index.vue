@@ -29,6 +29,7 @@ export default {
 
 <style lang="scss" scoped>
 #root {
+  position: relative;
   .mobileHeader {
     padding: 0 20px;
   }

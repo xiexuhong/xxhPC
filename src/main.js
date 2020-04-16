@@ -5,6 +5,7 @@ import store from './store';
 import i18n from './locales';
 import Antd from 'ant-design-vue';
 import Storage from 'vue-ls';
+import Clipboard from 'clipboard';
 
 import { setup } from '@/locales';
 
@@ -24,6 +25,7 @@ Vue.use(Antd);
 setup();
 
 Vue.config.productionTip = false;
+Vue.prototype.clipboard = Clipboard;
 
 new Vue({
   router,

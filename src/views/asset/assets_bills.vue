@@ -17,7 +17,7 @@
         <a-descriptions :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
           <a-descriptions-item label="时间">
           <div class="timing">
-            <input type="date" v-model = "starttime"/><span>&nbsp;——&nbsp;</span><input type="date" v-model = "endtime"/>
+            <input type="date" v-model = "starttime"/><span>——</span><input type="date" v-model = "endtime"/>
             <div class="button_area time">
               <a-button class="fontcolor" @click="choosetime(0)">今天</a-button>
               <a-button @click="choosetime(7)">最近一周</a-button>

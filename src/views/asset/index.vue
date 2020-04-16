@@ -43,6 +43,10 @@ export default {
       width: 100%;
       box-sizing: border-box;
     }
+    .ant-input {
+      max-width: 160px;
+      margin-right: 15px;
+    }
   }
   .mobileHeader {
     width:100%;
@@ -63,10 +67,12 @@ export default {
   }
   .button_area {
     display: flex;
-    margin: 20px 0 0;
     button {
       margin-right: 15px;
     }
+  }
+  .ant-list-item {
+    padding: 6px 0;
   }
 }
 

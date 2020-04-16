@@ -22,14 +22,16 @@
                 <template v-if="rechargestyle == 'general'">
                     <a-form-model-item label="选择币种">
                         <a-dropdown>
-                        <a-menu slot="overlay">
-                            <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
-                        </a-menu>
-                        <a-button style="margin-left: 8px" >{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
+                            <a-menu slot="overlay">
+                                <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+                            </a-menu>
+                            <a-button>{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
                         </a-dropdown>
+                        <span class="ant-form-text"> 可用余额：{{available}}{{coin}}</span>
                     </a-form-model-item>
                     <a-form-model-item label="充值金额">
                         <a-input v-model="form.amount" placeholder="请输入一个整数" />
+                        <span class="ant-form-text">金额范围：{{amountrange}}{{coin}}</span>
                     </a-form-model-item>
                     <a-form-model-item label="付款人姓名">
                         <a-input v-model="form.name" placeholder="请输入付款人姓名" />
@@ -38,20 +40,26 @@
                         <a-button><router-link to="/asset/publictransfer">对公转账</router-link></a-button>
                     </a-form-model-item>
                     <a-form-model-item>
-                        <a-button type="primary">
+                        <a-button type="primary" @click="goRecharge()">
                             立即充值
                         </a-button>
                     </a-form-model-item>
                 </template>
                 <template v-else>
                     <a-form-model-item label="选择币种">
-                        <a-button style="margin-left: 8px"> USDT(OMNI) </a-button>
+                        <a-button> USDT(OMNI) </a-button>
                     </a-form-model-item>
                     <a-form-model-item label="充币地址">
-                        <a-input v-model="form.coinaddress" readOnly placeholder="hifhsfosfsifsoiso" />
+                        <span class="ant-form-text" id="foo">{{form.coinaddress}}</span> 
+                        <a-button class="btn paste" data-clipboard-target="#foo" data-clipboard-action="copy">
+                            复制地址
+                        </a-button>
+                        <a-button class="btn">
+                            二维码
+                        </a-button>
                     </a-form-model-item>
                     <a-form-model-item>
-                        <a-button>
+                        <a-button class="btn">
                             查看账单
                         </a-button>
                     </a-form-model-item>
@@ -65,15 +73,16 @@
                 subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
             >
                 <template v-slot:extra>
-                <a-button type="primary" key="console">返回充值首页</a-button>
+                    <a-button type="primary" key="console" @click="goReturn()">返回充值首页</a-button>
                 </template>
             </a-result>
         </template>
     </div>
 </template>
 <script>
-import { setup } from '@/locales';
+import { setup } from '@/locales'
 import {mapState} from 'vuex'
+import Clipboard from 'clipboard'
 export default {
     data() {
         return {
@@ -81,11 +90,26 @@ export default {
                 coin:'',
                 amount: '',
                 name: '',
+                coinaddress:'egegeefgege'
             },
             coin:"",
             rechargestyle: 'general',
+            available:'1000.0',
+            amountrange:'400~1000000',
             result:false
         };
+    },
+    created(){
+        this.coin = this.defaultcurrency;
+    },
+    mounted() {
+        var clipboard = new Clipboard('.paste');
+        clipboard.on('success', function(e) {
+            console.log('复制成功')
+        });
+        clipboard.on('error', function(e) {
+            console.log('复制失败')
+        });
     },
     computed: 
         mapState({
@@ -101,22 +125,46 @@ export default {
             console.log('click left button', e);
         },        
         checkcurrency(index) {
-            console.log('click left button',index);
             this.coin = this.list[index];
-            // this.defaultcurrency = '';
-        }, 
+        },
+        goRecharge(){
+            this.result = true;
+        },
+        goReturn(){
+            this.result = false;
+        }
+
     },
 };
 </script>
 
 <style scoped lang="scss">
     #recharge{
-        padding:10px;        
-        max-width: 400px;
+        padding:10px;       
         font-size: 14px;
         header{
             margin: 0 0 10px;
             font-size: 16px;
+        }
+        .ant-btn{
+            margin-right: 15px;
+            color: #ffab32;
+            background-color: #fff;
+            border-color: #ffab32;
+        }
+        .ant-btn-primary {
+            color: #fff;
+        }
+        #foo{
+           font-size: 16px;
+           ::selection {
+                color: #fff;
+                background: #ffab32;
+                border-radius: 2px;
+            }
+        }
+        .btn{
+            border: none;
         }
     }
 </style>
