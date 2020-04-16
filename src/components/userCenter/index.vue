@@ -28,13 +28,13 @@
           <a-icon type="laptop" />算力合约
         </span>
         <a-menu-item key="5">
-          <router-link to="apple">我的合约</router-link>
+          <router-link to="/hashrateContract/contractList">我的合约</router-link>
         </a-menu-item>
         <a-menu-item key="6">
-          <router-link to="apple">算力收益</router-link>
+          <router-link to="/hashrateContract/hashrateIncome">算力收益</router-link>
         </a-menu-item>
         <a-menu-item key="7">
-          <router-link to="apple">算力转让</router-link>
+          <router-link to="/hashrateContract/hashrateTransfer">算力转让</router-link>
         </a-menu-item>
       </a-sub-menu>
       <a-sub-menu key="sub4">

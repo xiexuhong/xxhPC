@@ -38,6 +38,7 @@ export default {
     justify-content: center;
     width: 100%;
     margin-left:10px;
+    padding: 10px;
     .ant-layout-content {
       width: 100%;
       box-sizing: border-box;
@@ -47,6 +48,25 @@ export default {
     width:100%;
     padding: 0;
     margin: 0;
+  }
+  .fontcolor{
+    color: #FFAB32;
+  }
+  .ant-form-item {
+    margin-bottom: 12px;
+  }
+  .ant-radio-button-wrapper{
+    background-color:#F8F8F8;
+    margin-right: 10px;
+    border-radius: 5px;
+    color: #000;
+  }
+  .button_area {
+    display: flex;
+    margin: 20px 0 0;
+    button {
+      margin-right: 15px;
+    }
   }
 }
 

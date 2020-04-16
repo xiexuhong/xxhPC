@@ -9,17 +9,14 @@
             .item_title 长期算力合约
             .text 3年长期有效,最小1T起 锁定期满自由转让/续约
             a-button.btn(type="primary") 立即下单
-            .tag 低风险
         .item
             .item_title 高波动算力合约
             .text 优异性价比，限定时间和投入内 快速提升算力产出最优选
             a-button.btn(type="primary") 立即下单
-            .tag(class="tag2") 中风险
         .item
             .item_title 算力增值服务
             .text 算力收益套保服务，可自主设置盈亏 范围，获得额外保障性收益
             a-button.btn(type="primary") 立即下单
-            .tag(class="tag3") 套保服务
 </template>
 
 <script>
@@ -57,6 +54,7 @@ export default {
   }
   .content {
     display: flex;
+    justify-content: center;
     flex-wrap: wrap;
     .item {
       background: #fff;
@@ -103,7 +101,7 @@ export default {
     }
   }
   @media screen and (max-width: 768px) {
-    padding: 20px 0 20px 0;
+    padding: 20px;
     .title {
       margin-bottom: 20px;
       & > span {

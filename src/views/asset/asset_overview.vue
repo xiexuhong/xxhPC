@@ -1,16 +1,13 @@
-<template lang="pug">
-  
+<template lang="pug">  
   <div>
     <a-card>
       <header>
         <span>资产总览</span>
         <a-dropdown>
-          <a-menu slot="overlay" @click="handleMenuClick">
-            <a-menu-item key="1"><a-icon type="user" />CNY</a-menu-item>
-            <a-menu-item key="2"><a-icon type="user" />USD</a-menu-item>
-            <a-menu-item key="3"><a-icon type="user" />other</a-menu-item>
+          <a-menu slot="overlay">
+              <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
           </a-menu>
-          <a-button style="margin-left: 8px"> CNY <a-icon type="down" /> </a-button>
+          <a-button style="margin-left: 8px" >{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
         </a-dropdown>
       </header>
       <section>
@@ -18,8 +15,7 @@
       </section>
       <div>     
         <template>
-          <div>
-            <a-descriptions title="Responsive Descriptions" bordered :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
+            <a-descriptions bordered :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
               <a-descriptions-item label="Product">Cloud Database</a-descriptions-item>
               <a-descriptions-item label="Billing">Prepaid</a-descriptions-item>
               <a-descriptions-item label="Time">18:00:00</a-descriptions-item>
@@ -27,13 +23,12 @@
               <a-descriptions-item label="Discount">$20.00</a-descriptions-item>
               <a-descriptions-item label="Official">$60.00</a-descriptions-item>
             </a-descriptions>
-          </div>
         </template>
         <div class="button_area">
-          <a-button @click="recharge()">充值</a-button>
-          <a-button>提现</a-button>
-          <a-button>提币</a-button>
-          <a-button>账单</a-button>
+          <a-button><router-link to="/asset/recharge">充值</router-link></a-button>
+          <a-button><router-link to="/asset/withdraw">提现</router-link></a-button>
+          <a-button><router-link to="/asset/extractcoin">提币</router-link></a-button>
+          <a-button><router-link to="/asset/assetbills">账单</router-link></a-button>
         </div>
         <br />
       </div>
@@ -73,6 +68,7 @@
 
 <script>
 import { setup } from '@/locales';
+import {mapState} from 'vuex'
 export default {
   data() {
     return {
@@ -202,10 +198,23 @@ export default {
         },
       ],
       filterText:"",
-      isHide:false
+      isHide:false,
+      coin:"",
     };
   },
+  computed: 
+    mapState({
+        list(e){
+          return e.asset.currencylist;
+        },
+        defaultcurrency(e){
+          return e.asset.defaultcurrency;
+        },
+    }),
   methods: {
+    checkcurrency(index) {
+      this.coin = this.list[index];
+    }, 
     handleSearch(selectedKeys, confirm, dataIndex) {
       confirm();
       this.searchText = selectedKeys[0];
@@ -237,16 +246,10 @@ export default {
 <style lang="scss" scoped>
 header {
   margin-bottom: 15px;
+  
   span {
     font-size: 18px;
     font-weight: bolder;
-  }
-}
-.button_area {
-  display: flex;
-  margin: 10px 0;
-  button {
-    margin-right: 15px;
   }
 }
 .filter{

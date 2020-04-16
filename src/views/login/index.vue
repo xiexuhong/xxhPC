@@ -24,8 +24,11 @@ export default {
   align-items: center;
   height: calc(100vh - 350px);
   padding: 10px;
+  background-image: url('../../assets/image/login_bg.png');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 .mobileUserLayout {
-  height: calc(100vh - 68px) !important;
+  height: calc(100vh - 147px) !important;
 }
 </style>

@@ -22,7 +22,7 @@ export default {
     },
     login(e) {
       e.preventDefault();
-      this.goPath('/user/forgetThree');
+      this.goPath('/login/forgetThree');
       this.form.validateFields((err, values) => {
         if (!err) {
           console.log('Received values of form: ', values);

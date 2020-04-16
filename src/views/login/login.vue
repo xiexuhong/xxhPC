@@ -11,9 +11,9 @@
           a-input(v-decorator="['password',{ rules: [{ required: true, message: 'Please input your Password!' }] },]" placeholder="Password" type="password" autocomplete="off")
             a-icon(slot="prefix" type="lock" style="color: rgba(0,0,0,.25)")
         a-form-item
-          router-link(to="/user/forgetOne")
+          router-link(to="/login/forgetOne")
             a.forgetpass(href="javascript:;") 忘记密码
-          router-link(to="/user/register")
+          router-link(to="/login/register")
             a.register(href="javascript:;") 注册
           a-button.login_btn(type="primary" html-type="submit") 登录
     a-modal(v-model="visbile" :footer="null" :closable="false" wrapClassName="countryWrap")
