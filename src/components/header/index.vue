@@ -7,8 +7,9 @@
         ul.menu
           router-link(to="/")
             li 首页
-          li 算力市场
           li 平台动态
+          li 
+            router-link(to="/hashrateMarket") 算力市场
           li 帮助中心
           router-link(to="/about")
             li 关于我们
@@ -34,7 +35,8 @@
           span 首页
         a-menu-item(key="2")
           a-icon(type="desktop")
-          span 算力市场
+          span 
+            router-link(to="/hashrateMarket") 算力市场
         a-menu-item(key="3")
           a-icon(type="inbox")
           span 资讯
@@ -55,6 +57,7 @@ export default {
     return {
       localesEumn: localesEumn,
       collapsed: false,
+      _this: this,
     };
   },
   computed: {

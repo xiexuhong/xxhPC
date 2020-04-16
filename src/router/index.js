@@ -9,6 +9,7 @@ const files = require.context('./routes', false, /\.js$/);
 files.keys().forEach(key => {
   childrenRoute.push(...files(key).default);
 });
+console.log(childrenRoute);
 
 const routes = [
   {
