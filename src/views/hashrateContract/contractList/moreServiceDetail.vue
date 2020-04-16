@@ -174,6 +174,7 @@ const columns = [
     dataIndex: 'state',
     key: 'state',
     scopedSlots: { customRender: 'state' },
+    width: '7%',
   },
 ];
 

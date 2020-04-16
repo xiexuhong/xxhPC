@@ -130,6 +130,7 @@ const columns = [
     dataIndex: 'action',
     key: 'action',
     scopedSlots: { customRender: 'action' },
+    width: '12%',
   },
 ];
 
@@ -309,9 +310,9 @@ export default {
     /deep/td {
       padding: 16px 5px;
     }
-      /deep/.ant-table-thead > tr > th {
-        background-color: #ffffff;
-      }
+    /deep/.ant-table-thead > tr > th {
+      background-color: #ffffff;
+    }
     .totalHashrate {
       color: #ffab32;
       border-bottom: 1px solid #ffab32;
@@ -320,10 +321,7 @@ export default {
     .action a {
       display: inline-block;
       color: #ffab32;
-      margin: 5px 10px;
-      padding: 5px 10px;
-      border: 1px solid #ffab32;
-      border-radius: 5px;
+      margin: 5px 2px;
     }
   }
 }
