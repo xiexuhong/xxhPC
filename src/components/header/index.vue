@@ -7,9 +7,9 @@
         ul.menu
           router-link(to="/")
             li 首页
+          router-link(to="/hashrateMarket")
+            li 算力市场
           li 平台动态
-          li 
-            router-link(to="/hashrateMarket") 算力市场
           li 帮助中心
           router-link(to="/about")
             li 关于我们
@@ -110,7 +110,7 @@ export default {
       }
       .menu {
         display: flex;
-        & > li {
+        li {
           padding: 0 10px;
           cursor: pointer;
         }
