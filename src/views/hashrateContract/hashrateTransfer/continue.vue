@@ -62,7 +62,7 @@
           <span class="totalHashrate">{{ text }}</span>
         </a-popover>
         <span class="action" slot="action">
-          <router-link to="/hashrateContract/hashrateTransfer">转让</router-link>
+          <router-link to @click.native="$router.go(0)">转让</router-link>
           <router-link to="/hashrateContract/contractList/orderFade">退单</router-link>
           <router-link to="/hashrateContract/contractList/orderReorder">续单</router-link>
         </span>
@@ -117,6 +117,7 @@ const columns = [
     dataIndex: 'action',
     key: 'action',
     scopedSlots: { customRender: 'action' },
+    width: '12%',
   },
 ];
 
@@ -207,10 +208,7 @@ export default {
     .action a {
       display: inline-block;
       color: #ffab32;
-      margin: 5px 10px;
-      padding: 5px 10px;
-      border: 1px solid #ffab32;
-      border-radius: 5px;
+      margin: 5px 2px;
     }
   }
 }

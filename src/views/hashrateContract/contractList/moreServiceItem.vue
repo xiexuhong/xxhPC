@@ -59,6 +59,7 @@ const columns = [
     dataIndex: 'action',
     key: 'action',
     scopedSlots: { customRender: 'action' },
+    width: '8%',
   },
 ];
 
@@ -139,11 +140,7 @@ export default {
     }
     .action a {
       display: inline-block;
-      width: 78px;
       color: #ffab32;
-      padding: 5px 10px;
-      border: 1px solid #ffab32;
-      border-radius: 5px;
     }
   }
 }
@@ -164,7 +161,7 @@ export default {
       }
       .action a {
         display: block;
-        width: 50px;
+        width: 40px;
       }
     }
   }
