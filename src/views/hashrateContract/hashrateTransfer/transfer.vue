@@ -192,10 +192,7 @@ export default {
     .action a {
       display: inline-block;
       color: #ffab32;
-      margin: 5px 10px;
-      padding: 5px 10px;
-      border: 1px solid #ffab32;
-      border-radius: 5px;
+      margin: 5px 2px;
     }
   }
 }

@@ -1,31 +1,31 @@
 export default [
   {
-    path: '/user',
-    name: 'user',
+    path: '/login',
+    name: 'login',
     component: () => import('@/views/login'),
     children: [
       {
-        path: '/user/login',
+        path: '/login/login',
         name: 'login',
         component: () => import('@/views/login/login'),
       },
       {
-        path: '/user/register',
+        path: '/login/register',
         name: 'register',
         component: () => import('@/views/login/register'),
       },
       {
-        path: '/user/forgetOne',
+        path: '/login/forgetOne',
         name: 'forgetOne',
         component: () => import('@/views/login/forget_pass_one'),
       },
       {
-        path: '/user/forgetTwo',
+        path: '/login/forgetTwo',
         name: 'forgetTwo',
         component: () => import('@/views/login/forget_pass_two'),
       },
       {
-        path: '/user/forgetThree',
+        path: '/login/forgetThree',
         name: 'forgetThree',
         component: () => import('@/views/login/forget_pass_three'),
       },

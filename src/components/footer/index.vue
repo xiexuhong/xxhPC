@@ -41,7 +41,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #footer {
   height: 286px;
   padding-top: 68px;
