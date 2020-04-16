@@ -1,12 +1,13 @@
 <template>
     <div id="recharge">
         <header>
-            <a-breadcrumb separator=">">
-            <a-breadcrumb-item href=""><router-link to="/asset/assetoverview">资产总览</router-link></a-breadcrumb-item>
+            <a-breadcrumb separator="">
+            <a-breadcrumb-item href=""><router-link to="/asset/assetoverview" class="fontcolor">资产总览</router-link></a-breadcrumb-item>
+            <a-breadcrumb-separator style="color:#ffab32">></a-breadcrumb-separator>
             <a-breadcrumb-item>充值</a-breadcrumb-item>
-            </a-breadcrumb>
+            </a-breadcrumb>  
         </header>
-        <template>
+        <template v-if="!result">
             <a-form-model :model="form">
                 <a-form-model-item>
                 <a-radio-group v-model="rechargestyle">
@@ -57,6 +58,17 @@
                 </template>
             </a-form-model>
         </template>
+        <template v-else>
+            <a-result
+                status="success"
+                title="Successfully Purchased Cloud Server ECS!"
+                subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+            >
+                <template v-slot:extra>
+                <a-button type="primary" key="console">返回充值首页</a-button>
+                </template>
+            </a-result>
+        </template>
     </div>
 </template>
 <script>
@@ -72,6 +84,7 @@ export default {
             },
             coin:"",
             rechargestyle: 'general',
+            result:false
         };
     },
     computed: 
@@ -99,9 +112,11 @@ export default {
 <style scoped lang="scss">
     #recharge{
         padding:10px;        
-        max-width: 360px;
+        max-width: 400px;
+        font-size: 14px;
         header{
-            margin: 10px 0;
+            margin: 0 0 10px;
+            font-size: 16px;
         }
     }
 </style>

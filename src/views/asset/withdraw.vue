@@ -1,17 +1,18 @@
 <template>
     <div id="publictransfer">
         <template>
-            <div>
-                <a-breadcrumb separator=">">
-                <a-breadcrumb-item href=""><router-link to="/asset/assetoverview">资产总览</router-link></a-breadcrumb-item>
+            <header>
+              <a-breadcrumb separator="">
+                <a-breadcrumb-item href=""><router-link to="/asset/assetoverview" class="fontcolor">资产总览</router-link></a-breadcrumb-item>
+                <a-breadcrumb-separator style="color:#ffab32">></a-breadcrumb-separator>
                 <a-breadcrumb-item>提现</a-breadcrumb-item>
-                </a-breadcrumb>
-            </div>
+              </a-breadcrumb>  
+            </header>
         </template>
          <template>
             <div>
                 <template>
-                    <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
+                    <a-form :form="form">
                         <a-form-model-item label="选择币种">
                             <a-dropdown>
                             <a-menu slot="overlay" @click="handleMenuClick">
@@ -42,7 +43,7 @@
                             </a-select-option>
                         </a-select>
                         </a-form-item>
-                        <a-form-item :wrapper-col="{ span: 12, offset: 5 }">
+                        <a-form-item>
                         <a-button type="primary" html-type="submit">
                             申请提现
                         </a-button>
@@ -84,7 +85,16 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
+  #publictransfer{  
+        padding:10px;        
+        max-width: 400px;
+        font-size: 14px;
+        header{
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+    }
   #components-table-demo-size h4 {
     margin-bottom: 16px;
   }

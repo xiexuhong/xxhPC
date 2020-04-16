@@ -246,16 +246,10 @@ export default {
 <style lang="scss" scoped>
 header {
   margin-bottom: 15px;
+  
   span {
     font-size: 18px;
     font-weight: bolder;
-  }
-}
-.button_area {
-  display: flex;
-  margin: 10px 0;
-  button {
-    margin-right: 15px;
   }
 }
 .filter{

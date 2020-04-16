@@ -1,10 +1,11 @@
 <template>
     <div id="extractcoin">
         <header>
-            <a-breadcrumb separator=">">
-            <a-breadcrumb-item href=""><router-link to="/asset/assetoverview">资产总览</router-link></a-breadcrumb-item>
+            <a-breadcrumb separator="">
+            <a-breadcrumb-item href=""><router-link to="/asset/assetoverview" class="fontcolor">资产总览</router-link></a-breadcrumb-item>
+            <a-breadcrumb-separator style="color:#ffab32">></a-breadcrumb-separator>
             <a-breadcrumb-item>提币</a-breadcrumb-item>
-            </a-breadcrumb>
+            </a-breadcrumb>  
         </header>
         <template>
         <a-form-model  :form="form">
@@ -49,33 +50,28 @@
             </a-form-model-item>
 
             <a-form-model-item label="手续费">
-                <a-input readOnly :value="form.fee"/>
-                <span class="ant-form-text">
-                   {{form.coin}}
-                </span>
+                <div class="components-input-demo-presuffix">
+                    <a-input readOnly :value="form.fee" :suffix="form.coin" />
+                </div>
             </a-form-model-item>
 
             <a-form-model-item label="选择提币方式">
                 <a-radio-group v-model="form.type">
                     <a-radio value="BHPay">
-                    我的BHPay钱包（无需手续费）
+                    我的BHPay钱包<span class="fontcolor">（无需手续费）</span>
                     </a-radio>
                     <a-radio value="other">
                     其他数字钱包
                     </a-radio>
                 </a-radio-group>
-            </a-form-model-item>
-
-            
+            </a-form-model-item>            
             <a-form-model-item label="提示">
-                <p>信息1</p>
-                <p>信息2</p>
-                <p>信息3</p>
-                <p>信息4</p>
+                <p class="text">信息1</p>
+                <p class="text">信息2</p>
+                <p class="text">信息3</p>
+                <p class="text">信息4</p>
             </a-form-model-item>
-
-            
-             <a-form-model-item>
+            <a-form-model-item>
                 <a-button type="primary">
                     申请提币
                 </a-button>
@@ -116,39 +112,25 @@ export default {
 </script>
 <style lang="scss" scoped>
     #extractcoin{
+        max-width: 400px;
         padding: 10px;
+        font-size: 14px;
         header{
-            margin: 10px 0;
+            margin: 0 0 10px;
+            font-size: 16px;
         }
-        form{
-            .ant-select{
-                width: 50%;
-                margin-right: 8px;
-            }
-            .ant-input{
-                width: 120px;
-                margin-right: 8px;
-            }
-            .ant-radio-button-wrapper{
-                background-color:#F8F8F8;
-                margin-right: 10px;
-                border-radius: 5px;
-            }
-            .ant-radio-button-wrapper:hover{
-                color: #000
-            }
-            .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {                
-                border-color: #FFAB32;
-                color: #FFAB32;
-                box-shadow: -1px 0 0 0 #FFAB32;
-            }
-            .ant-input-number:hover {
-                border-color: #ffab32;
-            }
-            .ant-select-selection:hover {
-                border-color: #ffab32;
-                border-right-width: 1px !important;
-            }
+        .ant-select{
+            width: 50%;
+            margin-right: 8px;
+        }
+        
+        .text{
+            margin: 0;
+            line-height: 2;
+        }
+    
+        .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+            color: #ffab32;
         }
     }
 </style>
