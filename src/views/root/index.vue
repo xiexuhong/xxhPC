@@ -1,6 +1,6 @@
 <template lang="pug">
   a-layout(id="root")
-    a-layout-header(:class="{ mobileHeader: deviceType !== 'desktop',notTop:notTop }")
+    a-layout-header(:class="{ mobileHeader: deviceType !== 'desktop',}")
       Header
     .content
       a-layout-content
@@ -18,28 +18,14 @@ import { mapGetters } from 'vuex';
 export default {
   components: { Header, Footer, MobileFooter },
   data() {
-    return {
-      notTop: false,
-    };
+    return {};
   },
   computed: {
     ...mapGetters(['deviceType']),
   },
-  methods: {
-    onScroll() {
-      if (window.pageYOffset > 0) {
-        this.notTop = true;
-      } else {
-        this.notTop = false;
-      }
-    },
-  },
-  created() {
-    window.addEventListener('scroll', this.onScroll);
-  },
-  beforeDestroy() {
-    window.removeEventListener('scroll', this.onScroll);
-  },
+  methods: {},
+  created() {},
+  beforeDestroy() {},
 };
 </script>
 
@@ -55,9 +41,6 @@ export default {
     left: 0;
     width: 100%;
     z-index: 10;
-  }
-  .notTop {
-    background: rgba(32, 40, 51, 1);
   }
   .content {
     display: flex;
