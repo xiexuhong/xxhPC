@@ -1,9 +1,9 @@
 <template>
-  <main class="ant-layout-content" style="height: 100%; margin: 24px 24px 0px; padding-top: 0px;">
+  <main class="ant-layout-content" style="height: 100%; width:99%; margin: 10px; padding-top: 0px;">
     <div class="breadcrumb ant-breadcrumb">
       <span>
         <span class="ant-breadcrumb-link">
-          <a href="/account/security" class="router-link-active color_y">帳戶安全</a>
+          <router-link to="/account/security" class="router-link-active color_y">帳戶安全</router-link>
         </span>
         <span class="ant-breadcrumb-separator color_y">></span>
       </span>
@@ -74,9 +74,9 @@
 .ant-breadcrumb-link {
   font-size: 18px;
 }
-.ant-form-item {
+/* .ant-form-item {
   width: 70% !important;
-}
+} */
 .ant-select {
   width: 100% !important;
 }

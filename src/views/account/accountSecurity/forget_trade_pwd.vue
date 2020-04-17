@@ -5,7 +5,7 @@
         <div class="breadcrumb ant-breadcrumb">
           <span class>
             <span class="ant-breadcrumb-link">
-              <a href="/account/security" class="router-link-active color_y">帳戶&安全</a>
+              <router-link to="/account/security" class="router-link-active color_y">帳戶&安全</router-link>
             </span>
             <span class="ant-breadcrumb-separator color_y">></span>
           </span>
@@ -19,7 +19,9 @@
         <div>
           <a-form>
             <a-form-item label="短信验证码">
-              <a-input prefix="请输入短信验证码" suffix="獲取驗證碼" />
+              <a-input prefix="请输入短信验证码">
+                <span slot="suffix" class="color_y">獲取驗證碼</span>
+              </a-input>
               <span class="code_til_text">輸入您的手機 180 **** 0576 收到的驗證碼</span>
             </a-form-item>
             <a-form-item label="手持身份证拍照">

@@ -1,9 +1,12 @@
 <template>
-  <main class="ant-layout-content" style="height: 100%; margin: 24px 24px 0px; padding-top: 0px;">
+  <main
+    class="ant-layout-content"
+    style="height: 100%; margin: 24px 12px 0px; padding-top: 0px;width: 97.8%;"
+  >
     <div class="breadcrumb ant-breadcrumb">
       <span class>
         <span class="ant-breadcrumb-link">
-          <a href="/account/security" class="router-link-active color_y">帳戶安全</a>
+          <router-link to="/account/security" class="router-link-active color_y">帳戶安全</router-link>
         </span>
         <span class="ant-breadcrumb-separator color_y">></span>
       </span>
@@ -43,6 +46,7 @@ export default {
 <style scoped>
 .ant-result {
   width: 50%;
+  margin: auto;
 }
 .ant-result-content {
   max-width: 60%;

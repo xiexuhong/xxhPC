@@ -42,7 +42,7 @@
               </a-col>
             </a-row>
             <template slot="actions">
-              <div class="del_card">解绑</div>
+              <div class="del_card" @click="del_card()">解绑</div>
             </template>
           </a-card>
         </a-col>
@@ -59,7 +59,28 @@
     </div>
   </main>
 </template>
-
+<script>
+export default {
+  data() {
+    return {};
+  },
+  methods: {
+    del_card() {
+      this.$confirm({
+        title: '解綁銀行卡',
+        content: h => <div style="color:#999999;">您確定要解綁銀行卡嗎？</div>,
+        okText: '提交',
+        onOk() {
+          console.log('OK');
+        },
+        onCancel() {
+          console.log('Cancel');
+        },
+        class: 'test',
+      });
+    },
+  },
+};
 </script>
 <style scoped>
 .ant-breadcrumb {

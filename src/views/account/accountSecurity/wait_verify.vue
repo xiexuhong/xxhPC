@@ -3,7 +3,7 @@
     <div class="breadcrumb ant-breadcrumb">
       <span class>
         <span class="ant-breadcrumb-link">
-          <a href="/account/security" class="router-link-active color_y">帳戶安全</a>
+          <router-link to="/account/security" class="router-link-active color_y">帳戶安全</router-link>
         </span>
         <span class="ant-breadcrumb-separator color_y">></span>
       </span>

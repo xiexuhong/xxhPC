@@ -43,15 +43,15 @@
           <a-modal
             title="安全驗證"
             centered
+            :footer="null"
             :visible="isAdd"
-            @ok="() => addCoinAddr(true)"
             @cancel="() => addCoinAddr(false)"
           >
             <a-form-item label="交易密碼">
               <a-input placeholder="input placeholder 英文名" />
               <span class="color_y">忘記密碼?</span>
             </a-form-item>
-            <a-form-item>
+            <a-form-item class="t_center">
               <a-button type="primary">提交</a-button>
             </a-form-item>
           </a-modal>
@@ -110,7 +110,7 @@ export default {
     return {
       data,
       columns,
-      noDatas: true,
+      noDatas: false,
       isAdd: false,
     };
   },
@@ -132,7 +132,20 @@ export default {
 .color_y {
   color: #ffab32;
 }
+.t_center {
+  text-align: center;
+}
+.t_center button {
+  width: 48%;
+}
 .ant-breadcrumb-link {
   font-size: 18px;
+}
+.ant-modal-title {
+  border: none;
+  text-align: center;
+}
+#rcDialogTitle2 {
+  text-align: center;
 }
 </style>

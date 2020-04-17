@@ -1,5 +1,5 @@
 <template>
-  <main class="ant-layout-content" style="height: 100%; margin: 24px 24px 0px; padding-top: 0px;">
+  <main class="ant-layout-content" style="height: 100%; margin: 24px 12px 0px; padding-top: 0px;">
     <div class="breadcrumb ant-breadcrumb">
       <span>
         <span class="ant-breadcrumb-link">
@@ -8,13 +8,13 @@
       </span>
     </div>
     <div>
-      <a-card :bordered="false">
+      <a-card :bordered="false" :bodyStyle="{padding:0,}">
         <a-row>
-          <a-col :span="3">
+          <a-col :span="8">
             <small>我的当前算龄</small>
             <p class="t_bold">450 TD</p>
           </a-col>
-          <a-col :span="3">
+          <a-col :span="8">
             <small>历史最高算龄</small>
             <p class="t_bold">800 TD</p>
           </a-col>
@@ -37,7 +37,7 @@
           </a-col>
         </a-row>
       </a-card>
-      <a-card :bordered="false" class="grade_div">
+      <a-card :bordered="false" class="grade_div" :bodyStyle="{padding: 0,}">
         <h2>收益區間排名</h2>
         <a-row>
           <a-col :span="15">
@@ -95,9 +95,7 @@
           </a-col>
         </a-row>
       </a-card>
-      <a-row class="til_power">
-        <p>您的算齡未達標，未獲得雙挖礦機資源，沒有機內排名區間，快去下單算力加速成長，成長越快，等級越高，權益越大</p>
-      </a-row>
+      <a-alert message="您的算齡未達標，未獲得雙挖礦機資源，沒有機內排名區間，快去下單算力加速成長，成長越快，等級越高，權益越大" type="error" />
       <div class="btn_div">
         <a-button type="primary">加速成長</a-button>
       </div>
@@ -108,8 +106,12 @@
 main {
   width: 95% !important;
 }
-.ant-breadcrumb-link {
+.ant-breadcrumb-link,
+h2 {
   font-size: 18px;
+}
+h2 {
+  margin-top: 24px;
 }
 .ant-card .ant-card-body {
   padding: 20px 0 !important;
@@ -148,13 +150,14 @@ small {
   margin-top: 5%;
 }
 .desc_grade .ant-row:nth-child(3) {
-  margin-top: 8%;
+  margin-top: 9%;
 }
 .desc_grade .ant-row:nth-child(4) {
-  margin-top: 10%;
+  margin-top: 11%;
 }
 .btn_div {
   text-align: center;
+  margin: 2%;
 }
 .til_power {
   background-color: #fafafa;

@@ -27,11 +27,11 @@
               <h3>实名认证</h3>
               <span class="color_9">建議您完成實名認證，以確保財產安全</span>
               <div class="status_v">
-                <!-- <a-button type="primary">去认证>></a-button> -->
-                <router-link to="/account/verified">
+                <router-link to="/account/verified" v-if="isVerified">
                   <img src="../../../assets/image/account/icongougou.png" alt />
                   <span class="color_y">已认证</span>
                 </router-link>
+                <a-button type="primary" v-else @click="goVerify()">去认证>></a-button>
               </div>
             </a-col>
             <a-col :span="12" class="t_right">
@@ -93,7 +93,11 @@
                   </div>
                   <ul class="ant-list-item-action">
                     <li>
-                      <router-link to="/account/rela_bhpay" class="color_y">關聯BHPay</router-link>
+                      <router-link
+                        :to="isAssociated ? '/account/associated_bhpay' : '/account/rela_bhpay'"
+                        class="color_b"
+                        :class="{'color_y': !isAssociated}"
+                      >{{ isAssociated ? '已關聯BHPay' : "關聯BHPay"}}</router-link>
                     </li>
                   </ul>
                 </li>
@@ -119,7 +123,27 @@
                   </div>
                   <ul class="ant-list-item-action">
                     <li>
-                      <a class="color_y">修改</a>
+                      <a class="color_y" @click="changePwd(true)">修改</a>
+                      <a-modal
+                        title="修改登錄密碼"
+                        centered
+                        :footer="null"
+                        :visible="isChangePwd"
+                        @cancel="() => changePwd(false)"
+                      >
+                        <a-form-item label="舊密碼">
+                          <a-input placeholder="请输入舊密碼" />
+                        </a-form-item>
+                        <a-form-item label="新密碼">
+                          <a-input placeholder="6~16位字母、數字和特殊符號" />
+                        </a-form-item>
+                        <a-form-item label="确认新密碼">
+                          <a-input placeholder="请再次输入新密碼" />
+                        </a-form-item>
+                        <a-form-item class="t_center">
+                          <a-button type="primary">确认修改</a-button>
+                        </a-form-item>
+                      </a-modal>
                     </li>
                   </ul>
                 </li>
@@ -143,7 +167,32 @@
                   </div>
                   <ul class="ant-list-item-action">
                     <li>
-                      <a class="color_y">修改</a>
+                      <a class="color_y" @click="changeTrasPwd(true)">修改</a>
+                      <a-modal
+                        title="修改交易密碼"
+                        centered
+                        :footer="null"
+                        :visible="isChangeTrasPwd"
+                        @cancel="() => changeTrasPwd(false)"
+                      >
+                        <a-form-item label="舊密碼">
+                          <a-input placeholder="请输入舊密碼" />
+                        </a-form-item>
+                        <a-form-item label="新密碼">
+                          <a-input placeholder="6纯数字" />
+                        </a-form-item>
+                        <a-form-item label="确认新密碼">
+                          <a-input placeholder="请再次输入新密碼" />
+                        </a-form-item>
+                        <a-form-item label="短信驗證碼">
+                          <a-input placeholder="请输入短信验证码">
+                            <span slot="suffix" class="color_y">獲取驗證碼</span>
+                          </a-input>
+                        </a-form-item>
+                        <a-form-item class="t_center">
+                          <a-button type="primary">确认修改</a-button>
+                        </a-form-item>
+                      </a-modal>
                     </li>
                     <li>
                       <router-link to="/account/forget_trade_pwd" class="color_r">找回</router-link>
@@ -158,6 +207,31 @@
     </div>
   </main>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      isChangePwd: false, // 修改登录密码
+      isChangeTrasPwd: false, // 修改交易密码
+      isAssociated: true, // 是否关联BHPay
+      isVerified: false, // 是否实名认证
+    };
+  },
+  methods: {
+    changePwd(isChangePwd) {
+      this.isChangePwd = isChangePwd;
+      console.log('click', isChangePwd);
+    },
+    changeTrasPwd(isChangeTrasPwd) {
+      this.isChangeTrasPwd = isChangeTrasPwd;
+      console.log('click', isChangeTrasPwd);
+    },
+    goVerify() {
+      console.log('去认证');
+    },
+  },
+};
+</script>
 <style scoped>
 .content {
   background-color: transparent;
@@ -203,5 +277,14 @@
 .status_v span {
   margin-left: 1.5%;
   vertical-align: middle;
+}
+.t_center {
+  text-align: center;
+}
+.t_center button {
+  width: 48%;
+}
+.ant-input-suffix {
+  color: #ffab32;
 }
 </style>
