@@ -30,7 +30,6 @@
           <a-button><router-link to="/asset/withdraw">提现</router-link></a-button>
           <a-button><router-link to="/asset/recharge">账单</router-link></a-button>
         </div>
-        <br />
       </div>
     </a-card>
     <br />

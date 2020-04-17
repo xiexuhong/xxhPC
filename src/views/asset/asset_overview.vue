@@ -1,5 +1,5 @@
 <template lang="pug">  
-  <div>
+  <main>
     <a-card>
       <header>
         <span>资产总览</span>
@@ -13,8 +13,8 @@
       <section>
         <p>总资产（估值）：<span>48541515</span></p>
       </section>
-      <div>     
-        <template>
+      <div id="assetview">     
+          <div>
             <a-descriptions bordered :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
               <a-descriptions-item label="Product">Cloud Database</a-descriptions-item>
               <a-descriptions-item label="Billing">Prepaid</a-descriptions-item>
@@ -23,14 +23,14 @@
               <a-descriptions-item label="Discount">$20.00</a-descriptions-item>
               <a-descriptions-item label="Official">$60.00</a-descriptions-item>
             </a-descriptions>
-        </template>
-        <div class="button_area">
-          <a-button><router-link to="/asset/recharge">充值</router-link></a-button>
-          <a-button><router-link to="/asset/withdraw">提现</router-link></a-button>
-          <a-button><router-link to="/asset/extractcoin">提币</router-link></a-button>
-          <a-button><router-link to="/asset/assetbills">账单</router-link></a-button>
-        </div>
-        <br />
+            <div class="button_area">
+              <a-button><router-link to="/asset/recharge">充值</router-link></a-button>
+              <a-button><router-link to="/asset/withdraw">提现</router-link></a-button>
+              <a-button><router-link to="/asset/extractcoin">提币</router-link></a-button>
+              <a-button><router-link to="/asset/assetbills">账单</router-link></a-button>
+            </div>
+          </div>
+           <Assetview />
       </div>
     </a-card>
     <br />
@@ -52,7 +52,7 @@
       </div>
     </div>
       
-    <a-table :dataSource="data" :columns="columns">
+    <a-table :dataSource="data1" :columns="columns">
       <template slot="customRender" slot-scope="text, record, index, column">
         <span v-if="searchText && searchedColumn === column.dataIndex">
           <template v-for="(fragment, i) in text.toString().split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))">
@@ -63,16 +63,21 @@
         <span v-else>{{text}}</span>
       </template>
     </a-table>
-  </div> 
+  </main> 
 </template>
 
 <script>
 import { setup } from '@/locales';
-import {mapState} from 'vuex'
+import { mapState } from 'vuex';
+import Assetview from '@/components/assetview';
+
 export default {
+  components: {
+    Assetview
+  },
   data() {
     return {
-      data: [
+      data1: [
         {
           key: '1',
           coin: 'John Brown',
@@ -199,9 +204,10 @@ export default {
       ],
       filterText:"",
       isHide:false,
-      coin:"",
+      coin:""
     };
   },
+
   computed: 
     mapState({
         list(e){
@@ -236,10 +242,7 @@ export default {
     recharge() {
       console.log('recharge');
     },
-  },
-  created() {
-    console.log(this.$route.query);
-  },
+  }
 };
 </script>
 
@@ -252,6 +255,15 @@ header {
     font-weight: bolder;
   }
 }
+#assetview{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .echarts{
+    min-height: 220px;
+    margin-left: 15px;
+  }
+}
 .button_area {
   display: flex;
   margin: 10px 0;
@@ -259,6 +271,7 @@ header {
     margin-right: 15px;
   }
 }
+
 .filter{
   padding: 10px;
   .searchBox{
