@@ -42,19 +42,19 @@
           <a-icon type="notification" />我的账户
         </span>
         <a-menu-item key="9">
-          <router-link to="apple">账户&安全</router-link>
+          <router-link to="/account/security">账户&安全</router-link>
         </a-menu-item>
         <a-menu-item key="10">
-          <router-link to="apple">银行卡管理</router-link>
+          <router-link to="/account/bank_card">银行卡管理</router-link>
         </a-menu-item>
         <a-menu-item key="11">
-          <router-link to="apple">提币地址管理</router-link>
+          <router-link to="/account/get_coin_addr">提币地址管理</router-link>
         </a-menu-item>
         <a-menu-item key="12">
-          <router-link to="apple">算龄</router-link>
+          <router-link to="/account/power_age">算龄</router-link>
         </a-menu-item>
         <a-menu-item key="13">
-          <router-link to="apple">推荐奖励</router-link>
+          <router-link to="/account/invite">推荐奖励</router-link>
         </a-menu-item>
       </a-sub-menu>
     </a-menu>
