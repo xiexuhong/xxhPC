@@ -18,6 +18,7 @@ export default new Vuex.Store({
   },
   mutations: {
     saveUser(state, data) {
+      Vue.ls.set('user', data);
       state.user = data;
     },
     changeDeviceType(state, type) {
