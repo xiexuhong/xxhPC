@@ -5,7 +5,7 @@
         <span>资产总览</span>
         <a-dropdown>
           <a-menu slot="overlay">
-              <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+              <a-menu-item :key="index" v-for="(item,index) in currencylist" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px" >{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
         </a-dropdown>
@@ -30,7 +30,12 @@
               <a-button><router-link to="/asset/assetbills">账单</router-link></a-button>
             </div>
           </div>
-           <Assetview />
+          //- <ve-line
+          //-   :data="chartData"
+          //-   :loading="loading"
+          //-   :data-empty="dataEmpty"
+          //-   :settings="chartSettings">
+          //- </ve-line>
       </div>
     </a-card>
     <br />
@@ -68,7 +73,20 @@
 
 <script>
 import { setup } from '@/locales';
-import { mapState } from 'vuex';
+import {mapState, mapGetters } from 'vuex';
+import { getAssetList } from '@/script/api';
+  const DATA_FROM_BACKEND = {
+    columns: ["belongTime", "stepNum"],
+    rows: [
+        {'belongTime':'2018-09-24','stepNum':'100'},
+        {'belongTime':'2018-09-25','stepNum':'134'}
+    ]
+  }
+  const EMPTY_DATA = {
+    columns: [],
+    rows: [
+    ]
+  }
 
 export default {
   data() {
@@ -203,19 +221,19 @@ export default {
       coin:""
     };
   },
+  created(){
+    async () => {
+          const { datas } = await getAssetList();
+          console.log(datas);
+        }
+  },
+  computed: {
+    ...mapGetters(['user','currencylist','defaultcurrency'])
 
-  computed: 
-    mapState({
-        list(e){
-          return e.asset.currencylist;
-        },
-        defaultcurrency(e){
-          return e.asset.defaultcurrency;
-        },
-    }),
+  },
   methods: {
     checkcurrency(index) {
-      this.coin = this.list[index];
+      this.coin = this.currencylist[index];
     }, 
     handleSearch(selectedKeys, confirm, dataIndex) {
       confirm();

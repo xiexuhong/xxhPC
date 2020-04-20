@@ -13,7 +13,14 @@ http.interceptors.request.use(
     if (config.method === 'post') {
       const data = config.data || {};
       data['token'] = store.state.user.token;
+      data['app_version'] = '1.4.20';
       config.data = data;
+    }
+    if (config.method === 'get') {
+      const data = config. params || {};
+      data['token'] = store.state.user.token;
+      data['app_version'] = '1.4.20';
+      config.params = data;
     }
     return config;
   },
@@ -28,7 +35,16 @@ http.interceptors.response.use(
   },
 );
 
-export const get = (url, data) => http.get(url, { params: data });
+export const get = (url, data) => 
+new Promise(async (reslove,reject) =>{
+  const res = await http.get(url,data);
+  if (res.datas.error) {
+    message.error(res.datas.error);
+    reject(res.datas.error);
+  } else {
+    reslove(res);
+  }
+});
 export const post = (url, data) =>
   new Promise(async (reslove, reject) => {
     const res = await http.post(url, data);
