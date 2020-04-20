@@ -69,12 +69,8 @@
 <script>
 import { setup } from '@/locales';
 import { mapState } from 'vuex';
-import Assetview from '@/components/assetview';
 
 export default {
-  components: {
-    Assetview
-  },
   data() {
     return {
       data1: [
