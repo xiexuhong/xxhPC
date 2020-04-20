@@ -4,19 +4,19 @@ import store from '@/store';
 
 Vue.use(VueI18n);
 
-const DEFAULT_LANG = 'zh_cn';
+const DEFAULT_LANG = 'ZH_CN';
 const LOCALE_KEY = 'localeLanguage';
 
 const locales = {
-  zh_cn: require('./zh_cn.json'),
-  zh_tw: require('./zh_tw.json'),
-  en_us: require('./en_us.json'),
+  ZH_CN: require('./ZH_CN.json'),
+  ZH_TW: require('./ZH_TW.json'),
+  EN_US: require('./EN_US.json'),
 };
 
 export const localesEumn = {
-  zh_cn: '简体',
-  zh_tw: '繁体',
-  en_us: 'EN',
+  ZH_CN: '简体',
+  ZH_TW: '繁体',
+  EN_US: 'EN',
 };
 
 const i18n = new VueI18n({

@@ -4,7 +4,7 @@
     .form
       a-form(:form="form" @submit="register")
         a-form-item
-          a-input(v-decorator="['userName',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
+          a-input(v-decorator="['account',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
             span.country(slot="addonBefore" @click="countrySelect('/country')") {{country.number}}
             a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
         a-form-item
