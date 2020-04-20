@@ -26,6 +26,8 @@ export default {
       const res = (await getCountry(this.lang)).default;
       const country = res[0].countrys[0];
       this.$store.commit('changeCountry', country);
+      const user = this.$ls.get('user');
+      user && this.$store.commit('saveUser', user);
     },
   },
   created() {

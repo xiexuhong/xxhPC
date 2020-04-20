@@ -4,11 +4,11 @@
     .form
       a-form(:form="form" @submit="login")
         a-form-item
-          a-input(v-decorator="['userName',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
+          a-input(v-decorator="['account',{ rules: [{ required: true, message: 'Please input your account!' }] },]" placeholder="account")
             span.country(slot="addonBefore" @click="countrySelect('/country')") {{country.number}}
             a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
         a-form-item
-          a-input(v-decorator="['password',{ rules: [{ required: true, message: 'Please input your Password!' }] },]" placeholder="Password" type="password" autocomplete="off")
+          a-input(v-decorator="['pwd',{ rules: [{ required: true, message: 'Please input your Password!' }] },]" placeholder="Password" type="password" autocomplete="off")
             a-icon(slot="prefix" type="lock" style="color: rgba(0,0,0,.25)")
         a-form-item
           router-link(to="/login/forgetOne")
@@ -21,8 +21,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 import Country from './country';
+import { extend } from '@/script/utils';
+import { login } from '@/script/api';
 export default {
   components: { Country },
   data() {
@@ -34,6 +36,7 @@ export default {
     ...mapGetters(['country', 'deviceType']),
   },
   methods: {
+    ...mapMutations(['saveUser']),
     countrySelect(path) {
       if (this.deviceType === 'mobile') {
         this.$router.push(path);
@@ -43,9 +46,14 @@ export default {
     },
     login(e) {
       e.preventDefault();
-      this.form.validateFields((err, values) => {
+      this.form.validateFields(async (err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values);
+          const data = extend({}, values);
+          data['areacode'] = this.country.number;
+          data['country'] = this.country.short;
+          const { datas } = await login(data);
+          this.saveUser(datas.user);
+          this.$router.push('/');
         }
       });
     },
