@@ -10,7 +10,7 @@
     <div>
       <a-row>
         <a-col :span="8">
-          <a-card class="bank_info" hoverable>
+          <a-card class="bank_info" :bodyStyle="{padding: '12px',}">
             <a-row>
               <a-col :span="18">
                 <small class="op_64">卡號/帳號</small>
@@ -48,7 +48,7 @@
         </a-col>
         <a-col :span="1"></a-col>
         <a-col :span="8">
-          <a-card>
+          <a-card :bodyStyle="{padding: '41px'}">
             <router-link to="/account/add_bank_card" class="t_center">
               <img src="../../../assets/image/account/iconuu.png" alt />
               <div>Add Bank Card</div>
@@ -113,7 +113,7 @@ export default {
   color: #f62929;
   /* display: none; */
 }
-.bank_info:hover .del_card {
+.a-col:hover .del_card {
   display: block;
 }
 .op_64 {

@@ -3,7 +3,9 @@
     <div class="breadcrumb ant-breadcrumb">
       <span>
         <span class="ant-breadcrumb-link">
-          <router-link to="/account/bank_card" class="router-link-active color_y">银行卡管理</router-link>
+          <router-link to="/account/bank_card" class="router-link-active color_y"
+            >银行卡管理</router-link
+          >
         </span>
         <span class="ant-breadcrumb-separator color_y">></span>
       </span>
