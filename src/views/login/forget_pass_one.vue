@@ -2,14 +2,15 @@
   #forgetPassOne
     .title 重置密码
     .form
-      a-form(:form="form" @submit="login")
+      a-form(:form="form" @submit="next")
         a-form-item
           a-input(v-decorator="['userName',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
             span.country(slot="addonBefore" @click="countrySelect('/country')") {{country.number}}
             a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
         a-form-item
           a-input-search(v-decorator="['code',{ rules: [{ required: true, message: 'Please input your code!' }] },]" placeholder="code")
-            p(slot="enterButton") 3525
+            .code(slot="enterButton")
+              canvas#imgCode()
         a-form-item
           a-button.login_btn(type="primary" html-type="submit") 下一步
     a-modal(v-model="visbile" :footer="null" :closable="false" wrapClassName="countryWrap")
@@ -19,17 +20,36 @@
 <script>
 import { mapGetters } from 'vuex';
 import Country from './country';
+import Captcha from 'captcha-mini';
 export default {
   components: { Country },
   data() {
     return {
       visbile: false,
+      code: null,
     };
   },
   computed: {
     ...mapGetters(['country', 'deviceType']),
   },
   methods: {
+    createCode() {
+      const captcha1 = new Captcha({
+        lineWidth: 1, //线条宽度
+        lineNum: 6, //线条数量
+        dotR: 2, //点的半径
+        dotNum: 1, //点的数量
+        preGroundColor: [10, 80], //前景色区间
+        backGroundColor: [150, 250], //背景色区间
+        fontSize: 100, //字体大小
+        fontFamily: ['Georgia', '微软雅黑', 'Helvetica', 'Arial'], //字体类型
+        fontStyle: 'fill', //字体绘制方法，有fill和stroke
+        length: 4, //验证码长度
+      });
+      captcha1.draw(document.querySelector('#imgCode'), r => {
+        this.code = r;
+      });
+    },
     countrySelect(path) {
       if (this.deviceType === 'mobile') {
         this.$router.push(path);
@@ -37,12 +57,17 @@ export default {
       }
       this.visbile = true;
     },
-    login(e) {
+    next(e) {
       e.preventDefault();
-      this.$router.push('/login/forgetTwo');
-      this.form.validateFields((err, values) => {
+      this.form.validateFields(async (err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values);
+          const { userName, code } = values;
+          if (this.code.toUpperCase() !== code.toUpperCase()) {
+            this.$message.error('验证码错误');
+            return;
+          }
+          this.$ls.set('forgetPassTel', userName);
+          this.$router.push('/login/forgetTwo');
         }
       });
     },
@@ -50,7 +75,9 @@ export default {
   beforeCreate() {
     this.form = this.$form.createForm(this, { name: 'forgetOne' });
   },
-  created() {},
+  mounted() {
+    this.createCode();
+  },
 };
 </script>
 
@@ -71,6 +98,19 @@ export default {
     .login_btn {
       width: 100%;
     }
+    /deep/.ant-input-search-button {
+      padding: 0;
+      .code {
+        width: 100px;
+        height: 100%;
+        #imgCode {
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+
     .ant-input-search-button {
       background: #fff;
       border-color: #d9d9d9;

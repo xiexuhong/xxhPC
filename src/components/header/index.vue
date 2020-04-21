@@ -66,16 +66,12 @@ export default {
   computed: {
     ...mapGetters(['deviceType', 'lang', 'user']),
   },
-  mounted() {
-    console.log(this.localesEumn);
-    console.log(this.lang);
-  },
+  mounted() {},
   methods: {
     chooseLocale(val) {
       setup(val.key);
     },
     chooseMenu(val) {
-      console.log(val);
       this.$router.push(val.key);
       this.collapsed = false;
     },

@@ -5,7 +5,7 @@ import store from '@/store';
 import router from '@/router';
 
 const http = axios.create({
-  baseURL: 'http://api2.test.rrmine.superqr.cn',
+  baseURL: process.env.VUE_APP_BASIC_URL,
   timeout: 5000,
   transformRequest: [data => qs.stringify(data)],
 });
@@ -42,6 +42,10 @@ export const get = (url, data) =>
   new Promise(async (reslove, reject) => {
     const res = await http.get(url, data);
     if (res.datas.error) {
+      if (res.err_code === 'need_login') {
+        store.commit('removeUser');
+        router.push('/login');
+      }
       message.error(res.datas.error);
       reject(res.datas.error);
     } else {
@@ -51,12 +55,14 @@ export const get = (url, data) =>
 export const post = (url, data) =>
   new Promise(async (reslove, reject) => {
     const res = await http.post(url, data);
-    if (res.datas.error) {
+    if (typeof res === 'string') {
+      reslove(res);
+    } else if (res.datas.error || res.err_code) {
       if (res.err_code === 'need_login') {
         store.commit('removeUser');
         router.push('/login');
       }
-      message.error(res.datas.error);
+      message.error(res.datas.error || res.err_code);
       reject(res.datas.error);
     } else {
       reslove(res);
