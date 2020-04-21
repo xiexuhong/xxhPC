@@ -10,7 +10,8 @@
           router-link(to="/hashrateMarket")
             li 算力市场
           li 平台动态
-          li 帮助中心
+          router-link(to="/helpCenter")
+            li 帮助中心
           router-link(to="/about")
             li 关于我们
       a-button(v-else type="primary" @click="toggleCollapsed")

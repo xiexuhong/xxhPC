@@ -21,7 +21,7 @@
               </a-input-group>
             </a-form-item>
           </a-col>
-          <a-col :span="1">
+          <a-col :span="1" class="m_top_4">
             <span>-</span>
           </a-col>
           <a-col :span="8">
@@ -29,7 +29,7 @@
               <a-input placeholder="请输入钱包地址" />
             </a-form-item>
           </a-col>
-          <a-col :span="1">
+          <a-col :span="1" class="m_top_4 t_center">
             <span>-</span>
           </a-col>
           <a-col :span="8">
@@ -67,11 +67,11 @@
       <div class="addrList" v-else>
         <h2>提幣地址列表</h2>
         <a-table :columns="columns" :dataSource="data">
-          <a slot="name" slot-scope="text">{{text}}</a>
-          <span slot="customTitle">Name</span>
-          <span slot="action" slot-scope="text">
-            <a>Delete</a>
-          </span>
+          <template slot="action">
+            <a-popconfirm title="Sure to delete?" @confirm="() => onDelete()">
+              <a href="javascript:;">Delete</a>
+            </a-popconfirm>
+          </template>
         </a-table>
       </div>
     </div>
@@ -119,6 +119,9 @@ export default {
       this.isAdd = isAdd;
       console.log('click', isAdd);
     },
+    onDelete() {
+      alert('删除');
+    },
   },
 };
 </script>
@@ -147,5 +150,8 @@ export default {
 }
 #rcDialogTitle2 {
   text-align: center;
+}
+.m_top_4 {
+  margin-top: 4.5%;
 }
 </style>

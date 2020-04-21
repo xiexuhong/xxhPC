@@ -96,8 +96,8 @@
                       <router-link
                         :to="isAssociated ? '/account/associated_bhpay' : '/account/rela_bhpay'"
                         class="color_b"
-                        :class="{'color_y': !isAssociated}"
-                      >{{ isAssociated ? '已關聯BHPay' : "關聯BHPay"}}</router-link>
+                        :class="{ color_y: !isAssociated }"
+                      >{{ isAssociated ? '已關聯BHPay' : '關聯BHPay' }}</router-link>
                     </li>
                   </ul>
                 </li>
@@ -141,7 +141,7 @@
                           <a-input placeholder="请再次输入新密碼" />
                         </a-form-item>
                         <a-form-item class="t_center">
-                          <a-button type="primary">确认修改</a-button>
+                          <a-button type="primary" @click="changeLoginPwd()">确认修改</a-button>
                         </a-form-item>
                       </a-modal>
                     </li>
@@ -208,6 +208,8 @@
   </main>
 </template>
 <script>
+// import { mapState, mapGetters } from 'vuex';
+// import { getAccountInfo } from '@/script/api';
 export default {
   data() {
     return {
@@ -215,6 +217,12 @@ export default {
       isChangeTrasPwd: false, // 修改交易密码
       isAssociated: true, // 是否关联BHPay
       isVerified: false, // 是否实名认证
+    };
+  },
+  created() {
+    async () => {
+      const { datas } = await getAccountInfo();
+      console.log(datas);
     };
   },
   methods: {
@@ -229,7 +237,9 @@ export default {
     goVerify() {
       console.log('去认证');
     },
+    changeLoginPwd() {},
   },
+  created() {},
 };
 </script>
 <style scoped>

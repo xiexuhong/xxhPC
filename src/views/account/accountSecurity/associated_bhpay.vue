@@ -44,14 +44,11 @@ export default {
 };
 </script>
 <style scoped>
-.ant-result {
-  width: 50%;
-  margin: auto;
-}
 .ant-result-content {
   max-width: 60%;
   margin: auto;
   border-radius: 1%;
+  padding: 24px 15px;
 }
 .ant-breadcrumb {
   margin-bottom: 2%;
@@ -62,8 +59,14 @@ export default {
 .desc span {
   margin-bottom: 1em;
   display: inline-block;
-  width: 33%;
+  width: 25%;
   text-align: center;
+}
+.desc span:nth-child(2) {
+  width: 60%;
+}
+.desc span:nth-child(3) {
+  width: 13%;
 }
 .color_y {
   color: #ffab32;
