@@ -16,16 +16,20 @@
       a-button(v-else type="primary" @click="toggleCollapsed")
         a-icon(:type="collapsed ? 'menu-unfold' : 'menu-fold'" )
     .right
-      router-link(to="/login/login")
+      router-link(to="/login/login" v-if="!user.token")
         a-button(type="link") 登录
-      router-link(to="/login/register")
+      router-link(to="/login/login" v-else)
+        img(src="@/assets/image/account/user.png")
+      router-link(to="/login/register" v-if="!user.token")
         a-button(type="link") 注册
+      router-link(to="/login/register" v-else)
+        img(src="@/assets/image/account/notice.png")
       a-button(type="link") 下载
       a-dropdown(:trigger="['click']")
         a-menu(slot="overlay" @click="chooseLocale")
-          a-menu-item(key="zh_cn") 简体
-          a-menu-item(key="zh_tw") 繁体
-          a-menu-item(key="en_us") EN
+          a-menu-item(key="ZH_CN") 简体
+          a-menu-item(key="ZH_TW") 繁体
+          a-menu-item(key="EN_US") EN
         a-button(type="link") {{localesEumn[lang]}}
           a-icon(type="down")
     a-drawer(v-if="deviceType !== 'desktop'" placement="left" :closable="false" :visible="collapsed" @close="drawerClose" wrapClassName="menuDrawer")
@@ -57,11 +61,14 @@ export default {
     return {
       localesEumn: localesEumn,
       collapsed: false,
-      _this: this,
     };
   },
   computed: {
-    ...mapGetters(['deviceType', 'lang']),
+    ...mapGetters(['deviceType', 'lang', 'user']),
+  },
+  mounted() {
+    console.log(this.localesEumn);
+    console.log(this.lang);
   },
   methods: {
     chooseLocale(val) {
@@ -119,6 +126,13 @@ export default {
   }
   .right {
     height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    img {
+      display: block;
+      padding: 0 15px;
+    }
   }
 }
 </style>

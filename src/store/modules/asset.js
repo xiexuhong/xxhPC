@@ -5,7 +5,10 @@ const state = {
 };
 const mutations = {};
 const actions = {};
-const getters = {};
+const getters = {
+  currencylist: state => state.currencylist,
+  defaultcurrency: state =>state.defaultcurrency,
+};
 
 export default {
   state,

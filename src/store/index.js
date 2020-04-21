@@ -14,12 +14,16 @@ export default new Vuex.Store({
     user: {},
     deviceType: 'desktop',
     country: {},
-    lang: 'zh_cn',
+    lang: 'ZH_CN',
   },
   mutations: {
     saveUser(state, data) {
       Vue.ls.set('user', data);
       state.user = data;
+    },
+    removeUser(state) {
+      Vue.ls.remove('user');
+      state.user = {};
     },
     changeDeviceType(state, type) {
       state.deviceType = type;
@@ -33,6 +37,7 @@ export default new Vuex.Store({
   },
   actions: {},
   getters: {
+    user: state => state.user,
     deviceType: state => state.deviceType,
     country: state => state.country,
     lang: state => state.lang,
