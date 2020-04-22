@@ -1,4 +1,3 @@
-
 const childrenRoute = [];
 const files = require.context('./childrenRoutes', false, /\.js$/);
 files.keys().forEach(key => {
@@ -6,10 +5,9 @@ files.keys().forEach(key => {
 });
 
 export default [
-    {
-        path: '/asset',
-        name: 'Asset',
-        component:()=>import('@/views/asset/index'),
-        children:childrenRoute
-    }
-]
+  {
+    path: '/asset',
+    component: () => import('@/views/asset/index'),
+    children: childrenRoute,
+  },
+];

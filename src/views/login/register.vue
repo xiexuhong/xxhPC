@@ -5,55 +5,92 @@
       a-form(:form="form" @submit="register")
         a-form-item
           a-input(v-decorator="['account',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
-            span.country(slot="addonBefore" @click="countrySelect('/country')") {{country.number}}
+            span.country(slot="addonBefore")
+              CountrySelect
             a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
         a-form-item
-          a-input(v-decorator="['password',{ rules: [{ required: true, message: 'Please input your Password!' }] },]" placeholder="Password" type="password" autocomplete="off")
+          a-input(v-decorator="['password',{ rules: [{ required: true, message: 'Please input your Password!' },{validator:validateToNextPassword}] },]" placeholder="Password" type="password" autocomplete="off")
         a-form-item
-          a-input(v-decorator="['confirmpassword',{ rules: [{ required: true, message: 'Please input your Password!' }] },]" placeholder="confirm Password" type="password" autocomplete="off")
+          a-input(v-decorator="['confirm',{ rules: [{ required: true, message: 'Please input your Password!' },{validator:compareToFirstPassword}] },]" @blur="handleConfirmBlur" placeholder="confirm Password" type="password" autocomplete="off")
         a-form-item
-          a-input-search(v-decorator="['code',{ rules: [{ required: true, message: 'Please input your code!' }] },]" placeholder="code" type="tel")
-            a-button(slot="enterButton" type="primary") 发送验证码
+          a-input-search(@search="sendSmsCode" v-decorator="['verify',{ rules: [{ required: true, message: 'Please input your code!' }] },]" placeholder="code" type="tel")
+            a-button(slot="enterButton" type="primary" class="sms_btn") {{smsText}}
         a-form-item
-          a-input(placeholder="邀请码" type="text")
+          a-input(placeholder="邀请码" type="text" v-decorator="['invite_code', {}]")
         a-form-item
           .between
-            a-checkbox.contact 我已阅读
+            a-checkbox.contact(v-model="isRead") 我已阅读
               a(href="javascript:;") 《用户协议》
             span.login 已有账号
               router-link(to="/login/login")
                 a(href="javascript:;") 登录
           a-button.register_btn(type="primary" html-type="submit") 注册
-    a-modal(v-model="visbile" :footer="null" :closable="false" wrapClassName="countryWrap")
-      Country(@close="visbile=false")
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import Country from './country';
+import { mapGetters, mapMutations } from 'vuex';
+import CountrySelect from './countrySelect';
+import { checkSmsCode, register } from '@/script/api';
+import { smsMixin } from '@/mixins/smsMixin';
 export default {
-  components: { Country },
+  components: { CountrySelect },
+  mixins: [smsMixin],
   computed: {
     ...mapGetters(['country', 'deviceType']),
   },
   data() {
     return {
-      visbile: false,
+      confirmDirty: false,
+      isRead: true,
     };
   },
   methods: {
-    countrySelect(path) {
-      if (this.deviceType === 'mobile') {
-        this.$router.push(path);
-        return;
+    ...mapMutations(['saveUser']),
+    sendSmsCode() {
+      (async () => {
+        const { account } = await this.form.validateFields(['account']);
+        this.sendSms(account, 1);
+      })();
+    },
+    handleConfirmBlur(e) {
+      const value = e.target.value;
+      this.confirmDirty = this.confirmDirty || !!value;
+    },
+    compareToFirstPassword(rule, value, callback) {
+      const form = this.form;
+      if (value && value !== form.getFieldValue('password')) {
+        callback('Two passwords that you enter is inconsistent!');
+      } else {
+        callback();
       }
-      this.visbile = true;
+    },
+    validateToNextPassword(rule, value, callback) {
+      const form = this.form;
+      if (value && this.confirmDirty) {
+        form.validateFields(['confirm'], { force: true });
+      }
+      callback();
     },
     register(e) {
       e.preventDefault();
-      this.form.validateFields((err, values) => {
+      this.form.validateFields(async (err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values);
+          const { account, verify, password, invite_code } = values;
+          await checkSmsCode({
+            mobile: account,
+            areacode: this.country.number,
+            type: 1,
+            verify: verify,
+          });
+          const { datas } = await register({
+            account,
+            password,
+            invite_code,
+            country: this.country.short,
+            areacode: this.country.number,
+          });
+          this.saveUser(datas);
+          this.$router.push('/');
         }
       });
     },
@@ -84,6 +121,9 @@ export default {
     }
     .register_btn {
       width: 100%;
+    }
+    .sms_btn {
+      width: 100px;
     }
     .between {
       display: flex;

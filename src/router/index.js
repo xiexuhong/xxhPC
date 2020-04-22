@@ -13,7 +13,6 @@ files.keys().forEach(key => {
 const routes = [
   {
     path: '/',
-    name: 'root',
     component: () => import('@/views/root'),
     // meta: {
     //   requireAuth: true, // 判断此路由是否需要登录
