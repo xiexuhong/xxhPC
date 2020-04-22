@@ -5,7 +5,7 @@
         <span>数字资产</span>
         <a-dropdown>
           <a-menu slot="overlay">
-              <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+              <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px" >{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
         </a-dropdown>
@@ -50,7 +50,7 @@
         </label>
       </div>
     </div>
-        <a-table :columns="columns" :dataSource="data">
+        <a-table :columns="columns" :dataSource="coin_list">
           <a slot="name" slot-scope="text">{{ text }}</a>
           <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
           <span slot="action" slot-scope="text, record">
@@ -66,49 +66,12 @@
 
 <script>
 import { setup } from '@/locales';
-import {mapState} from 'vuex'
-const columns = [
-  {
-    dataIndex: 'name',
-    key: 'name',
-    slots: { title: 'customTitle' },
-    scopedSlots: { customRender: 'name' },
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: 'Tags',
-    key: 'tags',
-    dataIndex: 'tags',
-    scopedSlots: { customRender: 'tags' },
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    scopedSlots: { customRender: 'action' },
-  },
-];
+import {mapGetters} from 'vuex';
+import { changeCurrency } from '@/script/api';
+
 export default {
   data() {
     return {
-      data: [
-        {
-          key: '1',
-          coin: 'John Brown',
-          total: 32,
-          USD: 'New York No. 1 Lake Park',
-          available: '25',
-          freze: '7',
-        },
-      ],
       searchText: '',
       searchInput: null,
       searchedColumn: '',
@@ -159,15 +122,15 @@ export default {
         },
         {
           title: '折合USD',
-          dataIndex: 'USD',
-          key: 'USD',
+          dataIndex: 'valuation',
+          key: 'valuation',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
             customRender: 'customRender',
           },
           onFilter: (value, record) =>
-            record.usd
+            record.valuation
               .toString()
               .toLowerCase()
               .includes(value.toLowerCase()),
@@ -203,8 +166,8 @@ export default {
         },
         {
           title: '冻结',
-          dataIndex: 'freze',
-          key: 'freze',
+          dataIndex: 'freeze',
+          key: 'freeze',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
@@ -234,18 +197,15 @@ export default {
       coin:""
     };
   },
-  computed: 
-    mapState({
-        list(e){
-          return e.asset.currencylist;
-        },
-        defaultcurrency(e){
-          return e.asset.defaultcurrency;
-        },
-    }),
+  computed: {
+    ...mapGetters(['currency_list','defaultcurrency','lang',,'coin_list','balance_list','assetList']),
+  },
   methods: {
     checkcurrency(index) {
-      this.coin = this.list[index];
+      this.$store.state.asset.defaultcurrency = this.currencylist[index];
+      changeCurrency({currency:this.defaultcurrency}).then((res) => {
+          console.log(res);
+      })
     }, 
     handleSearch(selectedKeys, confirm, dataIndex) {
       confirm();

@@ -5,7 +5,7 @@
         <span>法币资产</span>
         <a-dropdown>
           <a-menu slot="overlay">
-              <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+              <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px" >{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
         </a-dropdown>
@@ -52,7 +52,7 @@
         </label>
       </div>
     </div>
-        <a-table :columns="columns" :dataSource="data">
+        <a-table :columns="columns" :dataSource="balance_list">
           <a slot="name" slot-scope="text">{{ text }}</a>
           <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
           <span slot="action" slot-scope="text, record">
@@ -68,7 +68,8 @@
 
 <script>
 import { setup } from '@/locales';
-import {mapState} from 'vuex'
+import {mapGetters} from 'vuex';
+import { changeCurrency } from '@/script/api';
 const columns = [
   {
     dataIndex: 'name',
@@ -101,16 +102,6 @@ const columns = [
 export default {
   data() {
     return {
-      data: [
-        {
-          key: '1',
-          coin: 'John Brown',
-          total: 32,
-          USD: 'New York No. 1 Lake Park',
-          available: '25',
-          freze: '7',
-        },
-      ],
       searchText: '',
       searchInput: null,
       searchedColumn: '',
@@ -160,9 +151,9 @@ export default {
           },
         },
         {
-          title: '折合USD',
-          dataIndex: 'USD',
-          key: 'USD',
+          title: '估值',
+          dataIndex: 'valuation',
+          key: 'valuation',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
@@ -205,8 +196,8 @@ export default {
         },
         {
           title: '冻结',
-          dataIndex: 'freze',
-          key: 'freze',
+          dataIndex: 'freeze',
+          key: 'freeze',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
@@ -225,29 +216,23 @@ export default {
             }
           },
         },
-        {
-          title: '操作',
-          key: 'action',
-          scopedSlots: { customRender: 'action' },
-        },
       ],
       filterText:"",
       isHide:false,
       coin:""
     };
   },
-  computed: 
-    mapState({
-        list(e){
-          return e.asset.currencylist;
-        },
-        defaultcurrency(e){
-          return e.asset.defaultcurrency;
-        },
-    }),
+  created(){
+  },
+  computed: {
+    ...mapGetters(['currency_list','defaultcurrency','total','lang','coin_list','balance_list']),
+  },
   methods: {
     checkcurrency(index) {
-      this.coin = this.list[index];
+      this.$store.state.asset.defaultcurrency = this.currency_list[index];
+      changeCurrency({currency:this.defaultcurrency}).then((res) => {
+          console.log(res);
+      })
     }, 
     handleSearch(selectedKeys, confirm, dataIndex) {
       confirm();
@@ -270,10 +255,7 @@ export default {
     recharge() {
       console.log('recharge');
     },
-  },
-  created() {
-    console.log(this.$route.query);
-  },
+  }
 };
 </script>
 

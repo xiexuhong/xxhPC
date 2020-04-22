@@ -5,7 +5,7 @@
         <span>资产账单</span>
         <a-dropdown>
           <a-menu slot="overlay">
-              <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+              <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
           </a-menu>
           <a-button style="margin-left: 8px" >{{coin==''?defaultcurrency:coin}}<a-icon type="down" /></a-button>
         </a-dropdown>
@@ -59,7 +59,8 @@
 
 <script>
 import { setup } from '@/locales';
-import { mapState} from 'vuex';
+import { mapGetters} from 'vuex';
+import { changeCurrency } from '@/script/api';
 export default {
   data() {
     return {
@@ -217,18 +218,15 @@ export default {
     this.starttime = `${year+'-'+month+'-'+day}`;
     this.endtime = `${year+'-'+month+'-'+day}`;
   },
-  computed: 
-    mapState({
-        list(e){
-          return e.asset.currencylist;
-        },
-        defaultcurrency(e){
-          return e.asset.defaultcurrency;
-        },
-    }),
+  computed:{
+    ...mapGetters(['currency_list','defaultcurrency','lang',,'coin_list','balance_list','assetList']),
+  },
   methods: {
     checkcurrency(index) {
-      this.coin = this.list[index];
+      this.$store.state.asset.defaultcurrency = this.currency_list[index];
+      changeCurrency({currency:this.defaultcurrency}).then((res) => {
+          console.log(res);
+      })
     }, 
     choosetime(days){
       var date = new Date();

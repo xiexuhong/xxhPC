@@ -5,23 +5,22 @@
         <span>资产总览</span>
         <a-dropdown>
           <a-menu slot="overlay">
-              <a-menu-item :key="index" v-for="(item,index) in currencylist" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+              <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
           </a-menu>
-          <a-button style="margin-left: 8px" >{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
+          <a-button style="margin-left: 8px" >{{defaultcurrency}}<a-icon type="down" /> </a-button>
         </a-dropdown>
       </header>
-      <section>
-        <p>总资产（估值）：<span>48541515</span></p>
-      </section>
+      
       <div id="assetview">     
-          <div>
-            <a-descriptions bordered :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
-              <a-descriptions-item label="Product">Cloud Database</a-descriptions-item>
-              <a-descriptions-item label="Billing">Prepaid</a-descriptions-item>
-              <a-descriptions-item label="Time">18:00:00</a-descriptions-item>
-              <a-descriptions-item label="Amount">$80.00</a-descriptions-item>
-              <a-descriptions-item label="Discount">$20.00</a-descriptions-item>
-              <a-descriptions-item label="Official">$60.00</a-descriptions-item>
+          <div class="left">
+            <section>
+              <p>总资产（估值）：</p>
+              <span>{{total.total}}&nbsp;{{defaultcurrency}}</span>
+            </section>
+            <a-descriptions bordered layout="vertical">
+              <a-descriptions-item label="总资产（估值）">{{total.total}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
+              <a-descriptions-item label="可用资金（估值）">{{total.asset_total}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
+              <a-descriptions-item label="合约金额（估值）">{{total.deposit}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
             </a-descriptions>
             <div class="button_area">
               <a-button><router-link to="/asset/recharge">充值</router-link></a-button>
@@ -30,12 +29,7 @@
               <a-button><router-link to="/asset/assetbills">账单</router-link></a-button>
             </div>
           </div>
-          //- <ve-line
-          //-   :data="chartData"
-          //-   :loading="loading"
-          //-   :data-empty="dataEmpty"
-          //-   :settings="chartSettings">
-          //- </ve-line>
+          <ve-line :data="chartData" class="charts"></ve-line>
       </div>
     </a-card>
     <br />
@@ -57,50 +51,29 @@
       </div>
     </div>
       
-    <a-table :dataSource="data1" :columns="columns">
-      <template slot="customRender" slot-scope="text, record, index, column">
-        <span v-if="searchText && searchedColumn === column.dataIndex">
-          <template v-for="(fragment, i) in text.toString().split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))">
-            <mark v-if="fragment.toLowerCase() === searchText.toLowerCase()" :key="i" class="highlight" >{{fragment}}</mark>
-            <template v-else>{{fragment}}</template>
-          </template>
-        </span>
-        <span v-else>{{text}}</span>
-      </template>
+    <a-table :dataSource="asset_list" :columns="columns" >
     </a-table>
   </main> 
 </template>
 
 <script>
 import { setup } from '@/locales';
-import {mapState, mapGetters } from 'vuex';
-import { getAssetList } from '@/script/api';
-  const DATA_FROM_BACKEND = {
-    columns: ["belongTime", "stepNum"],
-    rows: [
-        {'belongTime':'2018-09-24','stepNum':'100'},
-        {'belongTime':'2018-09-25','stepNum':'134'}
-    ]
-  }
-  const EMPTY_DATA = {
-    columns: [],
-    rows: [
-    ]
-  }
-
+import {mapState, mapGetters,mapMutations } from 'vuex';
+import { getAssetList,ownCurrency,changeCurrency } from '@/script/api';
 export default {
   data() {
     return {
-      data1: [
-        {
-          key: '1',
-          coin: 'John Brown',
-          total: 32,
-          USD: 'New York No. 1 Lake Park',
-          available: '25',
-          freze: '7',
-        },
-      ],
+     chartData: {
+        columns: ['日期', '访问用户', '下单用户', '下单率'],
+        rows: [
+          { '日期': '1/1', '访问用户': 1393, '下单用户': 1093, '下单率': 0.32 },
+          { '日期': '1/2', '访问用户': 3530, '下单用户': 3230, '下单率': 0.26 },
+          { '日期': '1/3', '访问用户': 2923, '下单用户': 2623, '下单率': 0.76 },
+          { '日期': '1/4', '访问用户': 1723, '下单用户': 1423, '下单率': 0.49 },
+          { '日期': '1/5', '访问用户': 3792, '下单用户': 3492, '下单率': 0.323 },
+          { '日期': '1/6', '访问用户': 4593, '下单用户': 4293, '下单率': 0.78 }
+        ]
+      },
       searchText: '',
       searchInput: null,
       searchedColumn: '',
@@ -150,9 +123,9 @@ export default {
           },
         },
         {
-          title: '折合USD',
-          dataIndex: 'USD',
-          key: 'USD',
+          title: '估值',
+          dataIndex: 'valuation',
+          key: 'valuation',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
@@ -195,8 +168,8 @@ export default {
         },
         {
           title: '冻结',
-          dataIndex: 'freze',
-          key: 'freze',
+          dataIndex: 'freeze',
+          key: 'freeze',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
@@ -218,22 +191,35 @@ export default {
       ],
       filterText:"",
       isHide:false,
-      coin:""
+      langArr:""
     };
   },
   created(){
-    async () => {
-          const { datas } = await getAssetList();
-          console.log(datas);
-        }
+    console.log(this.$t('myCome.myCome03'));
+    getAssetList().then((res)=>{
+      const {datas} = res;
+      if(datas.hasOwnProperty('error')){
+          return
+      }
+      this.$store.state.asset.assetMess = datas;
+      console.log( this.$store.state.asset.assetMess);
+     });
+     ownCurrency().then((res)=>{
+       const {datas} = res;
+       console.log(datas);
+       this.$store.state.asset.currency_list = datas.currency;
+       this.$store.state.asset.defaultcurrency = datas.default;
+     })
   },
   computed: {
-    ...mapGetters(['user','currencylist','defaultcurrency'])
-
+    ...mapGetters(['currency_list','defaultcurrency','lang','total','asset_list']),
   },
   methods: {
     checkcurrency(index) {
-      this.coin = this.currencylist[index];
+      this.$store.state.asset.defaultcurrency = this.currency_list[index];
+      changeCurrency({currency:this.defaultcurrency}).then((res) => {
+          console.log(res);
+      })
     }, 
     handleSearch(selectedKeys, confirm, dataIndex) {
       confirm();
@@ -273,9 +259,14 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  .echarts{
-    min-height: 220px;
-    margin-left: 15px;
+  .left{
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .charts{
+    flex: 1;
   }
 }
 .button_area {

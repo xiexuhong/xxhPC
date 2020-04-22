@@ -6,7 +6,9 @@ import i18n from './locales';
 import Antd from 'ant-design-vue';
 import Storage from 'vue-ls';
 import Clipboard from 'clipboard';
-import VCharts from 'v-charts'
+import VCharts from 'v-charts';
+import VueResource from 'vue-resource';
+
 
 import { setup } from '@/locales';
 
@@ -23,6 +25,7 @@ const options = {
 Vue.use(Storage, options);
 Vue.use(Antd);
 Vue.use(VCharts);
+Vue.use(VueResource);
 
 setup();
 

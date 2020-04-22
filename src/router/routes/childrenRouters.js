@@ -9,6 +9,7 @@ export default [
     {
         path: '/asset',
         name: 'Asset',
+        redirect: '/asset/assetoverview',
         component:()=>import('@/views/asset/index'),
         children:childrenRoute
     }

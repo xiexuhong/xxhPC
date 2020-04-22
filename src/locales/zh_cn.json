@@ -1,5 +1,18 @@
 {
   "home": {
     "hello": "你好"
+  },
+  "myCome": {
+    "myCome03": "总估算",
+    "myCome04": "币种",
+    "myCome05": "可用",
+    "myCome06": "估值",
+    "myCome07": "冻结",
+    "myCome08": "余额",
+    "myCome09": "币值",
+    "myCome10": "快捷设置",
+    "myCome11": "合约金",
+    "myCome12": "搜索资产",
+    "myCome13": "隐藏零资产"
   }
 }
