@@ -5,7 +5,8 @@
       a-form(:form="form" @submit="register")
         a-form-item
           a-input(v-decorator="['account',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
-            span.country(slot="addonBefore" @click="countrySelect('/country')") {{country.number}}
+            span.country(slot="addonBefore")
+              CountrySelect
             a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
         a-form-item
           a-input(v-decorator="['password',{ rules: [{ required: true, message: 'Please input your Password!' },{validator:validateToNextPassword}] },]" placeholder="Password" type="password" autocomplete="off")
@@ -24,17 +25,15 @@
               router-link(to="/login/login")
                 a(href="javascript:;") 登录
           a-button.register_btn(type="primary" html-type="submit") 注册
-    a-modal(v-model="visbile" :footer="null" :closable="false" wrapClassName="countryWrap")
-      Country(@close="visbile=false")
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex';
-import Country from './country';
+import CountrySelect from './countrySelect';
 import { checkSmsCode, register } from '@/script/api';
 import { smsMixin } from '@/mixins/smsMixin';
 export default {
-  components: { Country },
+  components: { CountrySelect },
   mixins: [smsMixin],
   computed: {
     ...mapGetters(['country', 'deviceType']),
@@ -43,7 +42,6 @@ export default {
     return {
       confirmDirty: false,
       isRead: true,
-      visbile: false,
     };
   },
   methods: {
@@ -72,13 +70,6 @@ export default {
         form.validateFields(['confirm'], { force: true });
       }
       callback();
-    },
-    countrySelect(path) {
-      if (this.deviceType === 'mobile') {
-        this.$router.push(path);
-        return;
-      }
-      this.visbile = true;
     },
     register(e) {
       e.preventDefault();
