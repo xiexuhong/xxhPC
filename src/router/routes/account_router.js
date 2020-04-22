@@ -71,12 +71,6 @@ export default [
         name: 'powerAge',
         component: () => import('@/views/account/power_age'),
       },
-      {
-        // 邀请
-        path: 'invite',
-        name: 'invite',
-        component: () => import('@/views/account/invite'),
-      },
     ],
   },
 ];
