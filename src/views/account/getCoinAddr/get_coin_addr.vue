@@ -9,8 +9,8 @@
     </div>
     <div>
       <a-form>
-        <a-row>
-          <a-col :span="2">
+        <div class="flex_div">
+          <div>
             <a-form-item label="币种">
               <a-input-group compact>
                 <a-select defaultValue="USDT">
@@ -20,24 +20,24 @@
                 </a-select>
               </a-input-group>
             </a-form-item>
-          </a-col>
-          <a-col :span="1" class="m_top_4">
+          </div>
+          <div class="m_top_4">
             <span>-</span>
-          </a-col>
-          <a-col :span="8">
+          </div>
+          <div>
             <a-form-item label="提币地址">
               <a-input placeholder="请输入钱包地址" />
             </a-form-item>
-          </a-col>
-          <a-col :span="1" class="m_top_4 t_center">
+          </div>
+          <div class="m_top_4 t_center">
             <span>-</span>
-          </a-col>
-          <a-col :span="8">
+          </div>
+          <div>
             <a-form-item label="備註">
               <a-input placeholder="限10个字符以内" />
             </a-form-item>
-          </a-col>
-        </a-row>
+          </div>
+        </div>
         <a-form-item>
           <a-button type="primary" @click="addCoinAddr(true)">Add</a-button>
           <a-modal
@@ -151,7 +151,10 @@ export default {
 #rcDialogTitle2 {
   text-align: center;
 }
+.flex_div {
+  display: flex;
+}
 .m_top_4 {
-  margin-top: 4.5%;
+  margin: auto 1%;
 }
 </style>

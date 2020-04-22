@@ -17,7 +17,7 @@
         <span class="ant-breadcrumb-separator">/</span>
       </span>
     </div>
-    <a-result status="success" title="恭喜您" subTitle="您的BHPay賬戶已经创建成功">
+    <a-result status="success" title="恭喜您" subTitle="您的BHPay賬戶已经创建成功" style="padding: 24px 15px">
       <template v-slot:extra>
         <a-button class="m_buttom">去人人礦場提幣</a-button>
         <a-button type="primary">下載BHPay錢包開啟新體驗</a-button>
@@ -45,10 +45,7 @@ export default {
 </script>
 <style scoped>
 .ant-result-content {
-  max-width: 60%;
-  margin: auto;
-  border-radius: 1%;
-  padding: 24px 15px;
+  padding: 24px 15px !important;
 }
 .ant-breadcrumb {
   margin-bottom: 2%;

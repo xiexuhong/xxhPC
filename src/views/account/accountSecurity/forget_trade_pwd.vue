@@ -1,5 +1,8 @@
 <template>
-  <main class="ant-layout-content" style="height: 100%; margin: 24px 24px 0px; padding-top: 0px;">
+  <main
+    class="ant-layout-content"
+    style="width:90%;height: 100%; margin: 24px 24px 0px; padding-top: 0px;"
+  >
     <div>
       <div class="page-header-index-wide">
         <div class="breadcrumb ant-breadcrumb">

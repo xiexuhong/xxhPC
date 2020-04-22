@@ -131,18 +131,20 @@
                         :visible="isChangePwd"
                         @cancel="() => changePwd(false)"
                       >
-                        <a-form-item label="舊密碼">
-                          <a-input placeholder="请输入舊密碼" />
-                        </a-form-item>
-                        <a-form-item label="新密碼">
-                          <a-input placeholder="6~16位字母、數字和特殊符號" />
-                        </a-form-item>
-                        <a-form-item label="确认新密碼">
-                          <a-input placeholder="请再次输入新密碼" />
-                        </a-form-item>
-                        <a-form-item class="t_center">
-                          <a-button type="primary" @click="changeLoginPwd()">确认修改</a-button>
-                        </a-form-item>
+                        <a-from :form="form" @submit="changeLoginPwd">
+                          <a-form-item label="舊密碼">
+                            <a-input placeholder="请输入舊密碼" v-decorator="['old_pwd',{ rules: [{ required: true, message: 'Please input your old Password!' }] },]" />
+                          </a-form-item>
+                          <a-form-item label="新密碼">
+                            <a-input placeholder="6~16位字母、數字和特殊符號" v-decorator="['new_pwd',{ rules: [{ required: true, message: 'Please input your old Password!' }] },]" @blur="validatePwdBlur" />
+                          </a-form-item>
+                          <a-form-item label="确认新密碼">
+                            <a-input placeholder="请再次输入新密碼" v-decorator="['re_pwd',{ rules: [{ required: true, message: '输入的密码不一致，请重新输入' }] },]" @blur="validateRePwdBlur" />
+                          </a-form-item>
+                          <a-form-item class="t_center">
+                            <a-button type="primary" html-type="submit">确认修改</a-button>
+                          </a-form-item>
+                        </a-from>
                       </a-modal>
                     </li>
                   </ul>
@@ -190,7 +192,7 @@
                           </a-input>
                         </a-form-item>
                         <a-form-item class="t_center">
-                          <a-button type="primary">确认修改</a-button>
+                          <a-button type="primary" @click="changeTraPwd()">确认修改</a-button>
                         </a-form-item>
                       </a-modal>
                     </li>
@@ -208,21 +210,25 @@
   </main>
 </template>
 <script>
-// import { mapState, mapGetters } from 'vuex';
-// import { getAccountInfo } from '@/script/api';
+import { mapState, mapGetters } from 'vuex';
+import { getAccountInfo } from '@/script/api';
+import { changeLoginPwd } from '@/script/api';
 export default {
   data() {
     return {
       isChangePwd: false, // 修改登录密码
       isChangeTrasPwd: false, // 修改交易密码
       isAssociated: true, // 是否关联BHPay
-      isVerified: false, // 是否实名认证
+      isVerified: true, // 是否实名认证
     };
+  },
+  beforeCreate() {
+    this.form = this.$form.createForm(this, { name: 'changeLoginPwd' });
   },
   created() {
     async () => {
+      console.log('初始化数据成功1312');
       const { datas } = await getAccountInfo();
-      console.log(datas);
     };
   },
   methods: {
@@ -237,12 +243,32 @@ export default {
     goVerify() {
       console.log('去认证');
     },
-    changeLoginPwd() {},
+    validatePwdBlur(e){
+      const reg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+      if (e.target.value && !reg.test(e.target.value)) {
+        const arr = [{
+          message: '您输入的密码格式不正确!',
+          field: 'new_pwd',
+        }]
+        this.form.setFields({ new_pwd: { value: e.target.value, errors: arr } })
+      }
+    },
+    validateRePwdBlur(e){
+
+    },
+    changeLoginPwd(e) {
+      e.preventDefault();
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          console.log('Received values of form: ', values);
+        }
+      });
+    },
+    changeTraPwd() {},
   },
-  created() {},
 };
 </script>
-<style scoped>
+<style lang='scss' scoped>
 .content {
   background-color: transparent;
 }
@@ -276,23 +302,20 @@ export default {
   text-align: right;
 }
 .t_right img {
-  width: 45%;
+  width: 50%;
 }
 .status_v {
   margin-top: 2%;
-}
-.status_v img {
-  width: 3.5%;
-}
-.status_v span {
-  margin-left: 1.5%;
-  vertical-align: middle;
+  span {
+    margin-left: 1.5%;
+    vertical-align: middle;
+  }
 }
 .t_center {
   text-align: center;
-}
-.t_center button {
-  width: 48%;
+  button {
+    width: 48%;
+  }
 }
 .ant-input-suffix {
   color: #ffab32;
