@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 import Country from './country';
 import { checkSmsCode, register } from '@/script/api';
 import { smsMixin } from '@/mixins/smsMixin';
@@ -47,6 +47,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(['saveUser']),
     sendSmsCode() {
       (async () => {
         const { account } = await this.form.validateFields(['account']);

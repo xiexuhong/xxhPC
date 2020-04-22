@@ -41,12 +41,14 @@ http.interceptors.response.use(
 export const get = (url, data) =>
   new Promise(async (reslove, reject) => {
     const res = await http.get(url, data);
-    if (res.datas.error) {
+    if (typeof res === 'string') {
+      reslove(res);
+    } else if (res.datas.error || res.err_code) {
       if (res.err_code === 'need_login') {
         store.commit('removeUser');
         router.push('/login');
       }
-      message.error(res.datas.error);
+      message.error(res.datas.error || res.err_code);
       reject(res.datas.error);
     } else {
       reslove(res);

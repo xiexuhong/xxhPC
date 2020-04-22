@@ -6,13 +6,15 @@
         a-form-item
           a-input-search(@search="sendSmsCode" v-decorator="['code',{ rules: [{ required: true, message: 'Please input your code!' }] },]" placeholder="code")
             a-button(slot="enterButton" type="primary" class="sms_btn") {{smsText}}
-          span.tips 输入您的手机{{tel}}收到的验证码
+          span.tips 输入您的手机{{telShow}}收到的验证码
         a-form-item
           a-button.login_btn(type="primary" html-type="submit") 下一步
 </template>
 
 <script>
 import { smsMixin } from '@/mixins/smsMixin';
+import { checkSmsCode } from '@/script/api';
+import { mapGetters } from 'vuex';
 export default {
   mixins: [smsMixin],
   data() {
@@ -20,18 +22,33 @@ export default {
       tel: '',
     };
   },
+  computed: {
+    ...mapGetters(['country']),
+    telShow() {
+      return `${this.tel.substring(0, 3)}****${this.tel.substring(
+        this.tel.length - 4,
+        this.tel.length,
+      )}`;
+    },
+  },
   methods: {
     sendSmsCode() {
-      const tel = this.$ls.get('forgetPassTel');
-      this.sendSms(tel, 3);
+      this.sendSms(this.tel, 3);
     },
     goPath(path) {
       this.$router.push(path);
     },
     next(e) {
       e.preventDefault();
-      this.form.validateFields((err, values) => {
+      this.form.validateFields(async (err, values) => {
         if (!err) {
+          await checkSmsCode({
+            mobile: this.tel,
+            areacode: this.country.number,
+            verify: values.code,
+            type: 3,
+          });
+          this.$router.push('/login/forgetThree');
           console.log('Received values of form: ', values);
         }
       });
@@ -41,8 +58,7 @@ export default {
     this.form = this.$form.createForm(this, { name: 'forgetOne' });
   },
   created() {
-    const tel = this.$ls.get('forgetPassTel');
-    this.tel = `${tel.substring(0, 3)}****${tel.substring(tel.length - 4, tel.length)}`;
+    this.tel = this.$ls.get('forgetPassTel');
   },
 };
 </script>

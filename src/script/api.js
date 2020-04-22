@@ -43,4 +43,13 @@ export const checkSmsCode = data => post('/index.php?act=user&op=checkSmsCode', 
  */
 export const register = data => post('/index.php?act=user&op=reg', data);
 
+/**
+ * @method 重置密码
+ * @param account -- 手机号
+ * @param password -- 密码
+ * @param country -- 国家缩写
+ * @param areacode -- 国家区号
+ */
+export const resetPassword = data => post('/index.php?act=user&op=findPwd', data);
+
 export const getAssetList = data => get('/index.php?act=asset&op=list', data);
