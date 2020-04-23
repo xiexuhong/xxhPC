@@ -4,6 +4,7 @@ import { post, get } from './http';
  * @method 获取国家数据
  * @param url -- 语言
  */
+
 export const getCountry = url => import(`@/assets/json/country.${url}.json`);
 
 /**
@@ -80,3 +81,11 @@ export const getUserAccountInfo = data => post('/index.php?act=wallet&op=getUser
  * @param type -- 验证码类型 reset_trade_pwd 重置交易密码
  */
 export const sendVerifyCode = data => post('/index.php?act=account&op=sendVerifyCode', data);
+
+export const getAssetList = data => get('/index.php?act=asset&op=list', data);
+
+//  获取算力列表
+export const getPowerList = data => get('/index.php?act=power&op=get_power_list', data);
+
+//  获取增值服务列表
+export const getInsuranceList = data => get('/index.php?act=insurance&op=myInsuranceList', data);
