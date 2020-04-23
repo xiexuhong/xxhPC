@@ -52,4 +52,10 @@ export const register = data => post('/index.php?act=user&op=reg', data);
  */
 export const resetPassword = data => post('/index.php?act=user&op=findPwd', data);
 
+/**
+ * @method 获取消息列表
+ * @param curpage -- 当前页码
+ */
+export const getMessageList = data => post('/index.php?act=article&op=index', data);
+
 export const getAssetList = data => get('/index.php?act=asset&op=list', data);
