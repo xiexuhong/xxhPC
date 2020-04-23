@@ -63,4 +63,9 @@ export const getMessageList = data => post('/index.php?act=article&op=index', da
  */
 export const getHome = () => post('//index.php?act=index');
 
+/**
+ * @method 获取实名状态
+ */
+export const getVerifyStatus = () => post('/index.php?act=account&op=realNameVerifyStatus');
+
 export const getAssetList = data => get('/index.php?act=asset&op=list', data);
