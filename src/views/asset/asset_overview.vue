@@ -1,23 +1,22 @@
 <template lang="pug">  
   <main>
     <a-card>
-      <header>
-        <span>资产总览</span>
-        <a-dropdown>
-          <a-menu slot="overlay">
-              <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
-          </a-menu>
-          <a-button style="margin-left: 8px" >{{defaultcurrency}}<a-icon type="down" /> </a-button>
-        </a-dropdown>
-      </header>
-      
       <div id="assetview">     
           <div class="left">
+            <header>
+              <span class="tit1">资产总览</span>
+              <a-dropdown>
+                <a-menu slot="overlay">
+                    <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+                </a-menu>
+                <a-button style="margin-left: 8px" >{{defaultcurrency}}<a-icon type="down" /> </a-button>
+              </a-dropdown>
+            </header>
             <section>
-              <p>总资产（估值）：</p>
-              <span>{{total.total}}&nbsp;{{defaultcurrency}}</span>
+              <p class="tit2">总资产（估值）：</p>
+              <p class="text">{{total.total}}&nbsp;{{defaultcurrency}}</p>
             </section>
-            <a-descriptions bordered layout="vertical">
+            <a-descriptions bordered :layout="layout">
               <a-descriptions-item label="总资产（估值）">{{total.total}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
               <a-descriptions-item label="可用资金（估值）">{{total.asset_total}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
               <a-descriptions-item label="合约金额（估值）">{{total.deposit}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
@@ -29,7 +28,13 @@
               <a-button><router-link to="/asset/assetbills">账单</router-link></a-button>
             </div>
           </div>
-          <ve-line :data="chartData" class="charts"></ve-line>
+          <div class="right" v-if="deviceType==='desktop'">
+            <span class='tit3'>资产趋势图</span>
+            <button @click="getData(0)" class="normalData" :class="{'activeData':isWeek}">周</button>
+            <button @click="getData(1)" class="normalData" :class="{'activeData':isMonth}">月</button>
+            <p class='tit4'>净资产总额（{{defaultcurrency}}）</p>
+            <ve-line :data="chartData" :settings="chartSettings"  :extend="chartExtend" class="charts" height='300px' :tooltip-visible="false" :loading="loading" :legend-visible="false"></ve-line>
+          </div>
       </div>
     </a-card>
     <br />
@@ -39,19 +44,12 @@
           <div class="icon">
             //- <img src="../../image/svg/search.svg" alt="" />
           </div>
-          <input class="weui-input" v-model="filterText" type="text"/>
+          <a-input-search placeholder="input search text" v-model="filterText" type="text" />
         </div>
-        <label for="s11" class="weui-cell weui-check__label radio" style="padding-left:0;">
-          <div class="weui-cell__hd">
-            <input type="checkbox" v-model="isHide" class="weui-check" name="checkbox1" id="s11" checked="checked"/>
-            <i class="weui-icon-checked"></i>
-          </div>
-          <div class="weui-cell__bd">隐藏零资产</div>
-        </label>
+        <a-checkbox @change="onChange">隐藏零资产</a-checkbox>
       </div>
-    </div>
-      
-    <a-table :dataSource="asset_list" :columns="columns" >
+    </div> 
+    <a-table :dataSource="filterList" :columns="columns" >
     </a-table>
   </main> 
 </template>
@@ -60,133 +58,111 @@
 import { setup } from '@/locales';
 import {mapState, mapGetters,mapMutations } from 'vuex';
 import { getAssetList,ownCurrency,changeCurrency } from '@/script/api';
+import 'v-charts/lib/style.css'
 export default {
   data() {
+    this.chartSettings = {
+        area:true,
+        itemStyle:{ //面积图颜色设置
+          color:{
+              type:'linear',
+              x:0,
+              y:0,
+              x2:0,
+              y2:1,
+              colorStops:[
+                  {
+                      offset: 0,
+                      color: '#FABF38', // 0% 处的颜色
+                  }, 
+                  {
+                      offset: 1, 
+                      color: '#FABF38' // 100% 处的颜色
+                  },
+              ],
+              globalCoord: false // 缺省为 false
+          }
+            
+      },
+    }
+  
     return {
-     chartData: {
-        columns: ['日期', '访问用户', '下单用户', '下单率'],
+      chartExtend:{
+        xAxis: {
+          show:true,
+          axisLabel:{
+            interval:5
+          }
+        },
+        yAxis: {
+          show: false,
+          // splitLine:{show: false},   //去除网格线
+          // axisTick:{ //y轴刻度线
+          //   show:false
+          // },
+          // axisLine:{ //y轴
+          //   show:false
+          // }
+        }
+      },
+      isWeek: true,
+      isMonth: false,
+      loading: false,
+      chartData: {
+        columns: ['日期', '访问用户'],
         rows: [
-          { '日期': '1/1', '访问用户': 1393, '下单用户': 1093, '下单率': 0.32 },
-          { '日期': '1/2', '访问用户': 3530, '下单用户': 3230, '下单率': 0.26 },
-          { '日期': '1/3', '访问用户': 2923, '下单用户': 2623, '下单率': 0.76 },
-          { '日期': '1/4', '访问用户': 1723, '下单用户': 1423, '下单率': 0.49 },
-          { '日期': '1/5', '访问用户': 3792, '下单用户': 3492, '下单率': 0.323 },
-          { '日期': '1/6', '访问用户': 4593, '下单用户': 4293, '下单率': 0.78 }
+          { '日期': '2018-01-01', '访问用户': 193},
+          { '日期': '2018-01-02', '访问用户': 35},
+          { '日期': '2018-01-03', '访问用户': 29},
+          { '日期': '2018-01-05', '访问用户': 17},
+          { '日期': '2018-01-10', '访问用户': 32},
+          { '日期': '2018-01-13', '访问用户': 53},
+          { '日期': '2018-01-20', '访问用户': 43}
         ]
       },
-      searchText: '',
-      searchInput: null,
-      searchedColumn: '',
-      columns: [
+      columns: [],
+      columns1: [
         {
           title: '币种',
           dataIndex: 'coin',
           key: 'coin',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.coin
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              }, 0);
-            }
-          },
         },
         {
           title: '总量',
           dataIndex: 'total',
           key: 'total',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.total
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
         },
         {
           title: '估值',
           dataIndex: 'valuation',
           key: 'valuation',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.usd
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
         },
         {
           title: '可用',
           dataIndex: 'available',
           key: 'available',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.available
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
         },
         {
           title: '冻结',
           dataIndex: 'freeze',
           key: 'freeze',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.freze
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
+        },
+      ],
+      columns2: [
+        {
+          title: '币种',
+          dataIndex: 'coin',
+          key: 'coin',
+        },
+        {
+          title: '可用',
+          dataIndex: 'available',
+          key: 'available',
+        },
+        {
+          title: '冻结',
+          dataIndex: 'freeze',
+          key: 'freeze',
         },
       ],
       filterText:"",
@@ -195,6 +171,8 @@ export default {
     };
   },
   created(){
+    this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
+    this.getData(0);
     console.log(this.$t('myCome.myCome03'));
     getAssetList().then((res)=>{
       const {datas} = res;
@@ -202,17 +180,32 @@ export default {
           return
       }
       this.$store.state.asset.assetMess = datas;
-      console.log( this.$store.state.asset.assetMess);
      });
      ownCurrency().then((res)=>{
        const {datas} = res;
-       console.log(datas);
        this.$store.state.asset.currency_list = datas.currency;
        this.$store.state.asset.defaultcurrency = datas.default;
      })
   },
   computed: {
-    ...mapGetters(['currency_list','defaultcurrency','lang','total','asset_list']),
+    ...mapGetters(['currency_list','defaultcurrency','lang','total','asset_list','deviceType']),
+    filterList() {
+      var _this = this;
+      return this.asset_list.filter(function(e) {
+        if(_this.isHide){
+          return e.valuation > 0
+        }
+        if (!_this.filterText) return e;
+        if (!e.coin) return;
+        return (
+          e.coin.slice(0, _this.filterText.length) === _this.filterText.toUpperCase()
+        );
+      });
+    },
+    layout(){
+      var s = this.deviceType==='desktop'?'vertical':'horizontal';
+      return  s
+    }
   },
   methods: {
     checkcurrency(index) {
@@ -221,14 +214,25 @@ export default {
           console.log(res);
       })
     }, 
-    handleSearch(selectedKeys, confirm, dataIndex) {
-      confirm();
-      this.searchText = selectedKeys[0];
-      this.searchedColumn = dataIndex;
+    getData(index){
+      if(index == 0){
+        this.isWeek=true;
+        this.isMonth=false;
+        this.chartExtend.xAxis.axisLabel.interval=5
+      }
+      else{
+        this.isWeek=false;
+        this.isMonth=true;
+        this.chartExtend.xAxis.axisLabel.interval=3
+      }
+      this.loading = true;
+      // ajax get data ....
+      setTimeout(() => {
+        this.loading = false;
+      }, 1000);
     },
-    handleReset(clearFilters) {
-      clearFilters();
-      this.searchText = '';
+    onChange(e) {
+      this.isHide = e.target.checked;
     },
     changeLang() {
       setup('en');
@@ -247,26 +251,41 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-header {
-  margin-bottom: 15px;
-  
-  span {
-    font-size: 18px;
-    font-weight: bolder;
-  }
-}
 #assetview{
   display: flex;
-  justify-content: space-between;
   align-items: center;
   .left{
-    min-height: 400px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    .ant-descriptions{
+      text-align: center;
+    }
   }
-  .charts{
+  .right{
     flex: 1;
+    text-align: right;
+    .tit3{
+      margin-right: 10px;
+    }
+    .tit4{
+      color: #999999;
+      font-size: 13px;
+      line-height: 26px;
+    }
+    .charts{
+      flex: 1;
+      margin-left: 30px;
+    }
+    .normalData{
+      width: 50px;
+      height: 25px;
+      border: 1px solid #EDAD0E;
+      background-color: #fff;
+    }
+    .activeData{
+      background-color: #FABF38;
+      color: #fff;
+    }
   }
 }
 .button_area {
@@ -276,7 +295,6 @@ header {
     margin-right: 15px;
   }
 }
-
 .filter{
   padding: 10px;
   .searchBox{

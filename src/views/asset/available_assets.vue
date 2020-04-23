@@ -2,36 +2,22 @@
   <div id="availableassets">
     <a-card>
       <header>
-        <span>法币资产</span>
+        <span  class="tit1">法币资产</span>
         <a-dropdown>
           <a-menu slot="overlay">
               <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
           </a-menu>
-          <a-button style="margin-left: 8px" >{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
+          <a-button style="margin-left: 8px" >{{defaultcurrency}}<a-icon type="down" /> </a-button>
         </a-dropdown>
       </header>
-      </header>
       <section>
-        <p>总资产（估值）：<span>48541515</span></p>
-      </section>
-      <div>     
-        <template>
-          <div>
-            <a-descriptions bordered :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
-              <a-descriptions-item label="Product">Cloud Database</a-descriptions-item>
-              <a-descriptions-item label="Billing">Prepaid</a-descriptions-item>
-              <a-descriptions-item label="Time">18:00:00</a-descriptions-item>
-              <a-descriptions-item label="Amount">$80.00</a-descriptions-item>
-              <a-descriptions-item label="Discount">$20.00</a-descriptions-item>
-              <a-descriptions-item label="Official">$60.00</a-descriptions-item>
-            </a-descriptions>
-          </div>
-        </template>
-        <div class="button_area">
-          <a-button><router-link to="/asset/recharge">充值</router-link></a-button>
-          <a-button><router-link to="/asset/withdraw">提现</router-link></a-button>
-          <a-button><router-link to="/asset/recharge">账单</router-link></a-button>
-        </div>
+        <p class="tit2">总资产（估值）：</p>
+        <p class="text">{{total.total}}&nbsp;{{defaultcurrency}}</p>
+      </section>   
+      <div class="button_area">
+        <a-button><router-link to="/asset/recharge">充值</router-link></a-button>
+        <a-button><router-link to="/asset/withdraw">提现</router-link></a-button>
+        <a-button><router-link to="/asset/recharge">账单</router-link></a-button>
       </div>
     </a-card>
     <br />
@@ -41,28 +27,22 @@
           <div class="icon">
             //- <img src="../../image/svg/search.svg" alt="" />
           </div>
-          <input class="weui-input" v-model="filterText" type="text"/>
+          <a-input v-model="filterText" type="text"/>
         </div>
-        <label for="s11" class="weui-cell weui-check__label radio" style="padding-left:0;">
-          <div class="weui-cell__hd">
-            <input type="checkbox" v-model="isHide" class="weui-check" name="checkbox1" id="s11" checked="checked"/>
-            <i class="weui-icon-checked"></i>
-          </div>
-          <div class="weui-cell__bd">隐藏零资产</div>
-        </label>
+        <a-checkbox @change="onChange">隐藏零资产</a-checkbox>
       </div>
     </div>
-        <a-table :columns="columns" :dataSource="balance_list">
-          <a slot="name" slot-scope="text">{{ text }}</a>
-          <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
-          <span slot="action" slot-scope="text, record">
-            <a>Invite 一 {{ record.name }}</a>
-            <a-divider type="vertical" />
-            <a>Delete</a>
-            <a-divider type="vertical" />
-            <a class="ant-dropdown-link"> More actions <a-icon type="down" /> </a>
-          </span>
-        </a-table>
+    <a-table :columns="columns" :dataSource="filterList">
+      <a slot="name" slot-scope="text">{{ text }}</a>
+      <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
+      <span slot="action" slot-scope="text, record">
+        <a>Invite 一 {{ record.name }}</a>
+        <a-divider type="vertical" />
+        <a>Delete</a>
+        <a-divider type="vertical" />
+        <a class="ant-dropdown-link"> More actions <a-icon type="down" /> </a>
+      </span>
+    </a-table>
   </div> 
 </template>
 
@@ -70,41 +50,9 @@
 import { setup } from '@/locales';
 import {mapGetters} from 'vuex';
 import { changeCurrency } from '@/script/api';
-const columns = [
-  {
-    dataIndex: 'name',
-    key: 'name',
-    slots: { title: 'customTitle' },
-    scopedSlots: { customRender: 'name' },
-  },
-  {
-    title: 'Age',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: 'Tags',
-    key: 'tags',
-    dataIndex: 'tags',
-    scopedSlots: { customRender: 'tags' },
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    scopedSlots: { customRender: 'action' },
-  },
-];
 export default {
   data() {
     return {
-      searchText: '',
-      searchInput: null,
-      searchedColumn: '',
       columns: [
         {
           title: '币种',
@@ -219,13 +167,25 @@ export default {
       ],
       filterText:"",
       isHide:false,
-      coin:""
     };
   },
   created(){
   },
   computed: {
-    ...mapGetters(['currency_list','defaultcurrency','total','lang','coin_list','balance_list']),
+    ...mapGetters(['currency_list','defaultcurrency','total','lang','balance_list']),
+    filterList() {
+      var _this = this;
+      return this.balance_list.filter(function(e) {
+        if(_this.isHide){
+          return e.valuation > 0
+        }
+        if (!_this.filterText) return e;
+        if (!e.coin) return;
+        return (
+          e.coin.slice(0, _this.filterText.length) === _this.filterText.toUpperCase()
+        );
+      });
+    },
   },
   methods: {
     checkcurrency(index) {
@@ -234,14 +194,8 @@ export default {
           console.log(res);
       })
     }, 
-    handleSearch(selectedKeys, confirm, dataIndex) {
-      confirm();
-      this.searchText = selectedKeys[0];
-      this.searchedColumn = dataIndex;
-    },
-    handleReset(clearFilters) {
-      clearFilters();
-      this.searchText = '';
+    onChange(e) {
+      this.isHide = e.target.checked;
     },
     changeLang() {
       setup('en');
@@ -260,13 +214,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-header {
-  margin-bottom: 15px;
-  span {
-    font-size: 18px;
-    font-weight: bolder;
-  }
-}
 .button_area {
   display: flex;
   margin: 10px 0;

@@ -23,15 +23,15 @@
                     <a-form-model-item label="选择币种">
                         <a-dropdown>
                             <a-menu slot="overlay">
-                                <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+                                <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
                             </a-menu>
-                            <a-button>{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
+                            <a-button style="margin-left: 8px" >{{defaultcurrency}}<a-icon type="down" /></a-button>
                         </a-dropdown>
-                        <span class="ant-form-text"> 可用余额：{{available}}{{coin}}</span>
+                        <span class="ant-form-text"> 可用余额：{{available}}{{defaultcurrency}}</span>
                     </a-form-model-item>
                     <a-form-model-item label="充值金额">
                         <a-input v-model="form.amount" placeholder="请输入一个整数" />
-                        <span class="ant-form-text">金额范围：{{amountrange}}{{coin}}</span>
+                        <span class="ant-form-text">金额范围：{{amountrange}}{{defaultcurrency}}</span>
                     </a-form-model-item>
                     <a-form-model-item label="付款人姓名">
                         <a-input v-model="form.name" placeholder="请输入付款人姓名" />
@@ -50,9 +50,9 @@
                         <a-button> USDT(OMNI) </a-button>
                     </a-form-model-item>
                     <a-form-model-item label="充币地址">
-                        <span class="ant-form-text" id="foo">{{form.coinaddress}}</span> 
+                        <span id="foo">{{form.coinaddress}}</span> 
                         <a-button class="btn paste" data-clipboard-target="#foo" data-clipboard-action="copy">
-                            复制地址
+                            复制地址                                           
                         </a-button>
                         <a-button class="btn">
                             二维码
@@ -81,7 +81,8 @@
 </template>
 <script>
 import { setup } from '@/locales'
-import {mapState} from 'vuex'
+import {mapGetters} from 'vuex'
+import { changeCurrency } from '@/script/api';
 import Clipboard from 'clipboard'
 export default {
     data() {
@@ -92,40 +93,51 @@ export default {
                 name: '',
                 coinaddress:'egegeefgege'
             },
-            coin:"",
             rechargestyle: 'general',
-            available:'1000.0',
+            available:'',
             amountrange:'400~1000000',
             result:false
         };
     },
     created(){
-        this.coin = this.defaultcurrency;
+        for(let item of this.balance_list){
+            if(item.coin == this.defaultcurrency){
+                this.available = item.available;
+                return
+            }
+        }
     },
     mounted() {
         var clipboard = new Clipboard('.paste');
+        var _this = this;
         clipboard.on('success', function(e) {
-            console.log('复制成功')
+            _this.success();
         });
         clipboard.on('error', function(e) {
-            console.log('复制失败')
+            _this.error();
         });
     },
-    computed: 
-        mapState({
-            list(e){
-                return e.asset.currencylist;
-            },
-            defaultcurrency(e){
-                return e.asset.defaultcurrency;
-            },
-         }),
+    computed:{
+    ...mapGetters(['currency_list','defaultcurrency','lang','total','balance_list']),
+  },
     methods: {
-        handleButtonClick(e) {
-            console.log('click left button', e);
-        },        
         checkcurrency(index) {
-            this.coin = this.list[index];
+            this.$store.state.asset.defaultcurrency = this.currency_list[index];
+            for(let item of this.balance_list){
+                if(item.coin == this.defaultcurrency){
+                    this.available = item.available;
+                    return
+                }
+            } 
+            changeCurrency({currency:this.defaultcurrency}).then((res) => {
+                console.log(res);
+            })
+        }, 
+        success() {
+            this.$message.success('复制成功');
+        },
+        error() {
+            this.$message.error('复制失败');
         },
         goRecharge(){
             this.result = true;
@@ -154,6 +166,12 @@ export default {
         }
         .ant-btn-primary {
             color: #fff;
+        }
+         .ant-radio-button-wrapper {
+            background-color: #fff;
+            margin-right: 10px;
+            border-radius: 5px;
+            color: #262626;
         }
         #foo{
            font-size: 16px;

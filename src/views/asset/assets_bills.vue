@@ -2,17 +2,18 @@
   <div id="availableassets">
     <a-card>
       <header>
-        <span>资产账单</span>
+        <span  class="tit1">资产账单</span>
         <a-dropdown>
           <a-menu slot="overlay">
               <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
           </a-menu>
-          <a-button style="margin-left: 8px" >{{coin==''?defaultcurrency:coin}}<a-icon type="down" /></a-button>
+          <a-button style="margin-left: 8px" >{{defaultcurrency}}<a-icon type="down" /></a-button>
         </a-dropdown>
       </header>
       <section>
-        <p>总资产（估值）：<span>48541515</span></p>
-      </section>
+        <p class="tit2">总资产（估值）：</p>
+        <p class="text">{{total.total}}&nbsp;{{defaultcurrency}}</p>
+      </section>       
       <div>     
         <a-descriptions :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
           <a-descriptions-item label="时间">
@@ -195,7 +196,6 @@ export default {
         },
       ],
       filterText:"",
-      coin:'',
       starttime:'',
       endtime:'',
       isHide:false
@@ -219,7 +219,7 @@ export default {
     this.endtime = `${year+'-'+month+'-'+day}`;
   },
   computed:{
-    ...mapGetters(['currency_list','defaultcurrency','lang',,'coin_list','balance_list','assetList']),
+    ...mapGetters(['currency_list','defaultcurrency','lang','coin_list','total']),
   },
   methods: {
     checkcurrency(index) {
@@ -290,13 +290,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-header {
-  margin-bottom: 15px;
-  span {
-    font-size: 18px;
-    font-weight: bolder;
-  }
-}
 .timing{
   display: flex;
 }

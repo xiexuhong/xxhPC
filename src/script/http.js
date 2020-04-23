@@ -41,7 +41,11 @@ http.interceptors.response.use(
 export const get = (url, data) =>
   new Promise(async (reslove, reject) => {
     const res = await http.get(url, data);
-    if (res.datas.error) {
+    if (res.datas.hasOwnProperty('error')) {
+      if (res.err_code === 'need_login') {
+        store.commit('removeUser');
+        router.push('/login');
+      }
       message.error(res.datas.error);
       reject(res.datas.error);
     } else {

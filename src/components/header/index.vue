@@ -18,11 +18,11 @@
     .right
       router-link(to="/login/login" v-if="!user.token")
         a-button(type="link") 登录
-      router-link(to="/login/login" v-else)
+      router-link(to="/asset/assetoverview" v-else)
         img(src="@/assets/image/account/user.png")
       router-link(to="/login/register" v-if="!user.token")
         a-button(type="link") 注册
-      router-link(to="/login/register" v-else)
+      router-link(to="/asset/assetoverview" v-else)
         img(src="@/assets/image/account/notice.png")
       a-button(type="link") 下载
       a-dropdown(:trigger="['click']")
