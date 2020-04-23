@@ -63,7 +63,7 @@ export default [
         // 提币地址管理
         path: 'get_coin_addr',
         name: 'getCoinAddr',
-        component: () => import('@/views/account/getCoinAddr/get_coin_addr'),
+        component: () => import('@/views/account/get_coin_addr'),
       },
       {
         // 算龄

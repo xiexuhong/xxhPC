@@ -19,27 +19,55 @@
     </div>
     <a-result status="success" title="恭喜您" subTitle="您的BHPay賬戶已经创建成功" style="padding: 24px 15px">
       <template v-slot:extra>
-        <a-button class="m_buttom">去人人礦場提幣</a-button>
-        <a-button type="primary">下載BHPay錢包開啟新體驗</a-button>
+        <a-button class="m_buttom" @click="goGetCoin()">去RRMine提幣</a-button>
+        <a-button type="primary" @click="downloaderBHPay()">下載BHPay錢包開啟新體驗</a-button>
       </template>
       <div class="desc">
         <p>
           <span>賬戶:</span>
-          <span class="t_left">201911151136058744435</span>
-          <span class="copy">複製</span>
+          <span class="t_left">{{ datas.bhpay_account }}</span>
+          <span class="copy" data-clipboard-action="copy" :data-clipboard-text="datas.bhpay_account">複製</span>
         </p>
         <p>
           <span>姓名:</span>
-          <span class="t_left">小白</span>
+          <span class="t_left">{{ datas.true_name }}</span>
         </p>
       </div>
     </a-result>
   </main>
 </template>
 <script>
+import { mapGetters, mapMutations } from 'vuex';
+import Clipboard from 'clipboard';
+
 export default {
   data() {
-    return {};
+    return {
+      datas: {},
+    };
+  },
+  created() {
+    this.datas = this.$ls.get("BHPayInfo");
+    console.log("datas: "+ JSON.stringify(this.datas));
+  },
+  methods: {
+    // 下载BHPay
+    downloaderBHPay(){
+      window.location.href = 'https://bhpay.io/app/dl/download.html';
+    },
+    // 去提币
+    goGetCoin(){
+      this.$router.push('/asset/extractcoin');
+    }
+  },
+  mounted() {
+      var clipboard = new Clipboard('.copy');
+      clipboard.on('success', function(e) {
+          alert('复制成功')
+      });
+      clipboard.on('error', function(e) {
+          alert('复制失败')
+      });
   },
 };
 </script>
@@ -74,6 +102,7 @@ export default {
 .copy {
   text-align: right !important;
   color: #ffab32;
+  cursor: pointer;
 }
 button {
   width: 100%;

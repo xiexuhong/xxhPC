@@ -60,7 +60,7 @@
       <div v-if="noDatas">
         <a-result title="No Records">
           <template v-slot:icon>
-            <img src="../../../assets/image/account/iconshenhezhong.png" alt />
+            <img src="../../assets/image/account/iconshenhezhong.png" alt />
           </template>
         </a-result>
       </div>

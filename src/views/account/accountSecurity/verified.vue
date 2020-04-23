@@ -25,20 +25,29 @@
         </p>
         <p>
           <span>證件號:</span>
-          <span>G1234567</span>
+          <span>{{ datas.idcard }}</span>
         </p>
         <p>
           <span>姓名:</span>
-          <span>王二狗</span>
+          <span>{{ datas.owner_name }}</span>
         </p>
       </div>
     </a-result>
   </main>
 </template>
 <script>
+import { mapMutations } from 'vuex';
+import { getUserAccountInfo } from '@/script/api';
 export default {
   data() {
-    return {};
+    return {
+      datas: [],
+    };
+  },
+  async created() {
+      const { datas } = await getUserAccountInfo();
+      this.datas = datas;
+      console.log("datas: ", datas);
   },
 };
 </script>

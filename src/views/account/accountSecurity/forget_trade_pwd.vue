@@ -22,10 +22,10 @@
         <div>
           <a-form>
             <a-form-item label="短信验证码">
-              <a-input prefix="请输入短信验证码">
-                <span slot="suffix" class="color_y">獲取驗證碼</span>
+              <a-input prefix="请输入短信验证码" v-decorator="['code',{ rules: [{ required: true, message: 'Please input your code!' }] },]">
+                <span slot="suffix" class="color_y" @click="sendCode()"> {{ codeText }} </span>
               </a-input>
-              <span class="code_til_text">輸入您的手機 180 **** 0576 收到的驗證碼</span>
+              <span class="code_til_text">輸入您的手機 {{ userInfo.mobile }} 收到的驗證碼</span>
             </a-form-item>
             <a-form-item label="手持身份证拍照">
               <span class="ant-form-item-children">
@@ -33,7 +33,10 @@
                   name="avatar"
                   listType="picture-card"
                   class="avatar-uploader"
+                  :showUploadList="false"
                   action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                 :beforeUpload="beforeUpload"
+                  @change="handleChange"
                 >
                   <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
                   <div v-else>
@@ -62,6 +65,53 @@
     </div>
   </main>
 </template>
+<script>
+import { mapGetters, mapMutations } from 'vuex';
+import { verifyCode } from '@/mixins/verifyCode';
+
+export default {
+  verify_code: [verifyCode],
+  data() {
+    return {
+      loading: false,
+      imageUrl: '',
+      userInfo: {}
+    };
+  },
+  computed: {
+    ...mapGetters(['user']),
+  },
+  created() {
+    this.userInfo = this.$ls.get("userInfo");
+  },
+  methods: {
+    sendCode(){
+      this.verifyCode(this.userInfo.mobile, 3);
+    },
+    handleChange(info) {
+      if (info.file.status === 'uploading') {
+        this.loading = true;
+        return;
+      }
+      if (info.file.status === 'done') {
+        console.log("info: ", info);
+        
+      }
+    },
+    beforeUpload(file) {
+      const isJpgOrPng = file.type === 'image/jpg' || file.type === 'image/png' || file.type === 'image/gif';
+      if (!isJpgOrPng) {
+        this.$message.error('You can only upload JPG file!');
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        this.$message.error('Image must smaller than 2MB!');
+      }
+      return isJpgOrPng && isLt2M;
+    },
+  }
+}
+</script>
 <style scoped>
 .color_y {
   color: #ffab32;
