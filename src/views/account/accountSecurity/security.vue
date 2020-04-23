@@ -9,16 +9,16 @@
             </span>
           </span>
         </div>
-        <a-card-meta description="上次登錄 2019-11-18 11:08:17 ">
+        <a-card-meta :description="'上次登录时间：' + datas.old_login_time ">
           <template slot="title">
             <div>
-              <span>点封皮节骨眼</span>
+              <span>{{ datas.nick_name}}</span>
               <img src="../../../assets/image/account/iconbianji.png" alt />
             </div>
           </template>
           <a-avatar
             slot="avatar"
-            src="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"
+            :src="datas.avatar"
           />
         </a-card-meta>
         <a-card class="m_top">
@@ -67,7 +67,7 @@
                   </div>
                   <ul class="ant-list-item-action">
                     <li>
-                      <a class="color_b">180****0001</a>
+                      <a class="color_b">{{ datas.mobile }}</a>
                     </li>
                   </ul>
                 </div>
@@ -96,8 +96,8 @@
                       <router-link
                         :to="isAssociated ? '/account/associated_bhpay' : '/account/rela_bhpay'"
                         class="color_b"
-                        :class="{'color_y': !isAssociated}"
-                      >{{ isAssociated ? '已關聯BHPay' : "關聯BHPay"}}</router-link>
+                        :class="{ color_y: !isAssociated }"
+                      >{{ isAssociated ? '已關聯BHPay' : '關聯BHPay' }}</router-link>
                     </li>
                   </ul>
                 </li>
@@ -128,21 +128,23 @@
                         title="修改登錄密碼"
                         centered
                         :footer="null"
-                        :visible="isChangePwd"
+                        :visible="isOpenPwd"
                         @cancel="() => changePwd(false)"
                       >
-                        <a-form-item label="舊密碼">
-                          <a-input placeholder="请输入舊密碼" />
-                        </a-form-item>
-                        <a-form-item label="新密碼">
-                          <a-input placeholder="6~16位字母、數字和特殊符號" />
-                        </a-form-item>
-                        <a-form-item label="确认新密碼">
-                          <a-input placeholder="请再次输入新密碼" />
-                        </a-form-item>
-                        <a-form-item class="t_center">
-                          <a-button type="primary">确认修改</a-button>
-                        </a-form-item>
+                        <a-from :form="form" @submit="changeLoginPwd">
+                          <a-form-item label="舊密碼">
+                            <a-input placeholder="请输入舊密碼" v-decorator="['old_pwd',{ rules: [{ required: true, message: 'Please input your old Password!' }] },]" />
+                          </a-form-item>
+                          <a-form-item label="新密碼">
+                            <a-input placeholder="6~16位字母、數字和特殊符號" v-decorator="['new_pwd',{ rules: [{ required: true, message: 'Please input your old Password!' }] },]" />
+                          </a-form-item>
+                          <a-form-item label="确认新密碼">
+                            <a-input placeholder="请再次输入新密碼" v-decorator="['re_pwd',{ rules: [{ required: true, message: '输入的密码不一致，请重新输入' }] },]" />
+                          </a-form-item>
+                          <a-form-item class="t_center">
+                            <a-button type="primary" html-type="submit">确认修改</a-button>
+                          </a-form-item>
+                        </a-from>
                       </a-modal>
                     </li>
                   </ul>
@@ -172,7 +174,7 @@
                         title="修改交易密碼"
                         centered
                         :footer="null"
-                        :visible="isChangeTrasPwd"
+                        :visible="isOpenTrasPwd"
                         @cancel="() => changeTrasPwd(false)"
                       >
                         <a-form-item label="舊密碼">
@@ -190,7 +192,7 @@
                           </a-input>
                         </a-form-item>
                         <a-form-item class="t_center">
-                          <a-button type="primary">确认修改</a-button>
+                          <a-button type="primary" @click="changeTraPwd()">确认修改</a-button>
                         </a-form-item>
                       </a-modal>
                     </li>
@@ -208,31 +210,86 @@
   </main>
 </template>
 <script>
+import { mapGetters, mapMutations } from 'vuex';
+import { getAccountInfo } from '@/script/api';
 export default {
   data() {
     return {
-      isChangePwd: false, // 修改登录密码
-      isChangeTrasPwd: false, // 修改交易密码
+      isOpenPwd: false, // 修改登录密码
+      isOpenTrasPwd: false, // 修改交易密码
       isAssociated: true, // 是否关联BHPay
-      isVerified: false, // 是否实名认证
+      isVerified: true, // 是否实名认证
+      datas: [],
     };
   },
+  beforeCreate() {
+    this.form = this.$form.createForm(this, { name: 'changePwd' });
+  },
+  async created() {
+      const { datas } = await getAccountInfo();
+      this.datas = datas;
+      console.log("datas: ", datas);
+      this.isAssociated = !!datas.bhpay_account;
+
+      this.$ls.set('userInfo',{
+        mobile: datas.account
+      })
+
+      // BHPay认证后信息
+      this.$ls.set('BHPayInfo', {
+        isRelated: this.isAssociated,
+        account: datas.account,
+        bhpay_account: datas.bhpay_account,
+        true_name: datas.true_name,
+        nick_name: datas.nick_name,
+        BHPay_date: datas.BHPay_date,
+        bhpay_quick_payment: datas.bhpay_quick_payment
+      });
+  },
   methods: {
-    changePwd(isChangePwd) {
-      this.isChangePwd = isChangePwd;
-      console.log('click', isChangePwd);
+    changePwd(isOpenPwd) {
+      this.isOpenPwd = isOpenPwd;
+      console.log('click', isOpenPwd);
     },
-    changeTrasPwd(isChangeTrasPwd) {
-      this.isChangeTrasPwd = isChangeTrasPwd;
-      console.log('click', isChangeTrasPwd);
+    changeTrasPwd(isOpenTrasPwd) {
+      this.isOpenTrasPwd = isOpenTrasPwd;
+      console.log('click', isOpenTrasPwd);
     },
     goVerify() {
       console.log('去认证');
     },
+    // validatePwdBlur(e){
+    //   const reg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+    //   if (e.target.value && !reg.test(e.target.value)) {
+    //     const arr = [{
+    //       message: '您输入的密码格式不正确!',
+    //       field: 'new_pwd',
+    //     }]
+    //     this.form.setFields({ new_pwd: { value: e.target.value, errors: arr } })
+    //   }
+    // },
+    // validateRePwdBlur(e){
+
+    // },
+    changeLoginPwd(e) {
+    //   e.preventDefault();
+    //   this.form.validateFields(async (err, values) => {
+    //     if (!err) {
+    //       console.log('Received values of form: ', values);
+    //       await changeLoginPwd({
+    //         new_pwd: values.new_pwd,
+    //         re_pwd: values.re_pwd,
+    //       });
+    //     } else {
+    //       console.log("err: ", err);
+    //     }
+    //   });
+    },
+    // changeTraPwd() {},
   },
 };
 </script>
-<style scoped>
+<style lang='scss' scoped>
 .content {
   background-color: transparent;
 }
@@ -266,23 +323,20 @@ export default {
   text-align: right;
 }
 .t_right img {
-  width: 45%;
+  width: 50%;
 }
 .status_v {
   margin-top: 2%;
-}
-.status_v img {
-  width: 3.5%;
-}
-.status_v span {
-  margin-left: 1.5%;
-  vertical-align: middle;
+  span {
+    margin-left: 1.5%;
+    vertical-align: middle;
+  }
 }
 .t_center {
   text-align: center;
-}
-.t_center button {
-  width: 48%;
+  button {
+    width: 48%;
+  }
 }
 .ant-input-suffix {
   color: #ffab32;

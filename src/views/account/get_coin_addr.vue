@@ -9,8 +9,8 @@
     </div>
     <div>
       <a-form>
-        <a-row>
-          <a-col :span="2">
+        <div class="flex_div">
+          <div>
             <a-form-item label="币种">
               <a-input-group compact>
                 <a-select defaultValue="USDT">
@@ -20,24 +20,24 @@
                 </a-select>
               </a-input-group>
             </a-form-item>
-          </a-col>
-          <a-col :span="1">
+          </div>
+          <div class="m_top_4">
             <span>-</span>
-          </a-col>
-          <a-col :span="8">
+          </div>
+          <div>
             <a-form-item label="提币地址">
               <a-input placeholder="请输入钱包地址" />
             </a-form-item>
-          </a-col>
-          <a-col :span="1">
+          </div>
+          <div class="m_top_4 t_center">
             <span>-</span>
-          </a-col>
-          <a-col :span="8">
+          </div>
+          <div>
             <a-form-item label="備註">
               <a-input placeholder="限10个字符以内" />
             </a-form-item>
-          </a-col>
-        </a-row>
+          </div>
+        </div>
         <a-form-item>
           <a-button type="primary" @click="addCoinAddr(true)">Add</a-button>
           <a-modal
@@ -60,18 +60,18 @@
       <div v-if="noDatas">
         <a-result title="No Records">
           <template v-slot:icon>
-            <img src="../../../assets/image/account/iconshenhezhong.png" alt />
+            <img src="../../assets/image/account/iconshenhezhong.png" alt />
           </template>
         </a-result>
       </div>
       <div class="addrList" v-else>
         <h2>提幣地址列表</h2>
         <a-table :columns="columns" :dataSource="data">
-          <a slot="name" slot-scope="text">{{text}}</a>
-          <span slot="customTitle">Name</span>
-          <span slot="action" slot-scope="text">
-            <a>Delete</a>
-          </span>
+          <template slot="action">
+            <a-popconfirm title="Sure to delete?" @confirm="() => onDelete()">
+              <a href="javascript:;">Delete</a>
+            </a-popconfirm>
+          </template>
         </a-table>
       </div>
     </div>
@@ -119,6 +119,9 @@ export default {
       this.isAdd = isAdd;
       console.log('click', isAdd);
     },
+    onDelete() {
+      alert('删除');
+    },
   },
 };
 </script>
@@ -147,5 +150,11 @@ export default {
 }
 #rcDialogTitle2 {
   text-align: center;
+}
+.flex_div {
+  display: flex;
+}
+.m_top_4 {
+  margin: auto 1%;
 }
 </style>

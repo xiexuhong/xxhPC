@@ -1,9 +1,14 @@
 <template>
-  <main class="ant-layout-content" style="height: 100%; margin: 24px 24px 0px; padding-top: 0px;">
+  <main
+    class="ant-layout-content"
+    style="width:93%;height: 100%; margin: 24px 24px 0px; padding-top: 0px;"
+  >
     <div class="breadcrumb ant-breadcrumb">
       <span>
         <span class="ant-breadcrumb-link">
-          <router-link to="/account/bank_card" class="router-link-active color_y">银行卡管理</router-link>
+          <router-link to="/account/bank_card" class="router-link-active color_y"
+            >银行卡管理</router-link
+          >
         </span>
         <span class="ant-breadcrumb-separator color_y">></span>
       </span>

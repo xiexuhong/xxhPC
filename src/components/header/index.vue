@@ -10,7 +10,8 @@
           router-link(to="/hashrateMarket")
             li 算力市场
           li 平台动态
-          li 帮助中心
+          router-link(to="/helpCenter")
+            li 帮助中心
           router-link(to="/about")
             li 关于我们
       a-button(v-else type="primary" @click="toggleCollapsed")
@@ -27,9 +28,9 @@
       a-button(type="link") 下载
       a-dropdown(:trigger="['click']")
         a-menu(slot="overlay" @click="chooseLocale")
-          a-menu-item(key="ZH_CN") 简体
-          a-menu-item(key="ZH_TW") 繁体
-          a-menu-item(key="EN_US") EN
+          a-menu-item(key="ZH-CN") 简体
+          a-menu-item(key="ZH-TW") 繁体
+          a-menu-item(key="EN-US") EN
         a-button(type="link") {{localesEumn[lang]}}
           a-icon(type="down")
     a-drawer(v-if="deviceType !== 'desktop'" placement="left" :closable="false" :visible="collapsed" @close="drawerClose" wrapClassName="menuDrawer")
@@ -66,16 +67,12 @@ export default {
   computed: {
     ...mapGetters(['deviceType', 'lang', 'user']),
   },
-  mounted() {
-    console.log(this.localesEumn);
-    console.log(this.lang);
-  },
+  mounted() {},
   methods: {
     chooseLocale(val) {
       setup(val.key);
     },
     chooseMenu(val) {
-      console.log(val);
       this.$router.push(val.key);
       this.collapsed = false;
     },
