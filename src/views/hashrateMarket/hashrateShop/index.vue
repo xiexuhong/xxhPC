@@ -1,159 +1,130 @@
 <template>
   <!-- 算力市场/算力商城首页 -->
   <div class="hashContainer">
-    <a-row class="hashContent" type="flex" justify="center" align="top">
-      <a-col :span="19">
-        <a-row>
-          <a-col :span="24">
-            <ul class="hashHeader">
-              <li>
-                <img src="../../../../public/hashrateMarket/btc.png" alt="icon" />
-              </li>
-              <li>BTC 30天算力包</li>
-              <li>合约限期</li>
-              <li>30天</li>
-            </ul>
-          </a-col>
-        </a-row>
-        <a-row class="hashBody">
-          <a-col :span="8">
-            <ul>
-              <li>单份价格</li>
-              <li style="color:#ffab32">425.00USD=425.00USDT</li>
-            </ul>
-          </a-col>
-          <a-col :span="8">
-            <ul>
-              <li>单份合约算力</li>
-              <li>1T+130%+(0-25)%</li>
-            </ul>
-          </a-col>
-          <a-col :span="8">
-            <ul>
-              <li>日挖矿收益</li>
-              <li>约0.18USD/份</li>
-            </ul>
-          </a-col>
-        </a-row>
-        <a-row class="hashBody">
-          <a-col :span="8">
-            <ul>
-              <li>剩余算力</li>
-              <li>48T</li>
-            </ul>
-          </a-col>
-          <a-col :span="8">
-            <ul>
-              <li>单次下单限额</li>
-              <li>5T</li>
-            </ul>
-          </a-col>
-          <a-col :span="8">
-            <ul>
-              <li>开挖时间</li>
-              <li>19/02/2020 00:00:00</li>
-            </ul>
-          </a-col>
-        </a-row>
-      </a-col>
-      <a-col :span="5">
-        <a-row class="showDetail">
-          <a-col :span="24">
-            <!-- <a href="#">查看详情 ></a> -->
-            <router-link to="/hashrateMarket/hashrateShop/contractDetail">查看详情 ></router-link>
-          </a-col>
-        </a-row>
-        <a-row class="charge">
-          <a-col :span="24">
-            <a-button v-show="unSellOut" size="large" block>
-              <router-link to="/hashrateMarket/hashrateShop/orderDetail">立即购买</router-link>
-            </a-button>
-            <a-button v-show="!unSellOut" class="disabled" size="large" block disabled>已售罄</a-button>
-          </a-col>
-        </a-row>
-      </a-col>
-    </a-row>
-    <a-row class="hashContent" type="flex" justify="center" align="top">
-      <a-col :span="18">
-        <a-row>
-          <a-col :span="24">
-            <ul class="hashHeader">
-              <li>
-                <img src="../../../../public/hashrateMarket/btc.png" alt="icon" />
-              </li>
-              <li>BTC 30天算力包</li>
-              <li>合约限期</li>
-              <li>30天</li>
-            </ul>
-          </a-col>
-        </a-row>
-        <a-row class="hashBody">
-          <a-col :span="8">
-            <ul>
-              <li>单份价格</li>
-              <li style="color:#ffab32">123134521231.0000</li>
-            </ul>
-          </a-col>
-          <a-col :span="8">
-            <ul>
-              <li>单份合约算力</li>
-              <li>1+2+5+5+5</li>
-            </ul>
-          </a-col>
-          <a-col :span="8">
-            <ul>
-              <li>日挖矿收益</li>
-              <li>约0.18hds</li>
-            </ul>
-          </a-col>
-        </a-row>
-        <a-row class="hashBody">
-          <a-col :span="8">
-            <ul>
-              <li>剩余算力</li>
-              <li>48T</li>
-            </ul>
-          </a-col>
-          <a-col :span="8">
-            <ul>
-              <li>单次下单限额</li>
-              <li>5T</li>
-            </ul>
-          </a-col>
-          <a-col :span="8">
-            <ul>
-              <li>开挖时间</li>
-              <li>19/02/2020</li>
-            </ul>
-          </a-col>
-        </a-row>
-      </a-col>
-      <a-col :span="6">
-        <a-row class="showDetail">
-          <a-col :span="24">
-            <a href="#">查看详情 ></a>
-          </a-col>
-        </a-row>
-        <a-row class="charge">
-          <a-col :span="24">
-            <ul>
-              <li>
-                <a-button size="large" block>立即购买</a-button>
-              </li>
-            </ul>
-          </a-col>
-        </a-row>
-      </a-col>
-    </a-row>
+    <div class="hashContent" v-for="(power, index) in powerList" :key="power.machine_id">
+      <a-row type="flex" justify="center" align="top">
+        <a-col :span="19">
+          <a-row>
+            <a-col :span="24">
+              <ul class="hashHeader">
+                <li>
+                  <img src="@/assets/image/hashrateBtc.png" alt="icon" />
+                </li>
+                <li>{{ power.name }}</li>
+                <li>合约限期</li>
+                <li>{{ power.constract_date_num }}天</li>
+              </ul>
+            </a-col>
+          </a-row>
+          <a-row class="hashBody">
+            <a-col :span="8">
+              <ul>
+                <li>单份价格</li>
+                <li style="color:#ffab32">
+                  <span
+                    v-for="(deposit, index) in power.deposit_arr"
+                    :key="deposit.name"
+                    style="display: inline-block"
+                  >
+                    <span v-show="index != 0">&nbsp;=&nbsp;</span>
+                    <span>{{ deposit.value }}</span>
+                    <small>{{ deposit.name }}</small>
+                  </span>
+                </li>
+              </ul>
+            </a-col>
+            <a-col :span="8">
+              <ul>
+                <li>单份合约算力</li>
+                <li>{{ power.unit_power }}</li>
+              </ul>
+            </a-col>
+            <a-col :span="8">
+              <ul>
+                <li>日挖矿收益</li>
+                <li>约0.18USD/份</li>
+              </ul>
+            </a-col>
+          </a-row>
+          <a-row class="hashBody">
+            <a-col :span="8">
+              <ul>
+                <li>剩余算力</li>
+                <li>{{ mult(power.base_power, power.num_left) }}T</li>
+              </ul>
+            </a-col>
+            <a-col :span="8">
+              <ul>
+                <li>单次下单限额</li>
+                <li>{{ power.once_limit }}T</li>
+              </ul>
+            </a-col>
+            <a-col :span="8">
+              <ul>
+                <li>开挖时间</li>
+                <li>{{ power.time_income }}</li>
+              </ul>
+            </a-col>
+          </a-row>
+        </a-col>
+        <a-col :span="5">
+          <a-row class="showDetail">
+            <a-col :span="24">
+              <!-- <a href="#">查看详情 ></a> -->
+              <router-link
+                to="/hashrateMarket/hashrateShop/contractDetail"
+                @click.native="setSingleList(index)"
+              >查看详情 ></router-link>
+            </a-col>
+          </a-row>
+          <a-row class="charge">
+            <a-col :span="24">
+              <a-button v-show="mult(power.base_power, power.num_left) > 0" size="large" block>
+                <router-link
+                  to="/hashrateMarket/hashrateShop/orderDetail"
+                  @click.native="setSingleList(index)"
+                >立即购买</router-link>
+              </a-button>
+              <a-button
+                v-show="mult(power.base_power, power.num_left) <= 0"
+                class="disabled"
+                size="large"
+                block
+                disabled
+              >已售罄</a-button>
+            </a-col>
+          </a-row>
+        </a-col>
+      </a-row>
+    </div>
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+import { getPowerList } from '@/script/api';
 export default {
   data() {
     return {
-      unSellOut: true, //算力是否售罄，默认未售罄
+      powerList: [], //获取算力列表
     };
+  },
+  created() {
+    //获取算力列表
+    getPowerList().then(resp => {
+      // console.log(resp.datas.machine_list);
+      this.powerList = resp.datas.machine_list;
+    });
+  },
+  computed: {},
+  methods: {
+    // 乘法
+    mult: (basePrice, number) => number * basePrice,
+    //  获取单调数据并传给vuex共享
+    ...mapMutations(['GET_SINGLE_LIST']),
+    setSingleList(powerItem) {
+      this.$store.commit('GET_SINGLE_LIST', this.powerList[powerItem]);
+    },
   },
 };
 </script>
@@ -164,7 +135,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  word-break: break-all;
   ul {
     margin: 10px;
   }
@@ -225,9 +195,6 @@ export default {
 }
 .charge {
   height: 100%;
-  // display: flex;
-  // flex-direction: column;
-  // align-items: center;
   margin-top: 40%;
   .ant-btn {
     display: inline-block;
