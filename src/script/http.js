@@ -5,7 +5,7 @@ import store from '@/store';
 import router from '@/router';
 
 const http = axios.create({
-  baseURL: '',
+  baseURL: process.env.VUE_APP_BASIC_URL,
   timeout: 5000,
   transformRequest: [data => qs.stringify(data)],
 });
@@ -40,7 +40,7 @@ http.interceptors.response.use(
 
 export const get = (url, data) =>
   new Promise(async (reslove, reject) => {
-    const res = await http.get(process.env.VUE_APP_BASIC_URL + url, data);
+    const res = await http.get(url, data);
     if (typeof res === 'string') {
       reslove(res);
     } else if (res.datas.error || res.err_code) {
@@ -57,24 +57,7 @@ export const get = (url, data) =>
 
 export const post = (url, data) =>
   new Promise(async (reslove, reject) => {
-    const res = await http.post(process.env.VUE_APP_BASIC_URL + url, data);
-    if (typeof res === 'string') {
-      reslove(res);
-    } else if (res.datas.error || res.err_code) {
-      if (res.err_code === 'need_login') {
-        store.commit('removeUser');
-        router.push('/login');
-      }
-      message.error(res.datas.error || res.err_code);
-      reject(res.datas.error);
-    } else {
-      reslove(res);
-    }
-  });
-
-export const upImg = (url, data) =>
-  new Promise(async (reslove, reject) => {
-    const res = await http.post(process.env.VUE_APP_UPIMG_URL + url, data);
+    const res = await http.post(url, data);
     if (typeof res === 'string') {
       reslove(res);
     } else if (res.datas.error || res.err_code) {
