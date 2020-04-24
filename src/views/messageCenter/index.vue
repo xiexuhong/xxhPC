@@ -7,7 +7,7 @@
                 a-tab-pane(tab="算力变更" key="2")
                 a-tab-pane(tab="资产变更" key="3")
             .bottom(v-if="isComponent")
-                a.allRead 全部标记为已读
+                a.allRead(@click="allRead") 全部标记为已读
                 a.more(@click="lookMore") 查看全部>
 </template>
 
@@ -37,6 +37,10 @@ export default {
     },
   },
   methods: {
+    allRead() {
+      this.$store.dispatch('requestReadAllMessage');
+      this.$emit('close');
+    },
     lookMore() {
       this.$router.push('/messageCenter');
       this.$emit('close');
