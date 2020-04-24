@@ -3,46 +3,54 @@
     <div class="contractItemChoose">
       <ul>
         <li>
-          <span>矿机类型:</span>
-          <span class="all">全部</span>
-          <span>单挖</span>
-          <span>双挖</span>
+          <label class="chooseTitle">选择交互方式:</label>
+          <a-radio-group v-model="chioce.type" @change="onChoiceChange">
+            <a-radio-button value="all">全部</a-radio-button>
+            <a-radio-button value="PT">单挖</a-radio-button>
+            <a-radio-button value="SW">双挖</a-radio-button>
+          </a-radio-group>
         </li>
         <li>
-          <span>合约状态:</span>
-          <span class="all">全部</span>
-          <span>在挖</span>
-          <span>待挖</span>
-          <span>退单</span>
+          <label class="chooseTitle">合约状态:</label>
+          <a-radio-group v-model="chioce.workType" @change="onChoiceChange">
+            <a-radio-button value="all">全部</a-radio-button>
+            <a-radio-button value="KW">在挖</a-radio-button>
+            <a-radio-button value="DW">待挖</a-radio-button>
+            <a-radio-button value="TZ">退单</a-radio-button>
+          </a-radio-group>
         </li>
         <li>
-          <span>锁定期限:</span>
-          <span class="all">全部</span>
-          <span>30天</span>
-          <span>90天</span>
-          <span>180天</span>
+          <label class="chooseTitle">锁定期限:</label>
+          <a-radio-group v-model="chioce.dateType" @change="onChoiceChange">
+            <a-radio-button value="all">全部</a-radio-button>
+            <a-radio-button value="30">30天</a-radio-button>
+            <a-radio-button value="90">90天</a-radio-button>
+            <a-radio-button value="180">180天</a-radio-button>
+          </a-radio-group>
         </li>
         <li>
-          <span>订单类型:</span>
-          <span class="all">全部</span>
-          <span>购买</span>
-          <span>承接</span>
+          <label class="chooseTitle">订单类型:</label>
+          <a-radio-group v-model="chioce.payType" @change="onChoiceChange">
+            <a-radio-button value="all">全部</a-radio-button>
+            <a-radio-button value="P">购买</a-radio-button>
+            <a-radio-button value="S">承接</a-radio-button>
+          </a-radio-group>
         </li>
       </ul>
     </div>
     <div class="contractItemTable">
       <a-table
         :columns="columns"
-        :dataSource="data"
+        :dataSource="datas"
         :pagination="{
           pageSizeOptions: ['10', '20', '30', '40'],
           showSizeChanger: true,
         }"
+        :rowKey="record => record.id"
       >
         <a-popover placement="rightTop" slot="totalHashrate" slot-scope="text">
           <div slot="title">
             <p style="color:#595959;textAlign:center">算力构成</p>
-            <p style="color:#999999;textAlign:center">720T=200.00+520.00</p>
           </div>
           <div slot="content">
             <ul>
@@ -72,7 +80,7 @@
               </li>
             </ul>
           </div>
-          <span class="totalHashrate">{{ text }}</span>
+          <span class="totalHashrate">{{ text }} T</span>
         </a-popover>
         <span class="action" slot="action">
           <router-link to="/hashrateContract/hashrateTransfer">转让</router-link>
@@ -85,193 +93,90 @@
 </template>
 
 <script>
+import { getMinePowerContract } from '@/script/api';
 const columns = [
   {
     title: '名称',
     dataIndex: 'name',
-    key: 'name',
   },
   {
     title: '金额',
     dataIndex: 'amountOfMoney',
-    key: 'amountOfMoney',
+    scopedSlots: { customRender: 'amountOfMoney' },
   },
   {
     title: '到手总算力',
-    dataIndex: 'totalHashrate',
-    key: 'totalHashrate',
+    dataIndex: 'computing_power',
     width: '10%',
     scopedSlots: { customRender: 'totalHashrate' },
   },
   {
     title: '合约期限',
-    key: 'contractDate',
     dataIndex: 'contractDate',
     width: '7%',
   },
   {
     title: '合约状态',
     dataIndex: 'contractState',
-    key: 'contractState',
     width: '7%',
   },
   {
     title: '开挖时间',
     dataIndex: 'beginTime',
-    key: 'beginTime',
   },
   {
     title: '下单时间',
     dataIndex: 'orderTime',
-    key: 'orderTime',
   },
   {
     title: '操作',
     dataIndex: 'action',
-    key: 'action',
     scopedSlots: { customRender: 'action' },
     width: '12%',
   },
 ];
-
-const data = [
-  {
-    key: '1',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '2',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '3',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '4',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '5',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '6',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '7',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '8',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '9',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '10',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '11',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '12',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-  {
-    key: '13',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    totalHashrate: '660.00T',
-    contractDate: '600天',
-    contractState: '正常',
-    beginTime: new Date().toString(),
-    orderTime: new Date().toString(),
-  },
-];
 export default {
+  props: ['rentedList'], //  继承的数据
   data() {
     return {
-      data,
-      columns,
+      datas: [], //  单元格数据
+      columns, //  表头
+      chioce: {
+        //  筛选选项
+        type: 'all', //  矿机类型
+        workType: 'all', //  合约状态
+        dateType: 'all', //  锁定期限
+        payType: 'all', //  订单类型
+      },
+      pageNum: 1, //  表格页数
     };
+  },
+  // created() {
+  //   this.datas = this.rentedList;
+  //   console.log(this.datas);
+  // },
+  //  不能放在created，因为props异步传输数据，created只工作一次，拿到的是父组件传入的初始值，不是直接请求到的数据，watch会监听数据变化，不会拿到空值
+  watch: {
+    rentedList() {
+      this.datas = this.rentedList;
+      console.log(this.datas);
+    },
+  },
+  methods: {
+    //  筛选数据
+    onChoiceChange() {
+      //  获取选项发送请求，获取数据
+      getMinePowerContract({
+        page: this.pageNum,
+        type: this.chioce.type,
+        work_type: this.chioce.workType,
+        date_type: this.chioce.dateType,
+        pay_type: this.chioce.payType,
+      }).then(resp => {
+        this.datas = resp.datas.rented_list;
+        console.log(this.datas);
+      });
+    },
   },
 };
 </script>
@@ -287,18 +192,27 @@ export default {
     ul {
       width: 100%;
       li {
-        display: inline-block;
+        display: block;
         width: 100%;
         color: #595959;
         font-size: 14px;
         margin-bottom: 8px;
-        span {
+        .chooseTitle {
           display: inline-block;
-          width: 8%;
-          &.all {
-            color: #ffab32;
-            margin-left: 10px;
-          }
+          width: 100px;
+        }
+        .ant-radio-button-wrapper {
+          border: none;
+          box-shadow: none;
+        }
+        .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled),
+        .ant-radio-button-wrapper:hover {
+          color: #ffab32;
+          box-shadow: none;
+        }
+        .ant-radio-button-wrapper > .ant-radio-button,
+        .ant-radio-button-wrapper:not(:first-child)::before {
+          display: none;
         }
       }
     }
@@ -323,15 +237,16 @@ export default {
       color: #ffab32;
       margin: 5px 2px;
     }
+    /deep/ .ant-pagination-item-active {
+      border: none;
+      background-color: #ffab32;
+      a {
+        color: #ffffff;
+      }
+    }
   }
 }
-/deep/ .ant-pagination-item-active {
-  border: none;
-  background-color: #ffab32;
-  a {
-    color: #ffffff;
-  }
-}
+
 @media screen and (max-width: 500px) {
   .contractItemContainer {
     .contractItemChoose {
@@ -341,9 +256,6 @@ export default {
         li {
           font-size: 10px;
           margin-bottom: 5px;
-          span {
-            width: 15%;
-          }
         }
       }
     }

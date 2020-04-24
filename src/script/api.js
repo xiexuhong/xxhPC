@@ -142,43 +142,81 @@ export const ownCurrency = data => get('/index.php?act=setting&op=currency', dat
  * @param currency -- 货币列表
  * @param default -- 默认货币
  */
- export const changeCurrency  = data => post('/index.php?act=setting&op=chgCurrency', data);
+export const changeCurrency = data => post('/index.php?act=setting&op=chgCurrency', data);
 
- /**
+/**
  * @method 修改默认货币
  */
-export const getCoinInfo = data => post('/index.php?act=asset&op=coinInfo',data);
+export const getCoinInfo = data => post('/index.php?act=asset&op=coinInfo', data);
 /**
  * @method 币资产信息
  */
-export const getCoinAddress = data => post('/index.php?act=asset&op=rechargeCoin',data);
+export const getCoinAddress = data => post('/index.php?act=asset&op=rechargeCoin', data);
 
 /**
  * @method 获取充币地址
  */
-export const recharge = data => post('/index.php?act=asset&op=recharge',data);
+export const recharge = data => post('/index.php?act=asset&op=recharge', data);
 
 /**
  * @method 充值
  */
-export const payment = data => get('/index.php?act=payment&op=index',data);
+export const payment = data => get('/index.php?act=payment&op=index', data);
 
 /**
  * @method 支付方式
  */
-export const getBill = data => get('/index.php?act=asset&op=log',data);
+export const getBill = data => get('/index.php?act=asset&op=log', data);
 
 /**
  * @method 账单信息
  */
-export const getPublicMess = data => post('/index.php?act=wallet&op=getPublicBank',data);
+export const getPublicMess = data => post('/index.php?act=wallet&op=getPublicBank', data);
 
 /**
  * @method 获取对公转账信息
  */
 
-//  获取算力列表
+/**  获取算力列表
+ * @method 获取算力列表
+ */
 export const getPowerList = data => get('/index.php?act=power&op=get_power_list', data);
 
-//  获取增值服务列表
+/**
+ * @method 获取增值服务列表
+ */
 export const getInsuranceList = data => get('/index.php?act=insurance&op=myInsuranceList', data);
+
+/**
+ * @method 获取算力合约列表
+ */
+export const getContractList = data => get('/app2/index.php?act=order&op=mine', data);
+
+/**
+ * @method 获取协议
+ */
+export const getAgreement = data => get('/index.php?act=power&op=contract', data);
+
+/**
+ * @method 获取剩余算力
+ * @param type -- 算力余额查询类型
+ */
+export const getSurplusPower = data => post('/index.php?act=payment&op=index', data);
+
+/**
+ * @method 购买算力
+ * @param machine_id -- 矿机id
+ * @param machine_type -- 矿机类型
+ * @param num -- 租用数量
+ * @param payment_code -- 支付方式
+ */
+export const rentPower = data => post('/index.php?act=order&op=create', data);
+
+/**
+ * @method 购买算力
+ * @param machine_id -- 矿机id
+ * @param machine_type -- 矿机类型
+ * @param num -- 租用数量
+ * @param payment_code -- 支付方式
+ */
+export const getMinePowerContract = data => get('/app2/index.php?act=order&op=mine', data);

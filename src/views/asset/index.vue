@@ -12,77 +12,90 @@
 <script>
 import UserCenter from '@/components/userCenter';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
-import { getAssetList,ownCurrency,changeCurrency,payment } from '@/script/api';
+import { getAssetList, ownCurrency, changeCurrency, payment } from '@/script/api';
 export default {
   components: { UserCenter },
   data() {
     return {};
   },
-   created(){
-    getAssetList().then((res)=>{
-      const {datas} = res;
-      if(datas.hasOwnProperty('error')){
-          return
+  created() {
+    getAssetList().then(res => {
+      const { datas } = res;
+      if (datas.hasOwnProperty('error')) {
+        return;
       }
-      
-      this.$store.state.asset.total = this.gettotal(datas.asset.asset_total,datas.balance.balance_total,datas.deposit.valuation,datas.total);
+
+      this.$store.state.asset.total = this.gettotal(
+        datas.asset.asset_total,
+        datas.balance.balance_total,
+        datas.deposit.valuation,
+        datas.total,
+      );
       this.$store.state.asset.coin_list = this.getcoin_list(datas.asset.asset_list);
       this.$store.state.asset.balance_list = this.getbalance_list(datas.balance.balance_list);
-
-     });
-     ownCurrency().then((res)=>{
-       const {datas} = res;
-       this.$store.state.asset.currency_list = datas.currency;
-       this.$store.state.asset.defaultcurrency = datas.default;
-       this.$store.state.asset.currency = datas.default;
-     });
-    payment({type:'recharge'}).then((res)=>{
+    });
+    ownCurrency().then(res => {
+      const { datas } = res;
+      this.$store.state.asset.currency_list = datas.currency;
+      this.$store.state.asset.defaultcurrency = datas.default;
+      this.$store.state.asset.currency = datas.default;
+    });
+    payment({ type: 'recharge' }).then(res => {
       console.log(res.datas);
       this.$store.state.asset.paymentlist = res.datas.list;
-    })
+    });
   },
   computed: {
-    ...mapGetters(['currencylist','defaultcurrency','lang',,'coin_list','balance_list','asset_list','deviceType']),
+    ...mapGetters([
+      'currencylist',
+      'defaultcurrency',
+      'lang',
+      ,
+      'coin_list',
+      'balance_list',
+      'asset_list',
+      'deviceType',
+    ]),
   },
-  methods:{
-      getcoin_list:function(datas){
-        var coin_list = [];
-        for(let i=0;i<datas.length;i++){
-          if(coin_list.length<datas.length){
-            coin_list.push({id:'',coin:'',total:"",available:"",freeze:""});
-            coin_list[i].id = i;
-            coin_list[i].coin =datas[i].coin;
-            coin_list[i].total =datas[i].total_num;
-            coin_list[i].available =datas[i].num_avail;
-            coin_list[i].freeze =datas[i].num_freeze;
-            coin_list[i].valuation =datas[i].unify_price;
-          }      
-        };
-        return coin_list;
-      },
-      getbalance_list:function(datas){
-        var balance_list=[];
-        for(let i=0;i<datas.length;i++){
-          if(balance_list.length<datas.length){
-            balance_list.push({id:'',coin:'',total:"",available:"",freeze:""});
-            balance_list[i].coin =datas[i].currency;
-            balance_list[i].total =datas[i].total_num;
-            balance_list[i].available =datas[i].money_avail;
-            balance_list[i].freeze =datas[i].money_freeze;
-            balance_list[i].valuation =datas[i].unify_price;
-          }
-        };
-        return balance_list;
-      },
-      gettotal:function(total1,total2,total3,total4){
-        var total ={};
-        total.asset_total =total1;
-        total.balance_total = total2;
-        total.deposit = total3;
-        total.total = total4;
-        return total;
+  methods: {
+    getcoin_list: function(datas) {
+      var coin_list = [];
+      for (let i = 0; i < datas.length; i++) {
+        if (coin_list.length < datas.length) {
+          coin_list.push({ id: '', coin: '', total: '', available: '', freeze: '' });
+          coin_list[i].id = i;
+          coin_list[i].coin = datas[i].coin;
+          coin_list[i].total = datas[i].total_num;
+          coin_list[i].available = datas[i].num_avail;
+          coin_list[i].freeze = datas[i].num_freeze;
+          coin_list[i].valuation = datas[i].unify_price;
+        }
       }
-  }
+      return coin_list;
+    },
+    getbalance_list: function(datas) {
+      var balance_list = [];
+      for (let i = 0; i < datas.length; i++) {
+        if (balance_list.length < datas.length) {
+          balance_list.push({ id: '', coin: '', total: '', available: '', freeze: '' });
+          balance_list[i].coin = datas[i].currency;
+          balance_list[i].total = datas[i].total_num;
+          balance_list[i].available = datas[i].money_avail;
+          balance_list[i].freeze = datas[i].money_freeze;
+          balance_list[i].valuation = datas[i].unify_price;
+        }
+      }
+      return balance_list;
+    },
+    gettotal: function(total1, total2, total3, total4) {
+      var total = {};
+      total.asset_total = total1;
+      total.balance_total = total2;
+      total.deposit = total3;
+      total.total = total4;
+      return total;
+    },
+  },
 };
 </script>
 
@@ -103,28 +116,28 @@ p {
     margin-left: 10px;
     padding: 10px;
     background-color: #fff;
-    header {  
+    header {
       margin-bottom: 15px;
-    .tit1{
+      .tit1 {
         font-size: 24px;
         color: #262626;
         line-height: 48px;
         font-weight: bolder;
       }
     }
-    section{
+    section {
       margin: 10px 0;
-      .tit2{
+      .tit2 {
         color: #999999;
       }
-      .text{
+      .text {
         font-size: 24px;
-        color: #FFAB32;
+        color: #ffab32;
         line-height: 48px;
         font-weight: bolder;
       }
     }
-    .ant-table-wrapper{
+    .ant-table-wrapper {
       background-color: #fff;
     }
     .ant-layout-content {
@@ -139,11 +152,11 @@ p {
       max-width: 180px;
       margin-right: 15px;
     }
-    .filter{
+    .filter {
       background-color: #fff;
-       .ant-input{
-          margin: 0;
-        }
+      .ant-input {
+        margin: 0;
+      }
     }
   }
   .mobileHeader {
@@ -173,10 +186,10 @@ p {
     padding: 6px 0;
   }
   .ant-list-split .ant-list-item {
-    border:none;
+    border: none;
   }
   .ant-list-split .ant-list-header {
-    border:none;
+    border: none;
   }
 }
 </style>

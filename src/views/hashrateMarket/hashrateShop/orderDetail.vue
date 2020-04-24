@@ -83,7 +83,6 @@
                     :max="power.maxLimitNum"
                     :defaultValue="1"
                     v-model="chargeAmount"
-                    @change="onChargeAmountChange"
                   />
                 </a-col>
                 <a-col :span="8">
@@ -95,7 +94,7 @@
                   <label class="chargeAmount">选择交互方式:</label>
                 </a-col>
                 <a-col :span="16">
-                  <a-radio-group v-model="currencyValue" @change="onCurrencyValueChange">
+                  <a-radio-group v-model="currencyValue">
                     <a-radio-button value="USDT">USDT</a-radio-button>
                     <a-radio-button value="USD">USD</a-radio-button>
                   </a-radio-group>
@@ -103,7 +102,12 @@
               </a-row>
               <a-row>
                 <a-col :span="8" class="chargeAmount">可用余额：</a-col>
-                <a-col :span="16" class="chargeAmount">1000000000.0000</a-col>
+                <a-col :span="16" class="chargeAmount">
+                  {{ surplusPowerNum =
+                  currencyValue === 'USDT'
+                  ? surplusPower[0].payment_avail
+                  : surplusPower[1].payment_avail }}
+                </a-col>
               </a-row>
             </div>
             <div class="hashrateTotal">
@@ -171,11 +175,7 @@
                   </a-checkbox>
                 </span>
               </p>
-              <a-button
-                size="large"
-                :disabled="!indeterminate"
-                @click="() => (chargeVisible = true)"
-              >立即购买</a-button>
+              <a-button size="large" :disabled="!indeterminate" @click="onChargeClick">立即购买</a-button>
               <div class="hashrateNodal">
                 <a-modal
                   title="安全验证"
@@ -190,7 +190,9 @@
                   <p>
                     <a-input />
                   </p>
-                  <p>忘记密码？</p>
+                  <router-link to="/account/forget_trade_pwd">
+                    <p>忘记密码？</p>
+                  </router-link>
                 </a-modal>
               </div>
             </div>
@@ -202,21 +204,36 @@
 </template>
 
 <script>
+import { getAgreement, getSurplusPower, rentPower } from '@/script/api';
 import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
       clicked: false, //点击气泡卡隐藏/显示
       chargeVisible: false, //点击弹窗隐藏/显示
-      value: 'USDT', //单选框初始值
       indeterminate: false, //设置协议复选框选中状态样式
       chargeAmount: 1, //  购买份数
       rewardPower: 0.0, //  达标算力动率
       currencyValue: 'USDT', //  选择的交互方式
       unitPriceNum: 0, //  选择的交互方式
+      surplusPower: [{ payment_avail: '' }, { payment_avail: '' }], //  可用余额,解决属性初次加载不存在的报错
+      surplusPowerNum: [], //  可用余额依据不同选择方式的具体数额
     };
   },
   created() {
+    //  获取协议
+    // getAgreement({ type: '1' }).then(resp => {
+    //   //  跨域
+    //   console.log(resp);
+    // });
+    //  获取剩余算力，并赋值初始化
+    getSurplusPower({ type: 'rent' }).then(resp => {
+      // console.log(resp);
+      this.surplusPower = resp.datas.list;
+      this.surplusPowerNum = this.surplusPower[0].payment_avail;
+      // console.log(this.surplusPower);
+    });
+
     console.log(this.power);
   },
   computed: {
@@ -238,14 +255,6 @@ export default {
       let result = (number * basePrice).toFixed(fixnum);
       return result;
     },
-    //  购买份数发生变化时
-    onChargeAmountChange() {
-      this.chargeAmount = this.chargeAmount;
-    },
-    //  币种变化
-    onCurrencyValueChange() {
-      this.currencyValue = this.currencyValue;
-    },
     // 达标算力
     getReward: (power, powerList) => {
       let flat = 0.0;
@@ -263,6 +272,34 @@ export default {
       }
       // console.log(flat);
       return (this.rewardPower = flat);
+    },
+    //  立即购买
+    onChargeClick() {
+      //  判断余额是否充足
+      if (
+        this.surplusPowerNum < 0 ||
+        this.surplusPowerNum < this.mult(this.unitPriceNum, this.chargeAmount, this.currencyValue)
+      ) {
+        this.$message.info('您的余额不足，请及时充值！！！');
+      } else {
+        //  余额充足，弹出交易框
+        this.chargeVisible = true;
+
+        //交易密码验证
+        if (true) return false;
+
+        //提交购买
+        rentPower({
+          machine_id: this.power.machine_id, // 矿机id
+          machine_type, // 矿机类型
+          num: this.chargeAmount, // 租用数量
+          payment_code: this.currencyValue, // 支付方式
+        }).then(resp => {
+          console.log(resp);
+          //提交成功之后，返回到上个页面
+          this.$router.go(-1);
+        });
+      }
     },
   },
 };
@@ -400,6 +437,10 @@ export default {
       }
     }
   }
+}
+
+a {
+  color: #ffab32;
 }
 @media screen and (max-width: 1000px) {
   .orderDetailContainer .orderDetailContent {

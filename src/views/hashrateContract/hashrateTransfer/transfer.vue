@@ -184,6 +184,13 @@ export default {
     /deep/.ant-table-thead > tr > th {
       background-color: #ffffff;
     }
+    /deep/ .ant-pagination-item-active {
+      border: none;
+      background-color: #ffab32;
+      a {
+        color: #ffffff;
+      }
+    }
     .transferHashrate {
       color: #ffab32;
       border-bottom: 1px solid #ffab32;
@@ -196,13 +203,7 @@ export default {
     }
   }
 }
-/deep/ .ant-pagination-item-active {
-  border: none;
-  background-color: #ffab32;
-  a {
-    color: #ffffff;
-  }
-}
+
 @media screen and (max-width: 500px) {
   .contractItemContainer {
     .contractItemChoose {

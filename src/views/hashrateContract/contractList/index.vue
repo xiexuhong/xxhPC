@@ -5,7 +5,7 @@
       <ul>
         <li>
           <span>基础算力</span>
-          <span class="listTitleContent">200T</span>
+          <span class="listTitleContent">{{ powerCount.base_power }}T</span>
         </li>
         <li>
           <span>
@@ -18,44 +18,53 @@
             >
               <div slot="title">
                 <p style="color:#595959;textAlign:center">算力构成</p>
-                <p style="color:#999999;textAlign:center">720T=200.00+520.00</p>
+                <p style="color:#999999;textAlign:center">
+                  {{ powerCount.computing_power }}T = {{ powerCount.base_power }}T +
+                  {{
+                  Number(powerCount.float_power) +
+                  Number(powerCount.pe_power) +
+                  Number(powerCount.futures_power) +
+                  Number(powerCount.regular_power) +
+                  Number(powerCount.inviter_power)
+                  }}T
+                </p>
               </div>
               <div slot="content">
                 <ul>
                   <li>
-                    <span>基础算力</span>
-                    <span>5.00T</span>
-                  </li>
-                  <li>
                     <span>浮动算力</span>
-                    <span>6.50T</span>
+                    <span>{{ powerCount.float_power }}T</span>
                   </li>
                   <li>
                     <span>达标算力</span>
-                    <span>0.00T</span>
+                    <span>{{ powerCount.pe_power }}T</span>
                   </li>
                   <li>
                     <span>期货算力</span>
-                    <span>0.00T</span>
+                    <span>{{ powerCount.futures_power }}T</span>
                   </li>
                   <li>
                     <span>定期算力</span>
-                    <span>0.00T</span>
+                    <span>{{ powerCount.regular_power }}T</span>
+                  </li>
+                  <li>
+                    <span>邀请算力</span>
+                    <span>{{ powerCount.inviter_power }}T</span>
                   </li>
                 </ul>
               </div>
               <span class="infoIcon">!</span>
             </a-popover>
           </span>
-          <span class="listTitleContent">720.00T</span>
+          <span class="listTitleContent">{{ powerCount.computing_power }}T</span>
         </li>
         <li>
           <span>总收益</span>
-          <span class="listTitleContent">12315123112</span>
+          <span class="listTitleContent">{{ powerCount.income_num }}</span>
         </li>
         <li style="border:none">
           <span>算龄</span>
-          <span class="listTitleContent">5200*D</span>
+          <span class="listTitleContent">{{ powerCount.my_td }}*D</span>
         </li>
       </ul>
     </div>
@@ -63,11 +72,10 @@
       <a-tabs
         defaultActiveKey="1"
         size="large"
-        :tabBarStyle="{width: '100%', background: '#FFFFFF', 
-    margin: 0}"
+        :tabBarStyle="{ width: '100%', background: '#FFFFFF', margin: 0 }"
       >
         <a-tab-pane tab="算力合约" key="1">
-          <HashrateContractItem></HashrateContractItem>
+          <HashrateContractItem :rentedList="rentedList"></HashrateContractItem>
         </a-tab-pane>
         <a-tab-pane tab="增值服务" key="2">
           <MoreServiceItem></MoreServiceItem>
@@ -80,11 +88,26 @@
 <script>
 import HashrateContractItem from './hashrateContractItem';
 import MoreServiceItem from './moreServiceItem';
+import { getContractList } from '@/script/api';
 export default {
   data() {
     return {
       clicked: false, //点击气泡卡隐藏/显示
+      powerCount: {}, //  当前用户算力相关信息
+      orderList: [], // ???
+      rentedList: [], //  当前用户算力合约信息
     };
+  },
+  created() {
+    getContractList().then(resp => {
+      // console.log(resp.datas);
+      this.powerCount = resp.datas.power_count;
+      // this.orderList = resp.datas.orderList;
+      this.rentedList = resp.datas.rented_list;
+      // console.log(this.powerCount);
+      // console.log(this.orderList);
+      // console.log(this.rentedList);
+    });
   },
   methods: {
     handleClickChange(visible) {
