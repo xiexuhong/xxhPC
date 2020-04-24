@@ -13,19 +13,19 @@
               <a-row>
                 <a-col :span="7">
                   <span class="contentTitle">名稱:</span>
-                  <span>BTC 30天算力包</span>
+                  <span>{{ power.name }}</span>
                 </a-col>
                 <a-col :span="6">
                   <span class="contentTitle">基礎算力:</span>
-                  <span>1.30 T</span>
+                  <span>{{ mult(power.base_power, chargeAmount) }} T</span>
                 </a-col>
                 <a-col :span="6">
                   <span class="contentTitle">浮動算力:</span>
-                  <span>1.30 T</span>
+                  <span>{{ mult(power.float_power, chargeAmount) }} T</span>
                 </a-col>
                 <a-col :span="5">
                   <span class="contentTitle">達標算力:</span>
-                  <span>1.30 T</span>
+                  <span>{{ mult(mult(power.base_power, chargeAmount), rewardPower) }} T</span>
                 </a-col>
               </a-row>
             </a-list-item>
@@ -33,19 +33,22 @@
               <a-row>
                 <a-col :span="7">
                   <span class="contentTitle">期貨算力:</span>
-                  <span>1.30 T</span>
+                  <span>{{ mult(power.futures_power, chargeAmount) }} T</span>
                 </a-col>
                 <a-col :span="6">
                   <span class="contentTitle">定期算力:</span>
-                  <span>1.30 T</span>
+                  <span>{{ mult(power.regular_power, chargeAmount) }} T</span>
                 </a-col>
                 <a-col :span="6">
                   <span class="contentTitle">單價:</span>
-                  <span>425.0000 USDT</span>
+                  <span>
+                    {{ unitPriceNum = currencyValue === 'USDT' ? power.deposit_arr[1].value : power.deposit_arr[0].value }}
+                    {{ currencyValue === 'USDT' ? power.deposit_arr[1].name : power.deposit_arr[0].name }}
+                  </span>
                 </a-col>
                 <a-col :span="5">
                   <span class="contentTitle">合約類型:</span>
-                  <span>BTC</span>
+                  <span>{{ power.currency_name }}</span>
                 </a-col>
               </a-row>
             </a-list-item>
@@ -53,15 +56,16 @@
               <a-row>
                 <a-col :span="7">
                   <span class="contentTitle">合約期限:</span>
-                  <span>30天</span>
+                  <span>{{ power.constract_date_num }}天</span>
                 </a-col>
                 <a-col :span="6">
                   <span class="contentTitle">開挖時間:</span>
-                  <span>19/02/2020 00:00:00</span>
+                  <span>{{ power.time_income }}</span>
                 </a-col>
                 <a-col :span="6">
                   <span class="contentTitle">算力來源:</span>
                   <span>京都資本</span>
+                  <!-- <span>{{ power.power_node_name }}</span>   undefined -->
                 </a-col>
                 <a-col :span="5"></a-col>
               </a-row>
@@ -75,9 +79,11 @@
                   <a-input-number
                     id="chargeAmount"
                     size="large"
-                    :min="0"
+                    :min="power.minLimitNum"
+                    :max="power.maxLimitNum"
                     :defaultValue="1"
-                    @change="onChange"
+                    v-model="chargeAmount"
+                    @change="onChargeAmountChange"
                   />
                 </a-col>
                 <a-col :span="8">
@@ -89,7 +95,7 @@
                   <label class="chargeAmount">选择交互方式:</label>
                 </a-col>
                 <a-col :span="16">
-                  <a-radio-group v-model="value">
+                  <a-radio-group v-model="currencyValue" @change="onCurrencyValueChange">
                     <a-radio-button value="USDT">USDT</a-radio-button>
                     <a-radio-button value="USD">USD</a-radio-button>
                   </a-radio-group>
@@ -115,46 +121,61 @@
                       <ul class="hashratePopover">
                         <li>
                           <span>基础算力</span>
-                          <span>5.00T</span>
+                          <span>{{ mult(power.base_power, chargeAmount) }} T</span>
                         </li>
                         <li>
                           <span>浮动算力</span>
-                          <span>6.50T</span>
+                          <span>{{ mult(power.float_power, chargeAmount) }} T</span>
                         </li>
                         <li>
                           <span>达标算力</span>
-                          <span>0.00T</span>
+                          <span>{{ mult(mult(power.base_power, chargeAmount), rewardPower) }} T</span>
                         </li>
                         <li>
                           <span>期货算力</span>
-                          <span>0.00T</span>
+                          <span>{{ mult(power.futures_power, chargeAmount) }} T</span>
                         </li>
                         <li>
                           <span>定期算力</span>
-                          <span>0.00T</span>
+                          <span>{{ mult(power.regular_power, chargeAmount) }} T</span>
                         </li>
                       </ul>
                     </div>
                     <span class="infoIcon">!</span>
                   </a-popover>
-                  <span class="totalNum">11.50 T</span>
+                  <span class="totalNum">
+                    {{
+                    parseFloat(mult(power.base_power, chargeAmount)) +
+                    parseFloat(mult(power.float_power, chargeAmount)) +
+                    parseFloat(mult(mult(power.base_power, chargeAmount), rewardPower)) +
+                    parseFloat(mult(power.futures_power, chargeAmount)) +
+                    parseFloat(mult(power.regular_power, chargeAmount))
+                    }} T
+                  </span>
                 </span>
                 <span>
                   总金额
-                  <span class="totalNum">2125.0000 USDT</span>
+                  <span
+                    class="totalNum"
+                  >{{ mult(unitPriceNum, chargeAmount, currencyValue) }}{{ currencyValue }}</span>
                 </span>
               </div>
             </div>
             <div class="hashrateAgreement">
               <p>
                 <span>
-                  <a-checkbox
-                    :indeterminate="indeterminate"
-                    @click="taggleIndeterminate"
-                  >我同意《【運算力】委託管理服務協議》/《雲算力服務銷售協議》</a-checkbox>
+                  <a-checkbox :indeterminate="indeterminate" @click="taggleIndeterminate">
+                    我同意
+                    <a href>《【運算力】委託管理服務協議》</a>/
+                    <a href>《雲算力服務銷售協議》</a>
+                  </a-checkbox>
                 </span>
               </p>
-              <a-button size="large" @click="() => (chargeVisible = true)">立即购买</a-button>
+              <a-button
+                size="large"
+                :disabled="!indeterminate"
+                @click="() => (chargeVisible = true)"
+              >立即购买</a-button>
               <div class="hashrateNodal">
                 <a-modal
                   title="安全验证"
@@ -181,6 +202,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
@@ -188,7 +210,17 @@ export default {
       chargeVisible: false, //点击弹窗隐藏/显示
       value: 'USDT', //单选框初始值
       indeterminate: false, //设置协议复选框选中状态样式
+      chargeAmount: 1, //  购买份数
+      rewardPower: 0.0, //  达标算力动率
+      currencyValue: 'USDT', //  选择的交互方式
+      unitPriceNum: 0, //  选择的交互方式
     };
+  },
+  created() {
+    console.log(this.power);
+  },
+  computed: {
+    ...mapGetters({ power: 'singleList' }),
   },
   methods: {
     handleClickChange(visible) {
@@ -198,6 +230,39 @@ export default {
     taggleIndeterminate() {
       //设置协议复选框选中状态样式
       this.indeterminate = !this.indeterminate;
+    },
+    // 乘法
+    mult: (basePrice, number, currency) => {
+      let fixnum;
+      currency == 'USDT' ? (fixnum = 4) : (fixnum = 2);
+      let result = (number * basePrice).toFixed(fixnum);
+      return result;
+    },
+    //  购买份数发生变化时
+    onChargeAmountChange() {
+      this.chargeAmount = this.chargeAmount;
+    },
+    //  币种变化
+    onCurrencyValueChange() {
+      this.currencyValue = this.currencyValue;
+    },
+    // 达标算力
+    getReward: (power, powerList) => {
+      let flat = 0.0;
+      if (typeof powerList == 'number') {
+        flat = powerList;
+      } else {
+        for (var i in powerList) {
+          if (
+            Number(power) < Number(powerList[i].section_to) &&
+            Number(power) >= Number(powerList[i].section_form)
+          ) {
+            flat = powerList[i].float;
+          }
+        }
+      }
+      // console.log(flat);
+      return (this.rewardPower = flat);
     },
   },
 };
@@ -313,6 +378,9 @@ export default {
           background-color: #ffab32;
           border-radius: 2px;
           color: #ffffff;
+        }
+        a {
+          color: #898989;
         }
       }
     }

@@ -4,54 +4,55 @@
       mode="inline"
       :openKeys="openKeys"
       @openChange="onOpenChange"
+      :defaultSelectedKeys="['1']"
       :class="{mobileHeader: deviceType !== 'desktop'}"
     >
       <a-sub-menu key="sub1">
         <span slot="title">
-          <a-icon type="user" />我的资产
+          <a-icon type="user" />{{$t('asset.asset02')}}
         </span>
         <a-menu-item key="1">
-          <router-link to="/asset/assetoverview">资产总览</router-link>
+          <router-link to="/asset/assetoverview">{{$t('asset.asset01')}}</router-link>
         </a-menu-item>
         <a-menu-item key="2">
-          <router-link to="/asset/available_assets">可用资产</router-link>
+          <router-link to="/asset/available_assets">{{$t('asset.asset03')}}</router-link>
         </a-menu-item>
         <a-menu-item key="3">
-          <router-link to="/asset/digiccy">数字货币</router-link>
+          <router-link to="/asset/digiccy">{{$t('asset.asset04')}}</router-link>
         </a-menu-item>
         <a-menu-item key="4">
-          <router-link to="/asset/assetbills">资产账单</router-link>
+          <router-link to="/asset/assetbills">{{$t('asset.asset05')}}</router-link>
         </a-menu-item>
       </a-sub-menu>
       <a-sub-menu key="sub2">
         <span slot="title">
-          <a-icon type="laptop" />算力合约
+          <a-icon type="laptop" />{{$t('asset.asset06')}}
         </span>
         <a-menu-item key="5">
-          <router-link to="/hashrateContract/contractList">我的合约</router-link>
+          <router-link to="/hashrateContract/contractList">{{$t('asset.asset07')}}</router-link>
         </a-menu-item>
         <a-menu-item key="6">
-          <router-link to="/hashrateContract/hashrateIncome">算力收益</router-link>
+          <router-link to="/hashrateContract/hashrateIncome">{{$t('asset.asset08')}}</router-link>
         </a-menu-item>
         <a-menu-item key="7">
-          <router-link to="/hashrateContract/hashrateTransfer">算力转让</router-link>
+          <router-link to="/hashrateContract/hashrateTransfer">{{$t('asset.asset09')}}</router-link>
         </a-menu-item>
       </a-sub-menu>
       <a-sub-menu key="sub4">
         <span slot="title">
-          <a-icon type="notification" />我的账户
+          <a-icon type="notification" />{{$t('asset.asset10')}}
         </span>
         <a-menu-item key="9">
-          <router-link to="/account/security">账户&安全</router-link>
+          <router-link to="/account/security">{{$t('asset.asset11')}}</router-link>
         </a-menu-item>
         <a-menu-item key="10">
-          <router-link to="/account/bank_card">银行卡管理</router-link>
+          <router-link to="/account/bank_card">{{$t('asset.asset12')}}</router-link>
         </a-menu-item>
         <a-menu-item key="11">
-          <router-link to="/account/get_coin_addr">提币地址管理</router-link>
+          <router-link to="/account/get_coin_addr">{{$t('asset.asset13')}}</router-link>
         </a-menu-item>
         <a-menu-item key="12">
-          <router-link to="/account/power_age">算龄</router-link>
+          <router-link to="/account/power_age">{{$t('asset.asset14')}}</router-link>
         </a-menu-item>
         <a-menu-item key="13">
           <router-link to="/invite">推荐奖励</router-link>
@@ -63,7 +64,8 @@
 
 <script>
 import { localesEumn } from '@/locales';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
+import { getAssetList,ownCurrency,changeCurrency } from '@/script/api';
 export default {
   data() {
     return {

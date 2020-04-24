@@ -33,6 +33,7 @@ export default new Vuex.Store({
     },
     changeLang(state, lang) {
       state.lang = lang;
+  
     },
   },
   actions: {},

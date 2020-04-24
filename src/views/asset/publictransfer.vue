@@ -2,23 +2,53 @@
     <div id="publictransfer">
       <header>
         <a-breadcrumb separator="">
-        <a-breadcrumb-item href=""><router-link to="/asset/assetoverview" class="fontcolor">资产总览</router-link></a-breadcrumb-item>
+        <a-breadcrumb-item href=""><router-link to="/asset/assetoverview" class="fontcolor">{{$t('asset.asset01')}}</router-link></a-breadcrumb-item>
         <a-breadcrumb-separator style="color:#ffab32">></a-breadcrumb-separator>
-        <a-breadcrumb-item>充值</a-breadcrumb-item>
+        <a-breadcrumb-item>{{$t('publictransfer.publictransfer02')}}</a-breadcrumb-item>
       </a-breadcrumb>  
       </header>
       <div v-if="!isSuccess">
         
         <section>
-          <a-list class="transferorder" :dataSource="data">
-            <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
-              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="item.content">复制地址</a>
-              <p>{{ item.title }}</p>
-              <p>{{ item.content }}</p>
+          <a-list class="transferorder">
+            <a-list-item>
+              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.name">{{$t('publictransfer.publictransfer10')}}</a>
+              <p>{{$t('publictransfer.publictransfer03')}}</p>
+              <p>{{publicdata.name}}</p>
+            </a-list-item>
+            <a-list-item>
+              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.card_num">{{$t('publictransfer.publictransfer10')}}</a>
+              <p>{{$t('publictransfer.publictransfer04')}}</p>
+              <p>{{publicdata.card_num}}</p>
+            </a-list-item>
+            <a-list-item>
+              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.company_adress">{{$t('publictransfer.publictransfer10')}}</a>
+              <p>{{$t('publictransfer.publictransfer05')}}</p>
+              <p>{{publicdata.company_adress}}</p>
+            </a-list-item>
+            <a-list-item>
+              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.bank_name">{{$t('publictransfer.publictransfer10')}}</a>
+              <p>{{$t('publictransfer.publictransfer06')}}</p>
+              <p>{{publicdata.bank_name}}</p>
+            </a-list-item>
+            <a-list-item>
+              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.address">{{$t('publictransfer.publictransfer10')}}</a>
+              <p>{{$t('publictransfer.publictransfer07')}}</p>
+              <p>{{publicdata.address}}</p>
+            </a-list-item>
+            <a-list-item>
+              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.code">{{$t('publictransfer.publictransfer10')}}</a>
+              <p>{{$t('publictransfer.publictransfer08')}}</p>
+              <p>{{publicdata.code}}</p>
+            </a-list-item>
+            <a-list-item>
+              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="amount">{{$t('publictransfer.publictransfer10')}}</a>
+              <p>{{$t('publictransfer.publictransfer09')}}</p>
+              <p>{{amount}}{{defaultcurrency}}</p>
             </a-list-item>
           </a-list>
-          <div class = "fontcolor">请按提示信息向商家付款</div>
-          <a-list :dataSource="tip">
+          <div class = "fontcolor">{{$t('publictransfer.publictransfer11')}}</div>
+          <a-list :dataSource="$t('publictransfer.publictransfer12')">
             <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
               <p>{{ item }}</p>
             </a-list-item>
@@ -26,21 +56,21 @@
         </section>
         <footer>
           <a-button type="primary" @click="confirmTransfer()">
-            我已确认付款
+           {{$t('publictransfer.publictransfer13')}}
           </a-button>
-          <span class="ant-form-text">温馨提示：如有任何疑问请联系在线客服（请在工作日9：00~21：00之间完成充值）</span>
+          <span class="ant-form-text">{{$t('publictransfer.publictransfer14')}}</span>
         </footer>
         <template>
           <div class="cover" v-if="isConfirmTransfer">   
             <a-result
               class="result"
               status="warning"
-              title="確認提醒"
-              subTitle="如您在未支付的情况下点击“确认已转账”，有可能导致您的帐户被冻结"
+              :title="$t('publictransfer.publictransfer15')"
+              :subTitle="$t('publictransfer.publictransfer16')"
             >
               <template v-slot:extra>         
-                <a-button key="buy" @click="cancelConfirmTransfer()">取消</a-button>
-                <a-button type="primary" key="console" @click="okConfirmTransfer()">确认已转账</a-button>
+                <a-button key="buy" @click="cancelConfirmTransfer()">{{$t('publictransfer.publictransfer17')}}</a-button>
+                <a-button type="primary" key="console" @click="okConfirmTransfer()">{{$t('publictransfer.publictransfer18')}}</a-button>
               </template>
             </a-result>
           </div>  
@@ -50,8 +80,8 @@
             <a-result
               class="result"
               status="success"
-              title="操作成功"
-              subTitle="平臺確認到賬後，您購買的貨幣將支付到商戶帳戶並自動完成充值"
+              :title="$t('publictransfer.publictransfer19')"
+              :subTitle="$t('publictransfer.publictransfer20')"
             >
               <template v-slot:extra> 
                 <a-list class="transferorder" :dataSource="order">
@@ -60,7 +90,7 @@
                     <p>{{ item.content }}</p>
                   </a-list-item>
                 </a-list>
-                <a-button type="primary" key="console"><router-link to="/asset/recharge">返回充值首页</router-link></a-button>
+                <a-button type="primary" key="console"><router-link to="/asset/recharge">{{$t('publictransfer.publictransfer21')}}</router-link></a-button>
               </template>
             </a-result>
       </div>
@@ -68,24 +98,15 @@
 </template>
 <<script>
 import Clipboard from 'clipboard'
-const data = [
-  {title:'收款方户名',content:'Racing car sprays burning fuel into crowd.'},
-  {title:'收款方卡号',content:'Japanese princess to wed commoner.'},
-  {title:'收款人地址',content:'Australian walks 100km after outback crash.'},
-  {title:'收款方开户行',content:'Man charged over missing wedding girl.'},
-  {title:'银行地址',content:'Los Angeles battles huge wildfires.'},
-  {title:'WIFT号',content:'Los Angeles battles huge wildfires.'},
-  {title:'转账金额',content:'Los Angeles battles huge wildfires.'},
-];
+import {getPublicMess} from '@/script/api'
+import { mapGetters } from "vuex";
+
 const order = [
   {title:'订单号',content:'Racing car sprays burning fuel into crowd.'},
   {title:'充值方式',content:'Japanese princess to wed commoner.'},
   {title:'充值金额',content:'Australian walks 100km after outback crash.'},
   {title:'充值账户',content:'Man charged over missing wedding girl.'}
 ];
-const tip = [
-  '1、请向指定银行账户汇款','2、请用第三方网银或者银行柜台转款','3、超过10分钟未确认，请联系客服核查','4、周末充值到账速度较慢，顺延至工作日处理'
-]
 export default {
   data() {
     return {
@@ -94,10 +115,17 @@ export default {
       showLoadingMore: true,
       isConfirmTransfer: false,
       isSuccess:false,
-      data,
-      order,
-      tip
+      publicdata:{},
+      amount:'',
+      order
     };
+  },
+  created(){
+    this.amount = this.$route.params.amount;
+    getPublicMess({currency:this.defaultcurrency}).then((res)=>{
+      const {datas} = res;
+      this.publicdata=datas.bank_info;
+    })
   },
   mounted() {
       var clipboard = new Clipboard('.paste');
@@ -107,6 +135,9 @@ export default {
       clipboard.on('error', function(e) {
           console.log('复制失败')
       });
+  },
+  computed:{
+    ...mapGetters(['defaultcurrency'])
   },
   methods: {
     confirmTransfer(){

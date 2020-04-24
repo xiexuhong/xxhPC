@@ -24,7 +24,11 @@ export default {
     ...mapGetters(['deviceType']),
   },
   methods: {},
-  created() {},
+  created() {
+    this.$store.dispatch('requestMessageList', {
+      curpage: 1,
+    });
+  },
   beforeDestroy() {},
 };
 </script>
