@@ -2,37 +2,37 @@
     <div id="extractcoin">
         <header>
             <a-breadcrumb separator="">
-            <a-breadcrumb-item href=""><router-link to="/asset/assetoverview" class="fontcolor">资产总览</router-link></a-breadcrumb-item>
+            <a-breadcrumb-item href=""><router-link to="/asset/assetoverview" class="fontcolor">{{$t('asset.asset03')}}</router-link></a-breadcrumb-item>
             <a-breadcrumb-separator style="color:#ffab32">></a-breadcrumb-separator>
-            <a-breadcrumb-item>提币</a-breadcrumb-item>
+            <a-breadcrumb-item>{{$t('extractcoin.extractcoin01')}}</a-breadcrumb-item>
             </a-breadcrumb>  
         </header>
         <template>
         <a-form-model  :form="form">
-            <a-form-model-item label="选择提币类型">
-                <a-radio-group v-model="form.coin" buttonStyle="solid">
-                    <a-radio-button value="BTC">BTC</a-radio-button>
-                    <a-radio-button value="BHP">BHP</a-radio-button>
-                    <a-radio-button value="USDT">USDT</a-radio-button>
+            <a-form-model-item :label="$t('extractcoin.extractcoin02')">
+                <a-radio-group buttonStyle="solid" :defaultValue="coin_list[0].coin">
+                    <a-radio-button v-for="item of coin_list" :key="item.id" @click="checkcoin(item.id)" :value="item.coin">{{item.coin}}</a-radio-button>
                 </a-radio-group>
             </a-form-model-item>
 
-            <a-form-model-item label="提币数量">
+            <a-form-model-item :label="$t('extractcoin.extractcoin03')">
                 <a-input-number v-model="form.amount" :min='0' :max='10000' />
                 <span class="ant-form-text">
-                    可用余额:
+                    {{$t('extractcoin.extractcoin04')}}
+                </span>
+                <span class="ant-form-text">
+                   {{available}}
                 </span>
                 <span class="ant-form-text">
                    {{form.coin}}
                 </span>
                 <span class="ant-form-text fontcolor">
-                    全部
+                    {{$t('extractcoin.extractcoin05')}}
                 </span>
             </a-form-model-item>
-            <a-form-model-item label="提币地址">
+            <a-form-model-item :label="$t('extractcoin.extractcoin06')">
                 <a-select
                     v-model="form.address"
-                    placeholder="Please select favourite colors"
                 >
                     <a-select-option value="red" >
                     Red
@@ -45,35 +45,32 @@
                     </a-select-option>
                 </a-select>
                 <span class="ant-form-text">
-                   <router-link to="/asset/extractcoin/extractcoinaddress" class="fontcolor">提币地址管理</router-link>
+                   <router-link to="/asset/extractcoin/extractcoinaddress" class="fontcolor">{{$t('extractcoin.extractcoin07')}}</router-link>
                 </span>
             </a-form-model-item>
 
-            <a-form-model-item label="手续费">
+            <a-form-model-item :label="$t('extractcoin.extractcoin08')">
                 <div class="components-input-demo-presuffix">
                     <a-input readOnly :value="form.fee" :suffix="form.coin" />
                 </div>
             </a-form-model-item>
 
-            <a-form-model-item label="选择提币方式">
+            <a-form-model-item :label="$t('extractcoin.extractcoin09')">
                 <a-radio-group v-model="form.type">
                     <a-radio value="BHPay">
-                    我的BHPay钱包<span class="fontcolor">（无需手续费）</span>
+                    {{$t('extractcoin.extractcoin10')}}<span class="fontcolor">{{$t('extractcoin.extractcoin11')}}</span>
                     </a-radio>
                     <a-radio value="other">
-                    其他数字钱包
+                    {{$t('extractcoin.extractcoin12')}}
                     </a-radio>
                 </a-radio-group>
             </a-form-model-item>            
-            <a-form-model-item label="提示">
-                <p class="text">信息1</p>
-                <p class="text">信息2</p>
-                <p class="text">信息3</p>
-                <p class="text">信息4</p>
+            <a-form-model-item :label="$t('extractcoin.extractcoin13')">
+                <p class="text" v-for="(item,index) of $t('extractcoin.extractcoin14')" :key="index">{{item}}</p>
             </a-form-model-item>
             <a-form-model-item>
                 <a-button type="primary">
-                    申请提币
+                    {{$t('extractcoin.extractcoin15')}}
                 </a-button>
             </a-form-model-item>
         </a-form-model>
@@ -84,22 +81,33 @@
 
 <script>
 import { setup } from '@/locales';
+import { mapGetters } from 'vuex';
 export default {
     data(){
         return  {
             form: {
-                coin:'BTC',
+                coin:'',
                 amount: '1',
                 address:'red',
                 fee:'0.0008',
                 type: 'BHPay',
             },
+            available:""
         }
     },
+    created(){
+        this.form.coin = this.coin_list[0].coin;
+        this.available= this.coin_list[0].available;
+    },
+    computed:{
+        ...mapGetters(['coin_list']),
+    },
     methods: {
-        changeCoin(coin){
-            this.form.coin = coin;
-        },
+        checkcoin(index) {
+            this.form.coin = this.coin_list[index].coin;
+            this.available = this.coin_list[index].available;
+            console.log(this.available)
+        }, 
         normFile(e) {
             console.log('Upload event:', e);
             if (Array.isArray(e)) {
@@ -127,6 +135,7 @@ export default {
         .text{
             margin: 0;
             line-height: 2;
+            color:#999999
         }
     
         .ant-radio-group-solid .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {

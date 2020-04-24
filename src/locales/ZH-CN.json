@@ -41,14 +41,17 @@
     "assetoverview06":"周",
     "assetoverview07":"月",
     "assetoverview08":"净资产总额",
-    "assetoverview09":"",
-    "assetoverview10":"",
+    "assetoverview09":"时间",
+    "assetoverview10":"类型",
     "assetoverview11":"币种",
     "assetoverview12":"总量",
     "assetoverview13":"估值",
     "assetoverview14":"可用",
     "assetoverview15":"冻结",
-    "assetoverview16":"操作"
+    "assetoverview16":"操作",
+    "assetoverview17":"账户/提币地址",
+    "assetoverview18":"数量",
+    "assetoverview19":"状态"
   },
   "assetoption":{
     "assetoption01":"充值",
@@ -67,7 +70,7 @@
     "assetbills03":"最近一周",
     "assetbills04":"最近一月",
     "assetbills05":"最近三月",
-    "assetbills06":"",
+    "assetbills06":"类型",
     "assetbills07":"",
     "assetbills08":"",
     "assetbills09":"",
@@ -97,8 +100,7 @@
                   "4. 網絡為BTC網絡；",
                   "5. 最小充值金額：100 USDT ，小於最小金額的充值將不會上賬且無法退回；",
                   "6. 您的充值地址不會經常改變，可以重複充值；如有更改，我們會盡量通過網站公告或郵件通知您；",
-                  "7. 請務必確認電腦及瀏覽器安全，防止信息被篡改或洩露。"],
-    "recharge19":"返回充值首页"
+                  "7. 請務必確認電腦及瀏覽器安全，防止信息被篡改或洩露。"]
   },
   "publictransfer":{
     "publictransfer02":"充值",
@@ -124,5 +126,38 @@
     "publictransfer22":"确认已转账",
     "publictransfer23":"确认已转账",
     "publictransfer24":"确认已转账"
+  },
+  "withdraw":{
+    "withdraw01":"提现",
+    "withdraw02":"选择币种",
+    "withdraw03":"提现金额",
+    "withdraw04":"请输入一个整数",
+    "withdraw05":"提现方式",
+    "withdraw06":"添加银行卡",
+    "withdraw07":"申请提现",
+    "withdraw08":"提现申请发起成功",
+    "withdraw09":"我们将在1~3个工作日内转入个人提现申请账户",
+    "withdraw10":"返回提现首页"
+  },
+  "extractcoin":{
+    "extractcoin01":"提币",
+    "extractcoin02":"选择提币类型",
+    "extractcoin03":"提币数量",
+    "extractcoin04":"可用余额:",
+    "extractcoin05":"全部",
+    "extractcoin06":"提币地址",
+    "extractcoin07":"提币地址管理",
+    "extractcoin08":"手续费",
+    "extractcoin09":"选择提币方式",
+    "extractcoin10":"我的BHPay钱包",
+    "extractcoin11":"（无需手续费）",
+    "extractcoin12":"其他数字钱包",
+    "extractcoin13":"提示",
+    "extractcoin14":["1. 提筆手續費為礦工費，RR Mine不會收取您的費用","2. 提必請務必保證提幣地址的準確性，否則資產將無法找回","3. 後台審核后一般0~60分鐘到賬，因網絡原因有可能延遲","4. 如長時間未到賬，請聯繫客服核查","5. BHPay不收取手續費"],
+    "extractcoin15":"申请提币",
+    "extractcoin16":"",
+    "extractcoin17":"",
+    "extractcoin18":"",
+    "extractcoin19":""
   }
 }

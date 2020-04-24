@@ -21,7 +21,7 @@
             <input type="date" v-model = "starttime"/><span>——</span><input type="date" v-model = "endtime"/>
             <div class="button_area time">
               <a-button class="fontcolor" @click="choosetime(0)">{{$t('assetbills.assetbills02')}}</a-button>
-              <a-button @click="choosetime(7)">{{$t('assetbills.assetbills03')}}</a-button>
+              <a-button @click="choosetime(6)">{{$t('assetbills.assetbills03')}}</a-button>
               <a-button @click="choosetime(30)">{{$t('assetbills.assetbills04')}}</a-button>
               <a-button @click="choosetime(90)">{{$t('assetbills.assetbills05')}}</a-button>
             </div>
@@ -29,7 +29,7 @@
           </a-descriptions-item>
         </a-descriptions>
         <a-descriptions :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
-          <a-descriptions-item label="类型">
+          <a-descriptions-item :label="$t('assetbills.assetbills06')">
             <div class="button_area options">
               <a-button class="fontcolor" @click="options(0)">{{$t('assetoption.assetoption07')}}</a-button>
               <a-button @click="options(1)">{{$t('assetoption.assetoption01')}}</a-button>
@@ -44,16 +44,7 @@
       </div>
     </a-card>
     <br />
-    <a-table :columns="columns" :dataSource="data">
-      <a slot="name" slot-scope="text">{{ text }}</a>
-      <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
-      <span slot="action" slot-scope="text, record">
-        <a>Invite 一 {{ record.name }}</a>
-        <a-divider type="vertical" />
-        <a>Delete</a>
-        <a-divider type="vertical" />
-        <a class="ant-dropdown-link"> More actions <a-icon type="down" /> </a>
-      </span>
+    <a-table :columns="columns" :dataSource="filterList">
     </a-table>
   </div> 
 </template>
@@ -67,135 +58,88 @@ export default {
     return {
       data: [
         {
-          key: '1',
-          coin: 'John Brown',
-          total: 32,
-          USD: 'New York No. 1 Lake Park',
-          available: '25',
-          freze: '7',
+          time: '2020.4.24',
+          type: 'withdraw',
+          coin: 'usd',
+          address: 'New York No. 1 Lake Park',
+          number: '125',
+          state: '审核中',
+        },
+        {
+          time: '2020.4.20',
+          type: 'rollin',
+          coin: 'usdt',
+          address: 'New York No. 1 Lake Park',
+          number: '125',
+          state: '审核中',
+        },
+        {
+          time: '2020.4.17',
+          type: 'recharge',
+          coin: 'twd',
+          address: 'New York No. 1 Lake Park',
+          number: '125',
+          state: '已支付',
+        },
+        {
+          time: '2020.3.24',
+          type: 'recharge',
+          coin: 'usd',
+          address: 'New York No. 1 Lake Park',
+          number: '125',
+          state: '成功',
+        },
+        {
+          time: '2020.3.15',
+          type: 'rollout',
+          coin: 'usdt',
+          address: 'New York No. 1 Lake Park',
+          number: '125',
+          state: '成功',
+        },
+        {
+          time: '2020.1.30',
+          type: 'getcoin',
+          coin: 'BTC',
+          address: 'New York No. 1 Lake Park',
+          number: '125',
+          state: '失败',
         },
       ],
-      searchText: '',
-      searchInput: null,
-      searchedColumn: '',
       columns: [
         {
-          title: '时间',
+          title: this.$t('assetoverview.assetoverview09'),
           dataIndex: 'time',
-          key: 'time',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.time
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              }, 0);
-            }
-          },
+          key: 'time'
         },
         {
-          title: '类型',
+          title: this.$t('assetoverview.assetoverview10'),
           dataIndex: 'type',
-          key: 'type',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.type
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
+          key: 'type'
         },
         {
-          title: '币种',
+          title: this.$t('assetoverview.assetoverview11'),
           dataIndex: 'coin',
-          key: 'coin',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.coin
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
+          key: 'coin'
         },
         {
-          title: '账户/提币地址',
+          title: this.$t('assetoverview.assetoverview17'),
           dataIndex: 'address',
-          key: 'address',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.address
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
+          key: 'address'
         },
         {
-          title: '数量',
+          title: this.$t('assetoverview.assetoverview18'),
           dataIndex: 'number',
-          key: 'number',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.number
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
+          key: 'number'
         },
         {
-          title: '状态',
-          key: 'state',
-          scopedSlots: { customRender: 'action' },
+          title: this.$t('assetoverview.assetoverview19'),
+          dataIndex: 'state',
+          key: 'state'
         },
       ],
       filterText:"",
+      filterItem:"",
       starttime:'',
       endtime:'',
       isHide:false
@@ -224,6 +168,28 @@ export default {
   },
   computed:{
     ...mapGetters(['currency_list','defaultcurrency','lang','coin_list','total']),
+    filterList() {
+      var _this = this;
+      return this.data.filter(function(e) {
+          var date = new Date(e.time);
+          var startdate = new Date(_this.starttime);
+          var enddate = new Date(_this.endtime);
+          startdate.setDate(startdate.getDate() - 1);
+          enddate.setDate(enddate.getDate() +1);
+          return date.getTime()<enddate.getTime()&&date.getTime()>startdate.getTime();
+      }).filter(function(e){
+          var content ="";
+          switch(_this.filterText){
+            case 1:content="recharge";break;
+            case 2:content="withdraw";break;
+            case 3:content="getcoin";break;
+            case 4:content="rollin";break;
+            case 5:content="rolliout";break;
+            default:content="";
+          }
+          return e.type.slice(0, content.length) === content.toLowerCase()
+      });
+    },
   },
   methods: {
     checkcurrency(index) {
@@ -249,12 +215,12 @@ export default {
         item.classList.remove('fontcolor');
       }
       switch(days){
-        case 0: buttonnode[0].classList.add('fontcolor');break;
-        case 7: buttonnode[1].classList.add('fontcolor');break;
-        case 30: buttonnode[2].classList.add('fontcolor');break;
-        case 90: buttonnode[3].classList.add('fontcolor');break;
+        case 0: buttonnode[0].classList.add('fontcolor');this.filterText = "0";break;
+        case 7: buttonnode[1].classList.add('fontcolor');this.filterText = "7";break;
+        case 30: buttonnode[2].classList.add('fontcolor');this.filterText = "30";break;
+        case 90: buttonnode[3].classList.add('fontcolor');this.filterText = "90";break;
       }
-      console.log(buttonnode)
+      this.filterItem = "time";
     },
     options(index){
       var buttonnode = document.querySelectorAll('.options>button');
@@ -262,15 +228,8 @@ export default {
         item.classList.remove('fontcolor');
       }
       buttonnode[index].classList.add('fontcolor');
-    },
-    handleSearch(selectedKeys, confirm, dataIndex) {
-      confirm();
-      this.searchText = selectedKeys[0];
-      this.searchedColumn = dataIndex;
-    },
-    handleReset(clearFilters) {
-      clearFilters();
-      this.searchText = '';
+      this.filterItem = "type";
+      this.filterText = index;
     },
     changeLang() {
       setup('en');
