@@ -22,7 +22,7 @@
         <div>
           <a-form>
             <a-form-item label="短信验证码">
-              <a-input prefix="请输入短信验证码" v-decorator="['code',{ rules: [{ required: true, message: 'Please input your code!' }] },]">
+              <a-input placeholder="请输入短信验证码" v-decorator="['code',{ rules: [{ required: true, message: 'Please input your code!' }] },]">
                 <span slot="suffix" class="color_y" @click="sendCode()"> {{ codeText }} </span>
               </a-input>
               <span class="code_til_text">輸入您的手機 {{ userInfo.mobile }} 收到的驗證碼</span>
@@ -67,10 +67,10 @@
 </template>
 <script>
 import { mapGetters, mapMutations } from 'vuex';
-import { verifyCode } from '@/mixins/verifyCode';
+import { verifyCode,payment } from '@/mixins/verifyCode';
 
 export default {
-  verify_code: [verifyCode],
+  mixins: [verifyCode],
   data() {
     return {
       loading: false,
@@ -81,12 +81,19 @@ export default {
   computed: {
     ...mapGetters(['user']),
   },
-  created() {
-    this.userInfo = this.$ls.get("userInfo");
+  // created() {
+  //   this.userInfo = this.$ls.get("userInfo");
+  // },
+  async created() {
+      const { datas } = await payment({
+        payment: 'USDT',
+        type: 'transfer'
+      });
+      console.log("zhifu: ", datas);
   },
   methods: {
     sendCode(){
-      this.verifyCode(this.userInfo.mobile, 3);
+  //     this.sendVerifyCode(this.userInfo.mobile, 'reset_trade_pwd');
     },
     handleChange(info) {
       if (info.file.status === 'uploading') {
@@ -99,9 +106,9 @@ export default {
       }
     },
     beforeUpload(file) {
-      const isJpgOrPng = file.type === 'image/jpg' || file.type === 'image/png' || file.type === 'image/gif';
+      const isJpgOrPng = (file.type === 'image/jpg' || file.type === 'image/png' || file.type === 'image/gif');
       if (!isJpgOrPng) {
-        this.$message.error('You can only upload JPG file!');
+        this.$message.error('You can only upload JPG/png/gif image!');
       }
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {

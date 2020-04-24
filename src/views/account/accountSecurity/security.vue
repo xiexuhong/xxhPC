@@ -132,8 +132,11 @@
                         @cancel="() => changePwd(false)"
                       >
                         <a-from :form="form" @submit="changeLoginPwd">
-                          <a-form-item label="舊密碼">
-                            <a-input placeholder="请输入舊密碼" v-decorator="['old_pwd',{ rules: [{ required: true, message: 'Please input your old Password!' }] },]" />
+                          <a-form-item label="短信验证码">
+                            <a-input placeholder="请输入短信验证码" v-decorator="['code',{ rules: [{ required: true, message: 'Please input your verify code!' }] },]" @blur="validateCode()">
+                              <span slot="suffix" class="color_y" @click="sendCode()"> {{ codeText }} </span>
+                            </a-input>
+                            <!-- <span class="code_til_text">輸入您的手機 {{ datas.account }} 收到的驗證碼</span> -->
                           </a-form-item>
                           <a-form-item label="新密碼">
                             <a-input placeholder="6~16位字母、數字和特殊符號" v-decorator="['new_pwd',{ rules: [{ required: true, message: 'Please input your old Password!' }] },]" />
@@ -212,7 +215,10 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex';
 import { getAccountInfo } from '@/script/api';
+import { verifyCode } from '@/mixins/verifyCode';
+
 export default {
+  mixins: [verifyCode],
   data() {
     return {
       isOpenPwd: false, // 修改登录密码
@@ -247,16 +253,40 @@ export default {
       });
   },
   methods: {
+    sendCode(){
+      this.sendVerifyCode(this.datas.account, 'change_pwd');
+    },
     changePwd(isOpenPwd) {
       this.isOpenPwd = isOpenPwd;
-      console.log('click', isOpenPwd);
     },
     changeTrasPwd(isOpenTrasPwd) {
       this.isOpenTrasPwd = isOpenTrasPwd;
-      console.log('click', isOpenTrasPwd);
     },
     goVerify() {
       console.log('去认证');
+    },
+    validateCode(){
+      this.form.validateFields(async (err, values) => {
+        console.log("values: "+ JSON.stringify(values));
+        // if (!err) {
+        //   const { verify_code } = values;
+        //   await checkSmsCode({
+        //     mobile: account,
+        //     areacode: this.country.number,
+        //     type: 1,
+        //     verify: verify,
+        //   });
+        //   const { datas } = await register({
+        //     account,
+        //     password,
+        //     invite_code,
+        //     country: this.country.short,
+        //     areacode: this.country.number,
+        //   });
+        //   this.saveUser(datas);
+        //   this.$router.push('/');
+        // }
+      });
     },
     // validatePwdBlur(e){
     //   const reg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;

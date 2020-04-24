@@ -12,30 +12,33 @@
         <a-row>
           <a-col :span="8">
             <small>我的当前算龄</small>
-            <p class="t_bold">450 TD</p>
+            <p class="t_bold">{{ datas.my_td }} TD</p>
           </a-col>
           <a-col :span="8">
             <small>历史最高算龄</small>
-            <p class="t_bold">800 TD</p>
+            <p class="t_bold">{{ datas.history_max }} TD</p>
           </a-col>
         </a-row>
-        <a-row>
-          <a-col :span="12">
+        <a-row class="myTD">
+          <div :class="{'isHide': datas.my_td > initAge}">
             <small>当前算领</small>
-          </a-col>
-          <a-col :span="12" class="t_right">
-            <small class="color_y g_power">1000TD</small>
-          </a-col>
+          </div>
+          <div class="t_right" v-if="datas.my_td < initAge">
+            <small class="color_y g_power">{{ datas.my_td < initAge ? initAge : datas.my_add }} TD</small>
+          </div>
+          <div v-else :style="'margin-left: ' + (range(datas.my_td, datas.my_add, datas.people_add)-8) + '%'">
+            <small class="color_y g_power">{{ datas.my_td < initAge ? initAge : datas.my_add }} TD</small>
+          </div>
         </a-row>
-        <a-progress :percent="75" :showInfo="false" strokeColor="#FFB149" />
+        <a-progress :percent="range(datas.my_td, datas.my_add, datas.people_add)" :showInfo="false" strokeColor="#FFB149" />
         <a-row>
-          <a-col :span="12">
-            <small>當前你的算齡未達到標準算齡， 暫未獲得雙挖礦機的資格</small>
-            <!-- <small>您的当前增长速度15TD.人均增长速度98TD</small>
-            <small>您的当前增长速度100TD.人均增长速度98TD</small> -->
+          <a-col :span="12">   
+            <small v-if='datas.my_td < initAge'>當前你的算齡未達到標準算齡， 暫未獲得雙挖礦機的資格</small>
+            <small v-else  class="color_y">人均增长速度 {{ datas.people_add }} TD.您的当前增长速度 {{ datas.my_add }} TD</small>
           </a-col>
           <a-col :span="12" class="t_right">
-            <small class="color_y">入门算龄</small>
+            <small class="color_y">{{ datas.my_td < initAge ? '入门算龄' : datas.people_add +
+              " TD" }}</small>
           </a-col>
         </a-row>
       </a-card>
@@ -57,7 +60,7 @@
                 </a-col>
                 <a-col :span="1"></a-col>
                 <a-col :span="18">
-                  <span class="color_y">算龄(大于246132)</span>
+                  <span class="color_y">算龄(大于{{ datas.percent_td.td_p99 }})</span>
                 </a-col>
               </a-row>
               <a-row>
@@ -68,7 +71,7 @@
                 </a-col>
                 <a-col :span="1"></a-col>
                 <a-col :span="18">
-                  <span class="color_y">算龄(74744-246132)</span>
+                  <span class="color_y">算龄({{ datas.percent_td.td_p94 }}-{{ datas.percent_td.td_p99 }})</span>
                 </a-col>
               </a-row>
               <a-row>
@@ -79,7 +82,7 @@
                 </a-col>
                 <a-col :span="1"></a-col>
                 <a-col :span="18">
-                  <span class="color_y">算龄(23187-74744)</span>
+                  <span class="color_y">算龄({{ datas.percent_td.td_p80 }}-{{ datas.percent_td.td_p94 }})</span>
                 </a-col>
               </a-row>
               <a-row>
@@ -90,8 +93,13 @@
                 </a-col>
                 <a-col :span="1"></a-col>
                 <a-col :span="18" class="img_own">
-                  <span class="color_y">算龄(1000-23187)</span>
-                  <img src="../../assets/image/account/iconmoren.png" alt="" />
+                  <span class="color_y">算龄({{ initAge }}-{{ datas.percent_td.td_p80 }})</span>
+                  <div class="img_div">
+                    <a-tooltip placement="topLeft" title="I’m here" :defaultVisible=true>
+                      <img :src="datas.avatar" alt="" />
+                    </a-tooltip>
+                  </div>
+                  
                 </a-col>
               </a-row>
             </div>
@@ -100,22 +108,92 @@
       </a-card>
       <a-alert
         message="您的算齡未達標，未獲得雙挖礦機資源，沒有機內排名區間，快去下單算力加速成長，成長越快，等級越高，權益越大"
-        type="error"
-      />
-      <!-- <a-alert
-        message="您目前排名在P4区间（算龄低于80%位数），日增长速度比人均增长速度少80TD。快去下单算力加速成长，等级越高，权益越大。"
-        type="error"
+        type="error" v-if="datas.my_td < initAge"
       />
       <a-alert
-        message="您目前排名在P4区间（算龄低于80%位数），日增长速度比人均增长速度多80TD。坚持成长，等级越高，权益越大。"
-        type="error"
-      /> -->
+        :message="'您目前排名在'+ isRank(datas.my_td, datas.percent_td.td_p99, datas.percent_td.td_p94,
+                  datas.percent_td.td_p80, initAge) +'区间，日增长速度比人均增长速度少'+ addSpeed(data.people_add, data.my_add) +'TD。快去下单算力加速成长，等级越高，权益越大。'"
+        type="error" v-else-if="datas.my_td > initAge && addSpeed(data.people_add, data.my_add) > 0"
+      />
+      <a-alert
+        :message="'您目前排名在'+ isRank(datas.my_td, datas.percent_td.td_p99, datas.percent_td.td_p94,
+                  datas.percent_td.td_p80, initAge) +'区间，日增长速度比人均增长速度多'+ addSpeed(data.people_add, data.my_add) +'TD。坚持成长，等级越高，权益越大。'"
+        type="error"  v-else-if="datas.my_td > initAge && addSpeed(data.people_add, data.my_add) < 0"
+      />
       <div class="btn_div">
-        <a-button type="primary">加速成長</a-button>
+        <a-button type="primary" @click="goRent()">加速成長</a-button>
       </div>
     </div>
   </main>
 </template>
+<script>
+import { powerAge } from '@/script/api';
+
+export default {
+  data() {
+    return {
+      datas: {
+        percent_td: {}
+      },
+      initAge: 1000
+    };
+  },
+  computed: {
+    range: function () {
+      //滚动条显示长度
+      return function (thisval, myAdd, peopleAdd) {
+        if (Number(thisval) == 0) {
+          return 0;
+        } else if (Number(thisval) < 1000) {
+          return ((Number(thisval) / 1000) * 100);
+        } else if (
+          Number(thisval) >= 1000 &&
+          Number(myAdd) < Number(peopleAdd)
+        ) {
+          return ((myAdd / peopleAdd) * 100);
+        } else {
+          return 80;
+        }
+      }
+    },
+    isRank: function () {
+      //排名区间
+      return function (powerAge, td_p99, td_p94, td_p80, in_td) {
+        var n_powerAge = Number(powerAge),
+          n_td_p99 = Number(td_p99),
+          n_td_p94 = Number(td_p94),
+          n_td_p80 = Number(td_p80),
+          n_in_td = Number(in_td);
+        if (n_td_p99 <= n_powerAge) {
+          return "P1";
+        } else if (n_td_p94 <= n_powerAge) {
+          return "P2";
+        } else if (n_td_p80 <= n_powerAge) {
+          return "P3";
+        } else if (n_in_td <= n_powerAge) {
+          return "P4";
+        }
+      };
+    },
+    addSpeed: function () {
+      //增长速度
+      return function (average, myAdd) {
+        return Number(average) - Number(myAdd);
+      };
+    },
+  },
+  async created() {
+    const { datas } = await powerAge();
+      this.datas = datas;
+      console.log("suanling: ", datas);
+  },
+  methods: {
+    goRent(){
+      this.$router.push('/hashrateMarket');
+    }
+  }
+}
+</script>
 <style scoped>
 main {
   width: 95% !important;
@@ -180,8 +258,22 @@ small {
 .grade_div .ant-card-body {
   padding: 0;
 }
+.img_own .img_div{
+  display: inline;
+  margin-left: 3%;
+}
 .img_own img {
   display: inline-block;
   width: 10%;
+  border-radius: 50%;
+}
+.myTD {
+  display: flex;
+}
+.myTD div{
+  min-width: 50%;
+}
+.isHide{
+  display: none;
 }
 </style>

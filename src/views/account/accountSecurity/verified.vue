@@ -21,7 +21,7 @@
       <div class="desc">
         <p>
           <span>證件類型:</span>
-          <span>護照</span>
+          <span>{{ datas.card_type_desc }}</span>
         </p>
         <p>
           <span>證件號:</span>
@@ -47,7 +47,7 @@ export default {
   async created() {
       const { datas } = await getUserAccountInfo();
       this.datas = datas;
-      console.log("datas: ", datas);
+      console.log("datas111: ", datas);
   },
 };
 </script>

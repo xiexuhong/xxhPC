@@ -66,6 +66,29 @@ export const getUserAccountInfo = data => post('/index.php?act=wallet&op=getUser
 
 /**
  * @method 发送验证码
- * @param type -- 验证码类型 reset_trade_pwd 重置交易密码
+ * @param type -- 验证码类型 reset_trade_pwd--重置交易密码 change_pwd--修改密码
  */
 export const sendVerifyCode = data => post('/index.php?act=account&op=sendVerifyCode', data);
+
+/**
+ * @method 验证验证码
+ * @param type -- 验证码类型 reset_trade_pwd 重置交易密码
+ * @param verify -- 验证码
+ */
+export const checkVerifyCode = data => post('/index.php?act=account&op=checkSmsCode', data);
+
+/**
+ * @method 算龄
+ */
+export const powerAge = data => post('/index.php?act=account&op=powerAge', data);
+
+/**
+ * @method 银行列表
+ * @param currency--货币类型
+ */
+export const getBankList = data => post('/index.php?act=wallet&op=getBankList', data);
+
+/**
+ * @method 我的资产
+ */
+export const payment = data => post('/index.php?act=payment&op=index', data);

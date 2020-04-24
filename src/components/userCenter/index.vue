@@ -54,7 +54,7 @@
           <router-link to="/account/power_age">算龄</router-link>
         </a-menu-item>
         <a-menu-item key="13">
-          <router-link to="/account/invite">推荐奖励</router-link>
+          <router-link to="/invite">推荐奖励</router-link>
         </a-menu-item>
       </a-sub-menu>
     </a-menu>
