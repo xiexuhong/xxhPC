@@ -79,4 +79,9 @@ export const getVerifyStatus = () => post('/index.php?act=account&op=realNameVer
  */
 export const getInviteList = data => post('/index.php?act=setting&op=inviterList', data);
 
+/**
+ * @method 获取邀请链接
+ */
+export const getInviteUrl = () => post('/index.php?act=setting&op=inviteUrl');
+
 export const getAssetList = data => get('/index.php?act=asset&op=list', data);

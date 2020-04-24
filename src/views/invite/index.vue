@@ -5,11 +5,11 @@
         .title 我的專屬分享方式
         a-form(:form="form" @submit="submit")
             a-form-item(label="註冊鏈接")
-                a-input-search(addonBefore="Http://" v-decorator="['url',{}]")
-                    a-button(slot="enterButton" type="primary") 复制
+                a-input-search(v-decorator="['url',{initialValue:invite_url}]")
+                    a-button.copyUrl(slot="enterButton" type="primary" :data-clipboard-text="invite_url") 复制
             a-form-item(label="邀请码")
                 a-input-search(v-decorator="['invite_code',{initialValue:invite_code}]")
-                    a-button(slot="enterButton" type="primary") 复制
+                    a-button.copyCode(slot="enterButton" type="primary" :data-clipboard-text="invite_code") 复制
             a-form-item(label="邮箱")
                 a-input(v-decorator="['email',{}]")
             a-form-item()
@@ -30,7 +30,8 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import { getInviteList } from '@/script/api';
+import { getInviteList, getInviteUrl } from '@/script/api';
+import Clipboard from 'clipboard';
 const column1 = [
   {
     title: '邀请注册',
@@ -77,6 +78,7 @@ export default {
       column1,
       column2,
       invite_code: null,
+      invite_url: null,
       data1: [],
       data2: [],
     };
@@ -92,6 +94,10 @@ export default {
       this.data1 = [{ num: list.num, rent_num: list.rent_num, power: list.power, key: 0 }];
       this.data2 = list.list || [];
     },
+    async requestInviteUrl() {
+      const { datas } = await getInviteUrl();
+      this.invite_url = datas;
+    },
     onChange(val) {},
     submit() {},
   },
@@ -100,6 +106,23 @@ export default {
   },
   created() {
     this.requestInviteList(1);
+    this.requestInviteUrl();
+  },
+  mounted() {
+    const clipboard1 = new Clipboard('.copyUrl');
+    const clipboard2 = new Clipboard('.copyCode');
+    clipboard1.on('success', () => {
+      this.$message.success('复制成功');
+    });
+    clipboard1.on('error', () => {
+      this.$message.success('复制失败');
+    });
+    clipboard2.on('success', () => {
+      this.$message.success('复制成功');
+    });
+    clipboard2.on('error', () => {
+      this.$message.success('复制失败');
+    });
   },
 };
 </script>
