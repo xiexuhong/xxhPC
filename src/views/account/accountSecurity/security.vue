@@ -216,9 +216,11 @@
 import { mapGetters, mapMutations } from 'vuex';
 import { getAccountInfo } from '@/script/api';
 import { verifyCode } from '@/mixins/verifyCode';
+import { verifyMixin } from '@/mixins/verifyMixin';
 
 export default {
   mixins: [verifyCode],
+  mixins: [verifyMixin],
   data() {
     return {
       isOpenPwd: false, // 修改登录密码
@@ -231,12 +233,16 @@ export default {
   beforeCreate() {
     this.form = this.$form.createForm(this, { name: 'changePwd' });
   },
+  computed: {
+    ...mapGetters(['verifyStatus']),
+  },
+  ...mapMutations(['hasVerified']),
   async created() {
       const { datas } = await getAccountInfo();
       this.datas = datas;
       console.log("datas: ", datas);
       this.isAssociated = !!datas.bhpay_account;
-
+      this.verifyStatus ? isVerified : !isVerified;
       this.$ls.set('userInfo',{
         mobile: datas.account
       })
@@ -268,7 +274,7 @@ export default {
       this.isOpenTrasPwd = isOpenTrasPwd;
     },
     goVerify() {
-      console.log('去认证');
+      this.requestVerifyStatus(this.userInfo.mobile, 'reset_trade_pwd');
     },
     validateCode(){
       this.form.validateFields(async (err, values) => {

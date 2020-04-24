@@ -21,7 +21,7 @@ export const verifyMixin = {
           case -2:
           case -1:
             this.$message.warn(desc);
-            this.$router.push('/');
+            this.$router.push('/account/verify');
             break;
           case 0:
             this.$message.warn(desc);
