@@ -23,11 +23,15 @@ export default {
   },
   methods: {
     async init() {
+      // 获取国家json
       const res = (await getCountry(this.lang)).default;
       const country = res[0].countrys[0];
       this.$store.commit('changeCountry', country);
+      // 如果有user信息初始化user
       const user = this.$ls.get('user');
       user && this.$store.commit('saveUser', user);
+      // 获取首页数据
+      this.$store.dispatch('requestHome');
     },
   },
   created() {

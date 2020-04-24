@@ -54,6 +54,7 @@ export const get = (url, data) =>
       reslove(res);
     }
   });
+
 export const post = (url, data) =>
   new Promise(async (reslove, reject) => {
     const res = await http.post(url, data);

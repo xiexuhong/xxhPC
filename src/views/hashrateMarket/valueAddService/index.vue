@@ -1,167 +1,90 @@
 <template>
   <!-- 算力市场/算力商城首页 -->
   <div class="hashContainer">
-    <a-row class="hashContent" type="flex" justify="center" align="top">
-      <a-col :span="19">
-        <a-row>
-          <a-col :span="24">
-            <ul class="hashHeader">
-              <li>算力包</li>
-              <li>合约限期</li>
-              <li>90天</li>
-            </ul>
-          </a-col>
-        </a-row>
-        <a-row class="hashBody">
-          <a-col :span="8">
-            <ul>
-              <li>起购金额（每T）</li>
-              <li style="color:#ffab32">0.7704usd/0.7704usd</li>
-            </ul>
-          </a-col>
-          <a-col :span="6">
-            <ul>
-              <li>剩余份额</li>
-              <li>352分</li>
-            </ul>
-          </a-col>
-          <a-col :span="5">
-            <ul>
-              <li>止损率</li>
-              <li>90%</li>
-            </ul>
-          </a-col>
-          <a-col :span="5">
-            <ul>
-              <li>止赢率</li>
-              <li>200%</li>
-            </ul>
-          </a-col>
-        </a-row>
-      </a-col>
-      <a-col :span="5">
-        <a-row class="showDetail">
-          <a-col :span="24">
-            <!-- <a href="#">查看详情 ></a> -->
-            <router-link to="/hashrateMarket/valueAddService/contractDetail">查看详情 ></router-link>
-          </a-col>
-        </a-row>
-        <a-row class="charge">
-          <a-col :span="24">
-            <a-button size="large" block>
-              <router-link to="/hashrateMarket/valueAddService/orderDetail">立即购买</router-link>
-            </a-button>
-          </a-col>
-        </a-row>
-      </a-col>
-    </a-row>
-    <a-row class="hashContent" type="flex" justify="center" align="top">
-      <a-col :span="18">
-        <a-row>
-          <a-col :span="24">
-            <ul class="hashHeader">
-              <li>算力包</li>
-              <li>合约限期</li>
-              <li>90天</li>
-            </ul>
-          </a-col>
-        </a-row>
-        <a-row class="hashBody">
-          <a-col :span="12">
-            <ul>
-              <li>起购金额（每T）</li>
-              <li style="color:#ffab32">0.7704usd/0.7704usd</li>
-            </ul>
-          </a-col>
-          <a-col :span="4">
-            <ul>
-              <li>剩余份额</li>
-              <li>352分</li>
-            </ul>
-          </a-col>
-          <a-col :span="4">
-            <ul>
-              <li>止损率</li>
-              <li>90%</li>
-            </ul>
-          </a-col>
-          <a-col :span="4">
-            <ul>
-              <li>止赢率</li>
-              <li>200%</li>
-            </ul>
-          </a-col>
-        </a-row>
-      </a-col>
-      <a-col :span="6">
-        <a-row class="showDetail">
-          <a-col :span="24">
-            <a href="#">查看详情 ></a>
-          </a-col>
-        </a-row>
-        <a-row class="charge">
-          <a-col :span="24">
-            <a-button size="large" block>立即购买</a-button>
-          </a-col>
-        </a-row>
-      </a-col>
-    </a-row>
-    <a-row class="hashContent" type="flex" justify="center" align="top">
-      <a-col :span="18">
-        <a-row>
-          <a-col :span="24">
-            <ul class="hashHeader">
-              <li>算力包</li>
-              <li>合约限期</li>
-              <li>90天</li>
-            </ul>
-          </a-col>
-        </a-row>
-        <a-row class="hashBody">
-          <a-col :span="12">
-            <ul>
-              <li>起购金额（每T）</li>
-              <li style="color:#ffab32">0.7704usd/0.7704usd</li>
-            </ul>
-          </a-col>
-          <a-col :span="4">
-            <ul>
-              <li>剩余份额</li>
-              <li>352分</li>
-            </ul>
-          </a-col>
-          <a-col :span="4">
-            <ul>
-              <li>止损率</li>
-              <li>90%</li>
-            </ul>
-          </a-col>
-          <a-col :span="4">
-            <ul>
-              <li>止赢率</li>
-              <li>200%</li>
-            </ul>
-          </a-col>
-        </a-row>
-      </a-col>
-      <a-col :span="6">
-        <a-row class="showDetail">
-          <a-col :span="24">
-            <a href="#">查看详情 ></a>
-          </a-col>
-        </a-row>
-        <a-row class="charge">
-          <a-col :span="24">
-            <a-button size="large" block>立即购买</a-button>
-          </a-col>
-        </a-row>
-      </a-col>
-    </a-row>
+    <div class="hashContent" v-for="insurance in insuranceList" :key="insurance.id">
+      <a-row type="flex" justify="center" align="top">
+        <a-col :span="19">
+          <a-row>
+            <a-col :span="24">
+              <ul class="hashHeader">
+                <li>{{ insurance.name }}</li>
+                <li>合约限期</li>
+                <li>90天</li>
+              </ul>
+            </a-col>
+          </a-row>
+          <a-row class="hashBody">
+            <a-col :span="8">
+              <ul>
+                <li>起购金额（每T）</li>
+                <li style="color:#ffab32">0.7704usd/0.7704usd</li>
+              </ul>
+            </a-col>
+            <a-col :span="6">
+              <ul>
+                <li>剩余份额</li>
+                <li>352分</li>
+              </ul>
+            </a-col>
+            <a-col :span="5">
+              <ul>
+                <li>止损率</li>
+                <li>90%</li>
+              </ul>
+            </a-col>
+            <a-col :span="5">
+              <ul>
+                <li>止赢率</li>
+                <li>200%</li>
+              </ul>
+            </a-col>
+          </a-row>
+        </a-col>
+        <a-col :span="5">
+          <a-row class="showDetail">
+            <a-col :span="24">
+              <!-- <a href="#">查看详情 ></a> -->
+              <router-link to="/hashrateMarket/valueAddService/contractDetail">查看详情 ></router-link>
+            </a-col>
+          </a-row>
+          <a-row class="charge">
+            <a-col :span="24">
+              <a-button size="large" block>
+                <router-link to="/hashrateMarket/valueAddService/orderDetail">立即购买</router-link>
+              </a-button>
+            </a-col>
+          </a-row>
+        </a-col>
+      </a-row>
+    </div>
   </div>
 </template>
 
 <script>
-export default {};
+import { mapMutations } from 'vuex';
+import { getInsuranceList } from '@/script/api';
+export default {
+  data() {
+    return {
+      insuranceList: [], //  增值服务详情列表
+    };
+  },
+  created() {
+    getInsuranceList().then(resp => {
+      // console.log(resp.datas.rented_list);
+      this.insuranceList = resp.datas.rented_list;
+    });
+  },
+  methods: {
+    // 乘法
+    mult: (basePrice, number) => number * basePrice,
+    //  获取单调数据并传给vuex共享
+    ...mapMutations(['GET_SINGLE_INSURANCE']),
+    setSingleInsurance(insuranceItem) {
+      this.$store.commit('GET_SINGLE_LIST', this.insuranceList[insuranceItem]);
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
