@@ -1,41 +1,40 @@
 <template lang="pug">  
   <main>
     <a-card>
-      <header>
-        <span>资产总览</span>
-        <a-dropdown>
-          <a-menu slot="overlay">
-              <a-menu-item :key="index" v-for="(item,index) in currencylist" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
-          </a-menu>
-          <a-button style="margin-left: 8px" >{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
-        </a-dropdown>
-      </header>
-      <section>
-        <p>总资产（估值）：<span>48541515</span></p>
-      </section>
       <div id="assetview">     
-          <div>
-            <a-descriptions bordered :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
-              <a-descriptions-item label="Product">Cloud Database</a-descriptions-item>
-              <a-descriptions-item label="Billing">Prepaid</a-descriptions-item>
-              <a-descriptions-item label="Time">18:00:00</a-descriptions-item>
-              <a-descriptions-item label="Amount">$80.00</a-descriptions-item>
-              <a-descriptions-item label="Discount">$20.00</a-descriptions-item>
-              <a-descriptions-item label="Official">$60.00</a-descriptions-item>
+          <div class="left">
+            <header>
+              <span class="tit1">{{$t('asset.asset01')}}</span>
+              <a-dropdown>
+                <a-menu slot="overlay">
+                    <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+                </a-menu>
+                <a-button style="margin-left: 8px" >{{defaultcurrency}}<a-icon type="down" /> </a-button>
+              </a-dropdown>
+            </header>
+            <section>
+              <p class="tit2">{{$t('assetoverview.assetoverview01')}}</p>
+              <p class="text">{{total.total}}&nbsp;{{defaultcurrency}}</p>
+            </section>
+            <a-descriptions bordered :layout="layout">
+              <a-descriptions-item :label="$t('assetoverview.assetoverview02')">{{total.total}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
+              <a-descriptions-item :label="$t('assetoverview.assetoverview03')">{{total.asset_total}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
+              <a-descriptions-item :label="$t('assetoverview.assetoverview04')">{{total.deposit}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
             </a-descriptions>
             <div class="button_area">
-              <a-button><router-link to="/asset/recharge">充值</router-link></a-button>
-              <a-button><router-link to="/asset/withdraw">提现</router-link></a-button>
-              <a-button><router-link to="/asset/extractcoin">提币</router-link></a-button>
-              <a-button><router-link to="/asset/assetbills">账单</router-link></a-button>
+              <a-button><router-link to="/asset/recharge">{{$t('assetoption.assetoption01')}}</router-link></a-button>
+              <a-button><router-link to="/asset/withdraw">{{$t('assetoption.assetoption02')}}</router-link></a-button>
+              <a-button><router-link to="/asset/extractcoin">{{$t('assetoption.assetoption03')}}</router-link></a-button>
+              <a-button><router-link to="/asset/assetbills">{{$t('assetoption.assetoption04')}}</router-link></a-button>
             </div>
           </div>
-          //- <ve-line
-          //-   :data="chartData"
-          //-   :loading="loading"
-          //-   :data-empty="dataEmpty"
-          //-   :settings="chartSettings">
-          //- </ve-line>
+          <div class="right" v-if="deviceType==='desktop'">
+            <span class='tit3'>{{$t('assetoverview.assetoverview05')}}</span>
+            <button @click="getData(0)" class="normalData" :class="{'activeData':isWeek}">{{$t('assetoverview.assetoverview06')}}</button>
+            <button @click="getData(1)" class="normalData" :class="{'activeData':isMonth}">{{$t('assetoverview.assetoverview07')}}</button>
+            <p class='tit4'>{{$t('assetoverview.assetoverview08')}}（{{defaultcurrency}}）</p>
+            <ve-line :data="chartData" :settings="chartSettings"  :extend="chartExtend" class="charts" height='300px' :tooltip-visible="false" :loading="loading" :legend-visible="false"></ve-line>
+          </div>
       </div>
     </a-card>
     <br />
@@ -45,204 +44,251 @@
           <div class="icon">
             //- <img src="../../image/svg/search.svg" alt="" />
           </div>
-          <input class="weui-input" v-model="filterText" type="text"/>
+          <a-input-search :placeholder="$t('assetoption.assetoption05')" v-model="filterText" type="text" />
         </div>
-        <label for="s11" class="weui-cell weui-check__label radio" style="padding-left:0;">
-          <div class="weui-cell__hd">
-            <input type="checkbox" v-model="isHide" class="weui-check" name="checkbox1" id="s11" checked="checked"/>
-            <i class="weui-icon-checked"></i>
-          </div>
-          <div class="weui-cell__bd">隐藏零资产</div>
-        </label>
+        <a-checkbox @change="onChange">{{$t('assetoption.assetoption06')}}</a-checkbox>
       </div>
-    </div>
-      
-    <a-table :dataSource="data1" :columns="columns">
-      <template slot="customRender" slot-scope="text, record, index, column">
-        <span v-if="searchText && searchedColumn === column.dataIndex">
-          <template v-for="(fragment, i) in text.toString().split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))">
-            <mark v-if="fragment.toLowerCase() === searchText.toLowerCase()" :key="i" class="highlight" >{{fragment}}</mark>
-            <template v-else>{{fragment}}</template>
-          </template>
-        </span>
-        <span v-else>{{text}}</span>
-      </template>
+    </div> 
+    <a-table :dataSource="filterList" :columns="columns" >
     </a-table>
   </main> 
 </template>
 
 <script>
 import { setup } from '@/locales';
-import {mapState, mapGetters } from 'vuex';
-import { getAssetList } from '@/script/api';
-  const DATA_FROM_BACKEND = {
-    columns: ["belongTime", "stepNum"],
-    rows: [
-        {'belongTime':'2018-09-24','stepNum':'100'},
-        {'belongTime':'2018-09-25','stepNum':'134'}
-    ]
-  }
-  const EMPTY_DATA = {
-    columns: [],
-    rows: [
-    ]
-  }
-
+import {mapState, mapGetters,mapMutations } from 'vuex';
+import { getAssetList,ownCurrency,changeCurrency } from '@/script/api';
+import 'v-charts/lib/style.css'
 export default {
   data() {
+    this.chartSettings = {
+        area:true,
+        itemStyle:{ //面积图颜色设置
+          color:{
+              type:'linear',
+              x:0,
+              y:0,
+              x2:0,
+              y2:1,
+              colorStops:[
+                  {
+                      offset: 0,
+                      color: '#FABF38', // 0% 处的颜色
+                  }, 
+                  {
+                      offset: 1, 
+                      color: '#FABF38' // 100% 处的颜色
+                  },
+              ],
+              globalCoord: false // 缺省为 false
+          }
+            
+      },
+    }
+  
     return {
-      data1: [
-        {
-          key: '1',
-          coin: 'John Brown',
-          total: 32,
-          USD: 'New York No. 1 Lake Park',
-          available: '25',
-          freze: '7',
+      chartExtend:{
+        xAxis: {
+          show:true,
+          axisLabel:{
+            interval:5
+          }
         },
-      ],
-      searchText: '',
-      searchInput: null,
-      searchedColumn: '',
-      columns: [
+        yAxis: {
+          show: false,
+        }
+      },
+      isWeek: true,
+      isMonth: false,
+      loading: false,
+      chartData: {
+        columns: ['日期', '访问用户'],
+        rows: [
+          { '日期': '2018-01-01', '访问用户': 193},
+          { '日期': '2018-01-02', '访问用户': 35},
+          { '日期': '2018-01-03', '访问用户': 29},
+          { '日期': '2018-01-05', '访问用户': 17},
+          { '日期': '2018-01-10', '访问用户': 32},
+          { '日期': '2018-01-13', '访问用户': 53},
+          { '日期': '2018-01-20', '访问用户': 43}
+        ]
+      },
+      columns: [],
+      columns1:[],
+      columns2: [
         {
-          title: '币种',
+          title: this.$t('assetoverview.assetoverview11'),
           dataIndex: 'coin',
           key: 'coin',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.coin
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              }, 0);
-            }
-          },
         },
         {
-          title: '总量',
-          dataIndex: 'total',
-          key: 'total',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.total
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
-        },
-        {
-          title: '折合USD',
-          dataIndex: 'USD',
-          key: 'USD',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.usd
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
-        },
-        {
-          title: '可用',
+          title: this.$t('assetoverview.assetoverview14'),
           dataIndex: 'available',
           key: 'available',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.available
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
         },
         {
-          title: '冻结',
-          dataIndex: 'freze',
-          key: 'freze',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.freze
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
+          title: this.$t('assetoverview.assetoverview15'),
+          dataIndex: 'freeze',
+          key: 'freeze',
         },
       ],
       filterText:"",
       isHide:false,
-      coin:""
+      langArr:""
     };
   },
   created(){
-    async () => {
-          const { datas } = await getAssetList();
-          console.log(datas);
-        }
+    this.columns1= [
+        {
+          title: this.$t('assetoverview.assetoverview11'),
+          dataIndex: 'coin',
+          key: 'coin',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview12'),
+          dataIndex: 'total',
+          key: 'total',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview13')+`(${this.defaultcurrency})`,
+          dataIndex: 'valuation',
+          key: 'valuation',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview14'),
+          dataIndex: 'available',
+          key: 'available',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview15'),
+          dataIndex: 'freeze',
+          key: 'freeze',
+        },
+      ];
+    this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
+    this.getData(0);
+    console.log(this.$t('myCome.myCome03'));
   },
   computed: {
-    ...mapGetters(['user','currencylist','defaultcurrency'])
-
+    ...mapGetters(['currency_list','defaultcurrency','lang','total','asset_list','deviceType']),
+    filterList() {
+      var _this = this;
+      return this.asset_list.filter(function(e) {
+        if(_this.isHide){
+          return e.valuation > 0
+        }
+        if (!_this.filterText) return e;
+        if (!e.coin) return;
+        return (
+          e.coin.slice(0, _this.filterText.length) === _this.filterText.toUpperCase()
+        );
+      });
+    },
+    layout(){
+      var s = this.deviceType==='desktop'?'vertical':'horizontal';
+      return  s
+    }
   },
   methods: {
     checkcurrency(index) {
-      this.coin = this.currencylist[index];
+      this.$store.state.asset.defaultcurrency = this.currency_list[index];
+      changeCurrency({currency:this.defaultcurrency}).then((res) => {
+          console.log(res);
+          this.columns1 = [
+            {
+              title: this.$t('assetoverview.assetoverview11'),
+              dataIndex: 'coin',
+              key: 'coin',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview12'),
+              dataIndex: 'total',
+              key: 'total',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview13')+`(${this.defaultcurrency})`,
+              dataIndex: 'valuation',
+              key: 'valuation',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview14'),
+              dataIndex: 'available',
+              key: 'available',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview15'),
+              dataIndex: 'freeze',
+              key: 'freeze',
+            },
+          ];
+          this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
+      });
+      getAssetList().then((res)=>{
+        const {datas} = res;
+        if(datas.hasOwnProperty('error')){
+            return
+        }
+        this.$store.state.asset.total = this.gettotal(datas.asset.asset_total,datas.balance.balance_total,datas.deposit.valuation,datas.total);
+        this.$store.state.asset.coin_list = this.getcoin_list(datas.asset.asset_list);
+        this.$store.state.asset.balance_list = this.getbalance_list(datas.balance.balance_list);
+      });
     }, 
-    handleSearch(selectedKeys, confirm, dataIndex) {
-      confirm();
-      this.searchText = selectedKeys[0];
-      this.searchedColumn = dataIndex;
+    getData(index){
+      if(index == 0){
+        this.isWeek=true;
+        this.isMonth=false;
+        this.chartExtend.xAxis.axisLabel.interval=5
+      }
+      else{
+        this.isWeek=false;
+        this.isMonth=true;
+        this.chartExtend.xAxis.axisLabel.interval=3
+      }
+      this.loading = true;
+      // ajax get data ....
+      setTimeout(() => {
+        this.loading = false;
+      }, 1000);
     },
-    handleReset(clearFilters) {
-      clearFilters();
-      this.searchText = '';
+    onChange(e) {
+      this.isHide = e.target.checked;
+    },
+    getcoin_list:function(datas){
+      var coin_list = [];
+      for(let i=0;i<datas.length;i++){
+        if(coin_list.length<datas.length){
+          coin_list.push({id:'',coin:'',total:"",available:"",freeze:""});
+          coin_list[i].id = i;
+          coin_list[i].coin =datas[i].coin;
+          coin_list[i].total =datas[i].total_num;
+          coin_list[i].available =datas[i].num_avail;
+          coin_list[i].freeze =datas[i].num_freeze;
+          coin_list[i].valuation =datas[i].unify_price;
+        }      
+      };
+      return coin_list;
+    },
+    getbalance_list:function(datas){
+      var balance_list=[];
+      for(let i=0;i<datas.length;i++){
+        if(balance_list.length<datas.length){
+          balance_list.push({id:'',coin:'',total:"",available:"",freeze:""});
+          balance_list[i].coin =datas[i].currency;
+          balance_list[i].total =datas[i].total_num;
+          balance_list[i].available =datas[i].money_avail;
+          balance_list[i].freeze =datas[i].money_freeze;
+          balance_list[i].valuation =datas[i].unify_price;
+        }
+      };
+      return balance_list;
+    },
+    gettotal:function(total1,total2,total3,total4){
+      var total ={};
+      total.asset_total =total1;
+      total.balance_total = total2;
+      total.deposit = total3;
+      total.total = total4;
+      return total;
     },
     changeLang() {
       setup('en');
@@ -261,21 +307,41 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-header {
-  margin-bottom: 15px;
-  
-  span {
-    font-size: 18px;
-    font-weight: bolder;
-  }
-}
 #assetview{
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  .echarts{
-    min-height: 220px;
-    margin-left: 15px;
+  .left{
+    display: flex;
+    flex-direction: column;
+    .ant-descriptions{
+      text-align: center;
+    }
+  }
+  .right{
+    flex: 1;
+    text-align: right;
+    .tit3{
+      margin-right: 10px;
+    }
+    .tit4{
+      color: #999999;
+      font-size: 13px;
+      line-height: 26px;
+    }
+    .charts{
+      flex: 1;
+      margin-left: 30px;
+    }
+    .normalData{
+      width: 50px;
+      height: 25px;
+      border: 1px solid #EDAD0E;
+      background-color: #fff;
+    }
+    .activeData{
+      background-color: #FABF38;
+      color: #fff;
+    }
   }
 }
 .button_area {
@@ -285,7 +351,6 @@ header {
     margin-right: 15px;
   }
 }
-
 .filter{
   padding: 10px;
   .searchBox{

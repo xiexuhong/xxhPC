@@ -70,6 +70,12 @@ export const getHome = () => post('//index.php?act=index');
 export const getVerifyStatus = () => post('/index.php?act=account&op=realNameVerifyStatus');
 
 export const getAssetList = data => get('/index.php?act=asset&op=list', data);
+/**
+ * @method 获取资产信息
+ * @param asset -- 总资产
+ * @param balanbe -- 资金
+ * @param deposit -- 押金
+ */
 
 /**
  * @method 个人中心信息
@@ -87,7 +93,43 @@ export const getUserAccountInfo = data => post('/index.php?act=wallet&op=getUser
  */
 export const sendVerifyCode = data => post('/index.php?act=account&op=sendVerifyCode', data);
 
-export const getAssetList = data => get('/index.php?act=asset&op=list', data);
+export const ownCurrency = data => get('/index.php?act=setting&op=currency', data);
+
+/**
+ * @method 获取默认货币
+ * @param currency -- 货币列表
+ * @param default -- 默认货币
+ */
+
+ export const changeCurrency  = data => post('/index.php?act=setting&op=chgCurrency', data);
+
+ /**
+ * @method 修改默认货币
+ */
+export const getCoinInfo = data => post('/index.php?act=asset&op=coinInfo',data);
+/**
+ * @method 币资产信息
+ */
+export const getCoinAddress = data => post('/index.php?act=asset&op=rechargeCoin',data);
+/**
+ * @method 获取充币地址
+ */
+export const recharge = data => post('/index.php?act=asset&op=recharge',data);
+/**
+ * @method 充值
+ */
+export const payment = data => get('/index.php?act=payment&op=index',data);
+/**
+ * @method 支付方式
+ */
+export const getBill = data => get('/index.php?act=asset&op=log',data);
+/**
+ * @method 账单信息
+ */
+export const getPublicMess = data => post('/index.php?act=wallet&op=getPublicBank',data);
+/**
+ * @method 获取对公转账信息
+ */
 
 //  获取算力列表
 export const getPowerList = data => get('/index.php?act=power&op=get_power_list', data);

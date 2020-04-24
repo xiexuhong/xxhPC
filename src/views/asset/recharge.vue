@@ -2,138 +2,213 @@
     <div id="recharge">
         <header>
             <a-breadcrumb separator="">
-            <a-breadcrumb-item href=""><router-link to="/asset/assetoverview" class="fontcolor">资产总览</router-link></a-breadcrumb-item>
+            <a-breadcrumb-item href=""><router-link to="/asset/assetoverview" class="fontcolor">{{$t('asset.asset01')}}</router-link></a-breadcrumb-item>
             <a-breadcrumb-separator style="color:#ffab32">></a-breadcrumb-separator>
-            <a-breadcrumb-item>充值</a-breadcrumb-item>
+            <a-breadcrumb-item>{{$t('recharge.recharge01')}}</a-breadcrumb-item>
             </a-breadcrumb>  
         </header>
-        <template v-if="!result">
+        <template>
             <a-form-model :model="form">
                 <a-form-model-item>
                 <a-radio-group v-model="rechargestyle">
                     <a-radio-button value="general">
-                    余额充值
+                    {{$t('recharge.recharge02')}}
                     </a-radio-button>
                     <a-radio-button value="USDTCharge">
-                    USDT充值
+                    {{$t('recharge.recharge03')}}
                     </a-radio-button>
                 </a-radio-group>
                 </a-form-model-item>
                 <template v-if="rechargestyle == 'general'">
-                    <a-form-model-item label="选择币种">
+                    <a-form-model-item :label="$t('recharge.recharge04')">
                         <a-dropdown>
                             <a-menu slot="overlay">
-                                <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+                                <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
                             </a-menu>
-                            <a-button>{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
+                            <a-button >{{form.currency}}<a-icon type="down" /></a-button>
                         </a-dropdown>
-                        <span class="ant-form-text"> 可用余额：{{available}}{{coin}}</span>
+                        <span class="ant-form-text">{{$t('recharge.recharge05')}}{{available}}{{form.currency}}</span>
                     </a-form-model-item>
-                    <a-form-model-item label="充值金额">
-                        <a-input v-model="form.amount" placeholder="请输入一个整数" />
-                        <span class="ant-form-text">金额范围：{{amountrange}}{{coin}}</span>
+                    <a-form-model-item :label="$t('recharge.recharge06')">
+                        <a-input v-model="form.amount" :placeholder="$t('recharge.recharge07')" />
+                        <span class="ant-form-text">{{$t('recharge.recharge08')}}{{amountrange}}{{form.currency}}</span>
                     </a-form-model-item>
-                    <a-form-model-item label="付款人姓名">
-                        <a-input v-model="form.name" placeholder="请输入付款人姓名" />
+                    <a-form-model-item :label="$t('recharge.recharge09')">
+                        <a-input v-model="form.name" :placeholder="$t('recharge.recharge10')" />
                     </a-form-model-item>
-                    <a-form-model-item label="支付方式">                            
-                        <a-button><router-link to="/asset/publictransfer">对公转账</router-link></a-button>
+                    <a-form-model-item :label="$t('recharge.recharge11')">                            
+                        <a-button>{{$t('recharge.recharge12')}}</a-button>
                     </a-form-model-item>
                     <a-form-model-item>
-                        <a-button type="primary" @click="goRecharge()">
-                            立即充值
+                        <a-button type="primary" @click="goPublic()">
+                            {{$t('recharge.recharge13')}}
                         </a-button>
                     </a-form-model-item>
                 </template>
                 <template v-else>
-                    <a-form-model-item label="选择币种">
+                    <a-form-model-item :label="$t('recharge.recharge04')">
                         <a-button> USDT(OMNI) </a-button>
                     </a-form-model-item>
-                    <a-form-model-item label="充币地址">
-                        <span class="ant-form-text" id="foo">{{form.coinaddress}}</span> 
-                        <a-button class="btn paste" data-clipboard-target="#foo" data-clipboard-action="copy">
-                            复制地址
-                        </a-button>
+                    <a-form-model-item :label="$t('recharge.recharge14')">
+                        <span class="address">{{form.coinaddress}}</span>
+                        <a-button class="btn paste" data-clipboard-action="copy" :data-clipboard-text="form.coinaddress">{{$t('recharge.recharge15')}} </a-button>
                         <a-button class="btn">
-                            二维码
+                            {{$t('recharge.recharge16')}}
                         </a-button>
                     </a-form-model-item>
                     <a-form-model-item>
                         <a-button class="btn">
-                            查看账单
+                            <router-link to="/asset/assetbills">{{$t('assetoption.assetoption04')}}</router-link>
                         </a-button>
                     </a-form-model-item>
+                    <div>{{$t('recharge.recharge17')}}</div>
+                    <a-list :dataSource="$t('recharge.recharge18')">
+                        <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
+                        <p>{{ item }}</p>
+                        </a-list-item>
+                    </a-list>
                 </template>
             </a-form-model>
-        </template>
-        <template v-else>
-            <a-result
-                status="success"
-                title="Successfully Purchased Cloud Server ECS!"
-                subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
-            >
-                <template v-slot:extra>
-                    <a-button type="primary" key="console" @click="goReturn()">返回充值首页</a-button>
-                </template>
-            </a-result>
         </template>
     </div>
 </template>
 <script>
 import { setup } from '@/locales'
-import {mapState} from 'vuex'
+import {mapGetters} from 'vuex'
+import { changeCurrency,getCoinAddress,recharge,payment } from '@/script/api';
 import Clipboard from 'clipboard'
 export default {
     data() {
         return {
             form: {
-                coin:'',
+                currency:'',
                 amount: '',
                 name: '',
-                coinaddress:'egegeefgege'
+                coinaddress:'ef48e4f8d8d52969qqw'
             },
-            coin:"",
-            rechargestyle: 'general',
-            available:'1000.0',
+            rechargeCoin:'',
+            rechargestyle: 'general',            
             amountrange:'400~1000000',
-            result:false
+            list:[],
+            is_support:''
         };
     },
     created(){
-        this.coin = this.defaultcurrency;
+        this.form.currency = this.currency;
+        getCoinAddress({coin: 'USDT_OMNI'}).then((res)=>{
+            const {datas} = res;
+            console.log(datas.error);
+            if(datas.hasOwnProperty('error')){
+                this.form.coinaddress = '48845sfre7ef4ef4efs';
+            }
+            else{                
+                this.form.coinaddress = datas;
+            }
+        });
+        payment({type:'recharge'}).then((res)=>{
+            console.log(res.datas);
+            this.list = res.datas.list;
+            for (var i = 0; i < this.list.length; i++) {
+                if (this.form.currency == this.list[i].currency) {
+                    this.is_support = this.list[i].is_support;
+                }
+            }
+        })
     },
     mounted() {
         var clipboard = new Clipboard('.paste');
+        var _this = this;
         clipboard.on('success', function(e) {
-            console.log('复制成功')
+            debounce(handle,1000)
         });
         clipboard.on('error', function(e) {
-            console.log('复制失败')
+            _this.$message.success('复制失败');
         });
-    },
-    computed: 
-        mapState({
-            list(e){
-                return e.asset.currencylist;
-            },
-            defaultcurrency(e){
-                return e.asset.defaultcurrency;
-            },
-         }),
-    methods: {
-        handleButtonClick(e) {
-            console.log('click left button', e);
-        },        
-        checkcurrency(index) {
-            this.coin = this.list[index];
-        },
-        goRecharge(){
-            this.result = true;
-        },
-        goReturn(){
-            this.result = false;
+        function debounce(fn, wait) {    
+            var timeout = null;    
+            return function() {        
+                if(timeout !== null)   clearTimeout(timeout);        
+                timeout = setTimeout(fn, wait);    
+            }
         }
-
+        // 处理函数
+        function handle() {    
+            this.$message.success('复制成功');
+        }
+    },
+    computed:{
+    ...mapGetters(['currency_list','currency','lang','total','balance_list','available']),
+  },
+    methods: {
+        checkcurrency(index) {
+            this.form.currency = this.currency_list[index];
+            this.$store.state.asset.currency = this.form.currency;
+            for (var i = 0; i < this.list.length; i++) {
+                if (this.form.currency == this.list[i].currency) {
+                    this.is_support = this.list[i].is_support;
+                }
+            }
+        }, 
+        testNum() {
+            var reg = /^\d$/;
+            var input = $("input[type='number']").val();
+            if (reg.test(input)) {
+              this.value = input;
+            }
+        },
+        // goRecharge(){
+        //     if (this.is_support == true) {
+        //         var thiz = this;
+        //         var amount = this.form.amount;
+        //         var reg = /^\d$/;
+        //         if (reg.test(amount)) {
+        //             this.value = input;
+        //         }
+        //         var min, max, no_fee
+        //         if (this.isLimitShow) {
+        //             min = Number(this.limitData[this.selected]['min_amount'])
+        //             max = Number(this.limitData[this.selected]['max_amount'])
+        //             if (amount < min || amount > max) {
+        //                 app.toast(thiz.langArr.recharge21);
+        //                 return false
+        //             }
+        //             no_fee = this.limitData[this.selected]['no_fee_amount']
+        //         }
+        //         $radio = $('input[type="radio"]:checked');
+        //         var thiz = this;
+        //         if (amount !== '') {
+        //             if ($radio.attr("id") == "pertopub") {
+        //             app.goWin("transferOrder", {
+        //                 animation: {
+        //                 type: "push",
+        //                 subType: "from_right"
+        //                 },
+        //                 pageParam: {
+        //                 coin: this.selected,
+        //                 amount: amount,
+        //                 no_fee: no_fee
+        //                 }
+        //             });
+        //             return false;
+        //             }
+        //             var data = {
+        //                 currency: thiz.defaultcurrency,
+        //                 amount: amount,
+        //                 payment_code: $radio.attr("id")
+        //             };
+        //             recharge(data).then((res)=>{
+        //                 if (data.datas.create_order) {
+        //                     this.$router.push('/asset/publictransfer');
+        //                 }else {
+        //                 // console.log("未生成订单");
+        //                 }
+        //             })
+        //         }
+        //     }
+        // },
+        goPublic(){
+            this.$router.push({name:'Publictransfer',params:{amount:this.form.amount}});     
+        }
     },
 };
 </script>
@@ -147,21 +222,23 @@ export default {
             font-size: 16px;
         }
         .ant-btn{
-            margin-right: 15px;
             color: #ffab32;
             background-color: #fff;
             border-color: #ffab32;
+            margin-right: 15px;
         }
         .ant-btn-primary {
             color: #fff;
         }
-        #foo{
-           font-size: 16px;
-           ::selection {
-                color: #fff;
-                background: #ffab32;
-                border-radius: 2px;
-            }
+        .ant-radio-button-wrapper {
+            background-color: #fff;
+            margin-right: 10px;
+            border-radius: 5px;
+            color: #262626;
+        }
+        .address{
+           font-size: 20px;
+           color: #262626;
         }
         .btn{
             border: none;
