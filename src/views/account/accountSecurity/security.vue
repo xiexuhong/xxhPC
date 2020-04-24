@@ -251,6 +251,11 @@ export default {
         BHPay_date: datas.BHPay_date,
         bhpay_quick_payment: datas.bhpay_quick_payment
       });
+      // 人人矿场对应信息
+      this.$ls.set('renrenInfo', {
+        uid: datas.rrm_uid,
+        token: datas.rrm_token
+      });
   },
   methods: {
     sendCode(){

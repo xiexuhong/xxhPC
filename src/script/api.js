@@ -96,6 +96,11 @@ export const sendVerifyCode = data => post('/index.php?act=account&op=sendVerify
 export const checkVerifyCode = data => post('/index.php?act=account&op=checkSmsCode', data);
 
 /**
+ * @method 重置交易密码
+ */
+export const resetTradePwd = data => post('/index.php?act=account&op=resetTradePwd', data);
+
+/**
  * @method 算龄
  */
 export const powerAge = data => post('/index.php?act=account&op=powerAge', data);
@@ -109,7 +114,6 @@ export const getBankList = data => post('/index.php?act=wallet&op=getBankList', 
 /**
  * @method 我的资产
  */
-export const payment = data => post('/index.php?act=payment&op=index', data);
 export const ownCurrency = data => get('/index.php?act=setting&op=currency', data);
 
 /**
@@ -117,29 +121,33 @@ export const ownCurrency = data => get('/index.php?act=setting&op=currency', dat
  * @param currency -- 货币列表
  * @param default -- 默认货币
  */
-
  export const changeCurrency  = data => post('/index.php?act=setting&op=chgCurrency', data);
 
  /**
  * @method 修改默认货币
  */
 export const getCoinAddress = data => post('/index.php?act=asset&op=rechargeCoin',data);
+
 /**
  * @method 获取充币地址
  */
 export const recharge = data => post('/index.php?act=asset&op=recharge',data);
+
 /**
  * @method 充值
  */
 export const payment = data => get('/index.php?act=payment&op=index',data);
+
 /**
  * @method 支付方式
  */
 export const getBill = data => get('/index.php?act=asset&op=log',data);
+
 /**
  * @method 账单信息
  */
 export const getPublicMess = data => post('/index.php?act=wallet&op=getPublicBank',data);
+
 /**
  * @method 获取对公转账信息
  */

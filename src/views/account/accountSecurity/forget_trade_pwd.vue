@@ -20,7 +20,7 @@
           </span>
         </div>
         <div>
-          <a-form>
+          <a-form :form="form" @submit="submitTradePwd">
             <a-form-item label="短信验证码">
               <a-input placeholder="请输入短信验证码" v-decorator="['code',{ rules: [{ required: true, message: 'Please input your code!' }] },]">
                 <span slot="suffix" class="color_y" @click="sendCode()"> {{ codeText }} </span>
@@ -30,12 +30,14 @@
             <a-form-item label="手持身份证拍照">
               <span class="ant-form-item-children">
                 <a-upload
-                  name="avatar"
                   listType="picture-card"
                   class="avatar-uploader"
                   :showUploadList="false"
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                 :beforeUpload="beforeUpload"
+                  name="img"
+                  action="http://iappfront.t1.anmaicloud.com/member/upload-img"
+                  method="post"
+                  :data=renrenInfo
+                  :beforeUpload="beforeUpload"
                   @change="handleChange"
                 >
                   <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
@@ -56,7 +58,7 @@
               </span>
             </a-form-item>
             <a-form-item>
-              <a-button type="primary">提交</a-button>
+              <a-button type="primary" html-type="submit">提交</a-button>
               <a-tooltip class="til">溫馨提示：找回密碼申請提交後，1-3個工作日將受到處理結果。</a-tooltip>
             </a-form-item>
           </a-form>
@@ -67,7 +69,8 @@
 </template>
 <script>
 import { mapGetters, mapMutations } from 'vuex';
-import { verifyCode,payment } from '@/mixins/verifyCode';
+import { verifyCode } from '@/mixins/verifyCode';
+import { resetTradePwd } from '@/script/api';
 
 export default {
   mixins: [verifyCode],
@@ -75,25 +78,20 @@ export default {
     return {
       loading: false,
       imageUrl: '',
-      userInfo: {}
+      userInfo: {},
+      renrenInfo: {},
     };
   },
   computed: {
     ...mapGetters(['user']),
   },
-  // created() {
-  //   this.userInfo = this.$ls.get("userInfo");
-  // },
-  async created() {
-      const { datas } = await payment({
-        payment: 'USDT',
-        type: 'transfer'
-      });
-      console.log("zhifu: ", datas);
+  created() {
+    this.userInfo = this.$ls.get("userInfo");
+    this.renrenInfo = this.$ls.get("renrenInfo");
   },
   methods: {
     sendCode(){
-  //     this.sendVerifyCode(this.userInfo.mobile, 'reset_trade_pwd');
+      this.sendVerifyCode(this.userInfo.mobile, 'reset_trade_pwd');
     },
     handleChange(info) {
       if (info.file.status === 'uploading') {
@@ -116,7 +114,24 @@ export default {
       }
       return isJpgOrPng && isLt2M;
     },
-  }
+    submitTradePwd(e){
+      e.preventDefault();
+      this.form.validateFields(async (err, values) => {
+        if (!err) {
+          const { code } = values;
+          const { datas } = await resetTradePwd({
+            photo: "",
+            verify: code,
+          });
+          console.log("datas: "+datas);
+          this.$router.push('/');
+        }
+      });
+    }
+  },
+  beforeCreate() {
+    this.form = this.$form.createForm(this, { name: 'submitTradePwd' });
+  },
 }
 </script>
 <style scoped>

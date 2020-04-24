@@ -95,7 +95,7 @@
   </main>
 </template>
 <script>
-import { getBankList,assetList } from '@/script/api';
+import { getBankList } from '@/script/api';
 
 export default {
   data() {
@@ -113,7 +113,6 @@ export default {
       const { datas } = await getBankList({
         currency: 'USDT'
       });
-      const { currencyInfo } = await assetList();
       this.bankList = datas.bank_list;
       this.countryList = datas.country_list;
       this.country = datas.user_country;
