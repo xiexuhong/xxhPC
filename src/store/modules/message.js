@@ -1,4 +1,4 @@
-import { getMessageList } from '@/script/api';
+import { getMessageList, readAllMessage } from '@/script/api';
 
 const state = {
   messageList: [],
@@ -12,6 +12,10 @@ const actions = {
     if (data.curpage === 1) commit('saveMessageHeader', datas.list);
     commit('saveMessageList', datas);
   },
+  async requestReadAllMessage({ commit }) {
+    await readAllMessage();
+    commit('allRead');
+  },
 };
 const mutations = {
   saveMessageHeader(state, data) {
@@ -22,6 +26,17 @@ const mutations = {
     state.totalMessage = total_page * 10;
     state.unread_sum = unread_sum;
     state.messageList = list;
+  },
+  allRead(state) {
+    state.messageList = state.messageList.map(e => {
+      e.if_unread = 0;
+      return e;
+    });
+    state.messageHeader = state.messageHeader.map(e => {
+      e.if_unread = 0;
+      return e;
+    });
+    state.unread_sum = 0;
   },
 };
 const getters = {

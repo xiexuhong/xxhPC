@@ -1,14 +1,14 @@
 <template lang="pug">
     #messageList
         a-list(itemLayout="horizontal" :dataSource="list")
-            a-list-item(slot="renderItem" slot-scope="item, index" rowKey="article_id")
+            a-list-item(slot="renderItem" slot-scope="item, index" :rowKey="item.article_id")
                 a.detail(slot="extra") 查看详情
                 a-list-item-meta(:title="item.article_title")
                     .content(slot="description")
                         .text {{item.article_abstract}}
                         .time {{item.article_time}}
                     .iconBox(slot="avatar")
-                        span.icon
+                        span.icon(:class="{hide:!item.if_unread}")
         .page(v-if="!isComponent")
             a-pagination(:total="totalMessage" showLessItems @change="pageChange" :current="curpage")
 </template>
@@ -67,6 +67,9 @@ export default {
       height: 6px;
       background: rgba(232, 67, 67, 1);
       border-radius: 50%;
+    }
+    .hide {
+      background: #fff;
     }
   }
   /deep/.ant-list-item-meta-description {
