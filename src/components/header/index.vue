@@ -23,8 +23,12 @@
         img(src="@/assets/image/account/user.png")
       router-link(to="/login/register" v-if="!user.token")
         a-button(type="link") 注册
-      router-link(to="/asset/assetoverview" v-else)
-        img(src="@/assets/image/account/notice.png")
+      router-link.message(to="/messageCenter" v-else)
+        a-badge(:count="unread_sum" :overflowCount="99")
+          a-popover(trigger="click" v-model="visible" v-if="deviceType==='desktop'")
+            MessageCenter(slot="content" isComponent @close="visible=false")
+            img(src="@/assets/image/account/notice.png")
+          img(src="@/assets/image/account/notice.png" v-else)
       a-button(type="link") 下载
       a-dropdown(:trigger="['click']")
         a-menu(slot="overlay" @click="chooseLocale")
@@ -57,18 +61,24 @@
 import { localesEumn } from '@/locales';
 import { mapGetters } from 'vuex';
 import { setup } from '@/locales';
+import MessageCenter from '@/views/messageCenter';
 export default {
+  components: { MessageCenter },
   data() {
     return {
+      visible: false,
       localesEumn: localesEumn,
       collapsed: false,
     };
   },
   computed: {
-    ...mapGetters(['deviceType', 'lang', 'user']),
+    ...mapGetters(['deviceType', 'lang', 'user', 'unread_sum']),
   },
   mounted() {},
   methods: {
+    openMessage() {
+      console.log(this.visible);
+    },
     chooseLocale(val) {
       setup(val.key);
     },
@@ -126,6 +136,11 @@ export default {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    .message {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
     img {
       display: block;
       padding: 0 15px;
