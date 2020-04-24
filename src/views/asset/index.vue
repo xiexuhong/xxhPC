@@ -34,6 +34,7 @@ export default {
        const {datas} = res;
        this.$store.state.asset.currency_list = datas.currency;
        this.$store.state.asset.defaultcurrency = datas.default;
+       this.$store.state.asset.currency = datas.default;
      });
     payment({type:'recharge'}).then((res)=>{
       console.log(res.datas);
@@ -131,6 +132,10 @@ p {
       box-sizing: border-box;
     }
     .ant-input {
+      max-width: 180px;
+      margin-right: 15px;
+    }
+    .ant-select {
       max-width: 180px;
       margin-right: 15px;
     }

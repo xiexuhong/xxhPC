@@ -101,6 +101,10 @@ export const ownCurrency = data => get('/index.php?act=setting&op=currency', dat
  /**
  * @method 修改默认货币
  */
+export const getCoinInfo = data => post('/index.php?act=asset&op=coinInfo',data);
+/**
+ * @method 币资产信息
+ */
 export const getCoinAddress = data => post('/index.php?act=asset&op=rechargeCoin',data);
 /**
  * @method 获取充币地址

@@ -7,7 +7,7 @@
             <a-breadcrumb-item>{{$t('recharge.recharge01')}}</a-breadcrumb-item>
             </a-breadcrumb>  
         </header>
-        <template v-if="!result">
+        <template>
             <a-form-model :model="form">
                 <a-form-model-item>
                 <a-radio-group v-model="rechargestyle">
@@ -40,7 +40,7 @@
                         <a-button>{{$t('recharge.recharge12')}}</a-button>
                     </a-form-model-item>
                     <a-form-model-item>
-                        <a-button type="primary" @click="goRecharge()">
+                        <a-button type="primary" @click="goPublic()">
                             {{$t('recharge.recharge13')}}
                         </a-button>
                     </a-form-model-item>
@@ -70,17 +70,6 @@
                 </template>
             </a-form-model>
         </template>
-        <template v-else>
-            <a-result
-                status="success"
-                title="Successfully Purchased Cloud Server ECS!"
-                subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
-            >
-                <template v-slot:extra>
-                    <a-button type="primary" key="console" @click="goReturn()"> {{$t('recharge.recharge19')}}</a-button>
-                </template>
-            </a-result>
-        </template>
     </div>
 </template>
 <script>
@@ -101,12 +90,11 @@ export default {
             rechargestyle: 'general',            
             amountrange:'400~1000000',
             list:[],
-            is_support:'',
-            result:false
+            is_support:''
         };
     },
     created(){
-        this.form.currency = this.defaultcurrency;
+        this.form.currency = this.currency;
         getCoinAddress({coin: 'USDT_OMNI'}).then((res)=>{
             const {datas} = res;
             console.log(datas.error);
@@ -149,11 +137,12 @@ export default {
         }
     },
     computed:{
-    ...mapGetters(['currency_list','defaultcurrency','lang','total','balance_list','available']),
+    ...mapGetters(['currency_list','currency','lang','total','balance_list','available']),
   },
     methods: {
         checkcurrency(index) {
             this.form.currency = this.currency_list[index];
+            this.$store.state.asset.currency = this.form.currency;
             for (var i = 0; i < this.list.length; i++) {
                 if (this.form.currency == this.list[i].currency) {
                     this.is_support = this.list[i].is_support;
@@ -217,14 +206,9 @@ export default {
         //         }
         //     }
         // },
-        goRecharge(){
-            this.result = true;
-            this.$router.push({name:'Publictransfer',params:{amount:this.form.amount}});            
-        },
-        goReturn(){
-            this.result = false;
+        goPublic(){
+            this.$router.push({name:'Publictransfer',params:{amount:this.form.amount}});     
         }
-
     },
 };
 </script>
@@ -246,7 +230,7 @@ export default {
         .ant-btn-primary {
             color: #fff;
         }
-         .ant-radio-button-wrapper {
+        .ant-radio-button-wrapper {
             background-color: #fff;
             margin-right: 10px;
             border-radius: 5px;
