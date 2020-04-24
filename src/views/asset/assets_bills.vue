@@ -1,8 +1,8 @@
 <template lang="pug">
-  <div id="availableassets">
+  <div id="assetbills">
     <a-card>
       <header>
-        <span  class="tit1">资产账单</span>
+        <span  class="tit1">{{$t('asset.asset05')}}</span>
         <a-dropdown>
           <a-menu slot="overlay">
               <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
@@ -11,19 +11,19 @@
         </a-dropdown>
       </header>
       <section>
-        <p class="tit2">总资产（估值）：</p>
+        <p class="tit2">{{$t('assetoverview.assetoverview01')}}</p>
         <p class="text">{{total.total}}&nbsp;{{defaultcurrency}}</p>
       </section>       
       <div>     
         <a-descriptions :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
-          <a-descriptions-item label="时间">
+          <a-descriptions-item :label="$t('assetbills.assetbills01')">
           <div class="timing">
             <input type="date" v-model = "starttime"/><span>——</span><input type="date" v-model = "endtime"/>
             <div class="button_area time">
-              <a-button class="fontcolor" @click="choosetime(0)">今天</a-button>
-              <a-button @click="choosetime(7)">最近一周</a-button>
-              <a-button @click="choosetime(30)">最近一月</a-button>
-              <a-button @click="choosetime(90)">最近三月</a-button>
+              <a-button class="fontcolor" @click="choosetime(0)">{{$t('assetbills.assetbills02')}}</a-button>
+              <a-button @click="choosetime(7)">{{$t('assetbills.assetbills03')}}</a-button>
+              <a-button @click="choosetime(30)">{{$t('assetbills.assetbills04')}}</a-button>
+              <a-button @click="choosetime(90)">{{$t('assetbills.assetbills05')}}</a-button>
             </div>
           </div>
           </a-descriptions-item>
@@ -31,12 +31,12 @@
         <a-descriptions :column="{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }">
           <a-descriptions-item label="类型">
             <div class="button_area options">
-              <a-button class="fontcolor" @click="options(0)">全部</a-button>
-              <a-button @click="options(1)">充值</a-button>
-              <a-button @click="options(2)">提现</a-button>
-              <a-button @click="options(3)">提币</a-button>
-              <a-button @click="options(4)">转入（BHP分红账户）</a-button>
-              <a-button @click="options(5)">转出（BHP分红账户）</a-button>
+              <a-button class="fontcolor" @click="options(0)">{{$t('assetoption.assetoption07')}}</a-button>
+              <a-button @click="options(1)">{{$t('assetoption.assetoption01')}}</a-button>
+              <a-button @click="options(2)">{{$t('assetoption.assetoption02')}}</a-button>
+              <a-button @click="options(3)">{{$t('assetoption.assetoption03')}}</a-button>
+              <a-button @click="options(4)">{{$t('assetoption.assetoption08')}}</a-button>
+              <a-button @click="options(5)">{{$t('assetoption.assetoption09')}}</a-button>
             </div>
           </a-descriptions-item>
         </a-descriptions>
@@ -61,7 +61,7 @@
 <script>
 import { setup } from '@/locales';
 import { mapGetters} from 'vuex';
-import { changeCurrency } from '@/script/api';
+import { changeCurrency,getBill } from '@/script/api';
 export default {
   data() {
     return {
@@ -217,6 +217,10 @@ export default {
     }
     this.starttime = `${year+'-'+month+'-'+day}`;
     this.endtime = `${year+'-'+month+'-'+day}`;
+    getBill().then((res)=>{
+      const {datas} = res;
+      console.log(datas)
+    })
   },
   computed:{
     ...mapGetters(['currency_list','defaultcurrency','lang','coin_list','total']),

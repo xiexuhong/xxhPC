@@ -63,19 +63,13 @@ export default [
         // 提币地址管理
         path: 'get_coin_addr',
         name: 'getCoinAddr',
-        component: () => import('@/views/account/getCoinAddr/get_coin_addr'),
+        component: () => import('@/views/account/get_coin_addr'),
       },
       {
         // 算龄
         path: 'power_age',
         name: 'powerAge',
         component: () => import('@/views/account/power_age'),
-      },
-      {
-        // 邀请
-        path: 'invite',
-        name: 'invite',
-        component: () => import('@/views/account/invite'),
       },
     ],
   },

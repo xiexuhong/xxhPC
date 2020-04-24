@@ -2,7 +2,7 @@
   <div id="availableassets">
     <a-card>
       <header>
-        <span  class="tit1">法币资产</span>
+        <span  class="tit1">{{$t('asset.asset03')}}</span>
         <a-dropdown>
           <a-menu slot="overlay">
               <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
@@ -11,13 +11,13 @@
         </a-dropdown>
       </header>
       <section>
-        <p class="tit2">总资产（估值）：</p>
+        <p class="tit2">{{$t('assetoverview.assetoverview01')}}</p>
         <p class="text">{{total.total}}&nbsp;{{defaultcurrency}}</p>
       </section>   
       <div class="button_area">
-        <a-button><router-link to="/asset/recharge">充值</router-link></a-button>
-        <a-button><router-link to="/asset/withdraw">提现</router-link></a-button>
-        <a-button><router-link to="/asset/recharge">账单</router-link></a-button>
+        <a-button><router-link to="/asset/recharge">{{$t('assetoption.assetoption01')}}</router-link></a-button>
+        <a-button><router-link to="/asset/withdraw">{{$t('assetoption.assetoption02')}}</router-link></a-button>
+        <a-button><router-link to="/asset/recharge">{{$t('assetoption.assetoption04')}}</router-link></a-button>
       </div>
     </a-card>
     <br />
@@ -27,20 +27,18 @@
           <div class="icon">
             //- <img src="../../image/svg/search.svg" alt="" />
           </div>
-          <a-input v-model="filterText" type="text"/>
+          <a-input-search :placeholder="$t('assetoption.assetoption05')" v-model="filterText" type="text" />
         </div>
-        <a-checkbox @change="onChange">隐藏零资产</a-checkbox>
+        <a-checkbox @change="onChange">{{$t('assetoption.assetoption06')}}</a-checkbox>
       </div>
     </div>
     <a-table :columns="columns" :dataSource="filterList">
-      <a slot="name" slot-scope="text">{{ text }}</a>
-      <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
       <span slot="action" slot-scope="text, record">
-        <a>Invite 一 {{ record.name }}</a>
+        <a>{{$t('assetoption.assetoption01')}}</a>
         <a-divider type="vertical" />
-        <a>Delete</a>
+        <a>{{$t('assetoption.assetoption02')}}</a>
         <a-divider type="vertical" />
-        <a class="ant-dropdown-link"> More actions <a-icon type="down" /> </a>
+        <a>{{$t('assetoption.assetoption03')}}</a>
       </span>
     </a-table>
   </div> 
@@ -49,120 +47,32 @@
 <script>
 import { setup } from '@/locales';
 import {mapGetters} from 'vuex';
-import { changeCurrency } from '@/script/api';
+import { changeCurrency,getAssetList } from '@/script/api';
 export default {
   data() {
     return {
-      columns: [
+      columns: [],
+      columns1:[],
+      columns2: [
         {
-          title: '币种',
+          title: this.$t('assetoverview.assetoverview11'),
           dataIndex: 'coin',
           key: 'coin',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.coin
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              }, 0);
-            }
-          },
         },
         {
-          title: '总量',
-          dataIndex: 'total',
-          key: 'total',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.total
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
-        },
-        {
-          title: '估值',
-          dataIndex: 'valuation',
-          key: 'valuation',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.usd
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
-        },
-        {
-          title: '可用',
+          title: this.$t('assetoverview.assetoverview14'),
           dataIndex: 'available',
           key: 'available',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.available
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
         },
         {
-          title: '冻结',
+          title: this.$t('assetoverview.assetoverview15'),
           dataIndex: 'freeze',
           key: 'freeze',
-          scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender',
-          },
-          onFilter: (value, record) =>
-            record.freze
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus();
-              });
-            }
-          },
+        },
+        {
+          title: this.$t('assetoverview.assetoverview16'),
+          key: 'action',
+          scopedSlots: { customRender: 'action' },
         },
       ],
       filterText:"",
@@ -170,9 +80,42 @@ export default {
     };
   },
   created(){
+    this.columns1= [
+        {
+          title: this.$t('assetoverview.assetoverview11'),
+          dataIndex: 'coin',
+          key: 'coin',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview12'),
+          dataIndex: 'total',
+          key: 'total',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview13')+`(${this.defaultcurrency})`,
+          dataIndex: 'valuation',
+          key: 'valuation',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview14'),
+          dataIndex: 'available',
+          key: 'available',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview15'),
+          dataIndex: 'freeze',
+          key: 'freeze',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview16'),
+          key: 'action',
+          scopedSlots: { customRender: 'action' },
+        },
+      ];
+    this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
   },
   computed: {
-    ...mapGetters(['currency_list','defaultcurrency','total','lang','balance_list']),
+    ...mapGetters(['currency_list','defaultcurrency','total','lang','balance_list','deviceType']),
     filterList() {
       var _this = this;
       return this.balance_list.filter(function(e) {
@@ -192,8 +135,82 @@ export default {
       this.$store.state.asset.defaultcurrency = this.currency_list[index];
       changeCurrency({currency:this.defaultcurrency}).then((res) => {
           console.log(res);
-      })
+          this.columns1 = [
+            {
+              title: this.$t('assetoverview.assetoverview11'),
+              dataIndex: 'coin',
+              key: 'coin',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview12'),
+              dataIndex: 'total',
+              key: 'total',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview13')+`(${this.defaultcurrency})`,
+              dataIndex: 'valuation',
+              key: 'valuation',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview14'),
+              dataIndex: 'available',
+              key: 'available',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview15'),
+              dataIndex: 'freeze',
+              key: 'freeze',
+            },
+          ];
+          this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
+      });
+      getAssetList().then((res)=>{
+        const {datas} = res;
+        if(datas.hasOwnProperty('error')){
+            return
+        }
+        this.$store.state.asset.total = this.gettotal(datas.asset.asset_total,datas.balance.balance_total,datas.deposit.valuation,datas.total);
+        this.$store.state.asset.coin_list = this.getcoin_list(datas.asset.asset_list);
+        this.$store.state.asset.balance_list = this.getbalance_list(datas.balance.balance_list);
+      });
     }, 
+    getcoin_list:function(datas){
+      var coin_list = [];
+      for(let i=0;i<datas.length;i++){
+        if(coin_list.length<datas.length){
+          coin_list.push({id:'',coin:'',total:"",available:"",freeze:""});
+          coin_list[i].id = i;
+          coin_list[i].coin =datas[i].coin;
+          coin_list[i].total =datas[i].total_num;
+          coin_list[i].available =datas[i].num_avail;
+          coin_list[i].freeze =datas[i].num_freeze;
+          coin_list[i].valuation =datas[i].unify_price;
+        }      
+      };
+      return coin_list;
+    },
+    getbalance_list:function(datas){
+      var balance_list=[];
+      for(let i=0;i<datas.length;i++){
+        if(balance_list.length<datas.length){
+          balance_list.push({id:'',coin:'',total:"",available:"",freeze:""});
+          balance_list[i].coin =datas[i].currency;
+          balance_list[i].total =datas[i].total_num;
+          balance_list[i].available =datas[i].money_avail;
+          balance_list[i].freeze =datas[i].money_freeze;
+          balance_list[i].valuation =datas[i].unify_price;
+        }
+      };
+      return balance_list;
+    },
+    gettotal:function(total1,total2,total3,total4){
+      var total ={};
+      total.asset_total =total1;
+      total.balance_total = total2;
+      total.deposit = total3;
+      total.total = total4;
+      return total;
+    },
     onChange(e) {
       this.isHide = e.target.checked;
     },

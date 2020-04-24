@@ -5,7 +5,8 @@
       a-form(:form="form" @submit="login")
         a-form-item
           a-input(v-decorator="['account',{ rules: [{ required: true, message: 'Please input your account!' }] },]" placeholder="account")
-            span.country(slot="addonBefore" @click="countrySelect('/country')") {{country.number}}
+            span.country(slot="addonBefore")
+              CountrySelect
             a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
         a-form-item
           a-input(v-decorator="['pwd',{ rules: [{ required: true, message: 'Please input your Password!' }] },]" placeholder="Password" type="password" autocomplete="off")
@@ -16,34 +17,23 @@
           router-link(to="/login/register")
             a.register(href="javascript:;") 注册
           a-button.login_btn(type="primary" html-type="submit") 登录
-    a-modal(v-model="visbile" :footer="null" :closable="false" wrapClassName="countryWrap")
-      Country(@close="visbile=false")
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex';
-import Country from './country';
+import CountrySelect from './countrySelect';
 import { extend } from '@/script/utils';
 import { login } from '@/script/api';
 export default {
-  components: { Country },
+  components: { CountrySelect },
   data() {
-    return {
-      visbile: false,
-    };
+    return {};
   },
   computed: {
     ...mapGetters(['country', 'deviceType']),
   },
   methods: {
     ...mapMutations(['saveUser']),
-    countrySelect(path) {
-      if (this.deviceType === 'mobile') {
-        this.$router.push(path);
-        return;
-      }
-      this.visbile = true;
-    },
     login(e) {
       e.preventDefault();
       this.form.validateFields(async (err, values) => {

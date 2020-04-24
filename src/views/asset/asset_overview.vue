@@ -4,7 +4,7 @@
       <div id="assetview">     
           <div class="left">
             <header>
-              <span class="tit1">资产总览</span>
+              <span class="tit1">{{$t('asset.asset01')}}</span>
               <a-dropdown>
                 <a-menu slot="overlay">
                     <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
@@ -13,26 +13,26 @@
               </a-dropdown>
             </header>
             <section>
-              <p class="tit2">总资产（估值）：</p>
+              <p class="tit2">{{$t('assetoverview.assetoverview01')}}</p>
               <p class="text">{{total.total}}&nbsp;{{defaultcurrency}}</p>
             </section>
             <a-descriptions bordered :layout="layout">
-              <a-descriptions-item label="总资产（估值）">{{total.total}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
-              <a-descriptions-item label="可用资金（估值）">{{total.asset_total}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
-              <a-descriptions-item label="合约金额（估值）">{{total.deposit}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
+              <a-descriptions-item :label="$t('assetoverview.assetoverview02')">{{total.total}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
+              <a-descriptions-item :label="$t('assetoverview.assetoverview03')">{{total.asset_total}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
+              <a-descriptions-item :label="$t('assetoverview.assetoverview04')">{{total.deposit}}&nbsp;{{defaultcurrency}}</a-descriptions-item>
             </a-descriptions>
             <div class="button_area">
-              <a-button><router-link to="/asset/recharge">充值</router-link></a-button>
-              <a-button><router-link to="/asset/withdraw">提现</router-link></a-button>
-              <a-button><router-link to="/asset/extractcoin">提币</router-link></a-button>
-              <a-button><router-link to="/asset/assetbills">账单</router-link></a-button>
+              <a-button><router-link to="/asset/recharge">{{$t('assetoption.assetoption01')}}</router-link></a-button>
+              <a-button><router-link to="/asset/withdraw">{{$t('assetoption.assetoption02')}}</router-link></a-button>
+              <a-button><router-link to="/asset/extractcoin">{{$t('assetoption.assetoption03')}}</router-link></a-button>
+              <a-button><router-link to="/asset/assetbills">{{$t('assetoption.assetoption04')}}</router-link></a-button>
             </div>
           </div>
           <div class="right" v-if="deviceType==='desktop'">
-            <span class='tit3'>资产趋势图</span>
-            <button @click="getData(0)" class="normalData" :class="{'activeData':isWeek}">周</button>
-            <button @click="getData(1)" class="normalData" :class="{'activeData':isMonth}">月</button>
-            <p class='tit4'>净资产总额（{{defaultcurrency}}）</p>
+            <span class='tit3'>{{$t('assetoverview.assetoverview05')}}</span>
+            <button @click="getData(0)" class="normalData" :class="{'activeData':isWeek}">{{$t('assetoverview.assetoverview06')}}</button>
+            <button @click="getData(1)" class="normalData" :class="{'activeData':isMonth}">{{$t('assetoverview.assetoverview07')}}</button>
+            <p class='tit4'>{{$t('assetoverview.assetoverview08')}}（{{defaultcurrency}}）</p>
             <ve-line :data="chartData" :settings="chartSettings"  :extend="chartExtend" class="charts" height='300px' :tooltip-visible="false" :loading="loading" :legend-visible="false"></ve-line>
           </div>
       </div>
@@ -44,9 +44,9 @@
           <div class="icon">
             //- <img src="../../image/svg/search.svg" alt="" />
           </div>
-          <a-input-search placeholder="input search text" v-model="filterText" type="text" />
+          <a-input-search :placeholder="$t('assetoption.assetoption05')" v-model="filterText" type="text" />
         </div>
-        <a-checkbox @change="onChange">隐藏零资产</a-checkbox>
+        <a-checkbox @change="onChange">{{$t('assetoption.assetoption06')}}</a-checkbox>
       </div>
     </div> 
     <a-table :dataSource="filterList" :columns="columns" >
@@ -96,13 +96,6 @@ export default {
         },
         yAxis: {
           show: false,
-          // splitLine:{show: false},   //去除网格线
-          // axisTick:{ //y轴刻度线
-          //   show:false
-          // },
-          // axisLine:{ //y轴
-          //   show:false
-          // }
         }
       },
       isWeek: true,
@@ -121,46 +114,20 @@ export default {
         ]
       },
       columns: [],
-      columns1: [
-        {
-          title: '币种',
-          dataIndex: 'coin',
-          key: 'coin',
-        },
-        {
-          title: '总量',
-          dataIndex: 'total',
-          key: 'total',
-        },
-        {
-          title: '估值',
-          dataIndex: 'valuation',
-          key: 'valuation',
-        },
-        {
-          title: '可用',
-          dataIndex: 'available',
-          key: 'available',
-        },
-        {
-          title: '冻结',
-          dataIndex: 'freeze',
-          key: 'freeze',
-        },
-      ],
+      columns1:[],
       columns2: [
         {
-          title: '币种',
+          title: this.$t('assetoverview.assetoverview11'),
           dataIndex: 'coin',
           key: 'coin',
         },
         {
-          title: '可用',
+          title: this.$t('assetoverview.assetoverview14'),
           dataIndex: 'available',
           key: 'available',
         },
         {
-          title: '冻结',
+          title: this.$t('assetoverview.assetoverview15'),
           dataIndex: 'freeze',
           key: 'freeze',
         },
@@ -171,21 +138,36 @@ export default {
     };
   },
   created(){
+    this.columns1= [
+        {
+          title: this.$t('assetoverview.assetoverview11'),
+          dataIndex: 'coin',
+          key: 'coin',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview12'),
+          dataIndex: 'total',
+          key: 'total',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview13')+`(${this.defaultcurrency})`,
+          dataIndex: 'valuation',
+          key: 'valuation',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview14'),
+          dataIndex: 'available',
+          key: 'available',
+        },
+        {
+          title: this.$t('assetoverview.assetoverview15'),
+          dataIndex: 'freeze',
+          key: 'freeze',
+        },
+      ];
     this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
     this.getData(0);
     console.log(this.$t('myCome.myCome03'));
-    getAssetList().then((res)=>{
-      const {datas} = res;
-      if(datas.hasOwnProperty('error')){
-          return
-      }
-      this.$store.state.asset.assetMess = datas;
-     });
-     ownCurrency().then((res)=>{
-       const {datas} = res;
-       this.$store.state.asset.currency_list = datas.currency;
-       this.$store.state.asset.defaultcurrency = datas.default;
-     })
   },
   computed: {
     ...mapGetters(['currency_list','defaultcurrency','lang','total','asset_list','deviceType']),
@@ -212,7 +194,44 @@ export default {
       this.$store.state.asset.defaultcurrency = this.currency_list[index];
       changeCurrency({currency:this.defaultcurrency}).then((res) => {
           console.log(res);
-      })
+          this.columns1 = [
+            {
+              title: this.$t('assetoverview.assetoverview11'),
+              dataIndex: 'coin',
+              key: 'coin',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview12'),
+              dataIndex: 'total',
+              key: 'total',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview13')+`(${this.defaultcurrency})`,
+              dataIndex: 'valuation',
+              key: 'valuation',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview14'),
+              dataIndex: 'available',
+              key: 'available',
+            },
+            {
+              title: this.$t('assetoverview.assetoverview15'),
+              dataIndex: 'freeze',
+              key: 'freeze',
+            },
+          ];
+          this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
+      });
+      getAssetList().then((res)=>{
+        const {datas} = res;
+        if(datas.hasOwnProperty('error')){
+            return
+        }
+        this.$store.state.asset.total = this.gettotal(datas.asset.asset_total,datas.balance.balance_total,datas.deposit.valuation,datas.total);
+        this.$store.state.asset.coin_list = this.getcoin_list(datas.asset.asset_list);
+        this.$store.state.asset.balance_list = this.getbalance_list(datas.balance.balance_list);
+      });
     }, 
     getData(index){
       if(index == 0){
@@ -233,6 +252,43 @@ export default {
     },
     onChange(e) {
       this.isHide = e.target.checked;
+    },
+    getcoin_list:function(datas){
+      var coin_list = [];
+      for(let i=0;i<datas.length;i++){
+        if(coin_list.length<datas.length){
+          coin_list.push({id:'',coin:'',total:"",available:"",freeze:""});
+          coin_list[i].id = i;
+          coin_list[i].coin =datas[i].coin;
+          coin_list[i].total =datas[i].total_num;
+          coin_list[i].available =datas[i].num_avail;
+          coin_list[i].freeze =datas[i].num_freeze;
+          coin_list[i].valuation =datas[i].unify_price;
+        }      
+      };
+      return coin_list;
+    },
+    getbalance_list:function(datas){
+      var balance_list=[];
+      for(let i=0;i<datas.length;i++){
+        if(balance_list.length<datas.length){
+          balance_list.push({id:'',coin:'',total:"",available:"",freeze:""});
+          balance_list[i].coin =datas[i].currency;
+          balance_list[i].total =datas[i].total_num;
+          balance_list[i].available =datas[i].money_avail;
+          balance_list[i].freeze =datas[i].money_freeze;
+          balance_list[i].valuation =datas[i].unify_price;
+        }
+      };
+      return balance_list;
+    },
+    gettotal:function(total1,total2,total3,total4){
+      var total ={};
+      total.asset_total =total1;
+      total.balance_total = total2;
+      total.deposit = total3;
+      total.total = total4;
+      return total;
     },
     changeLang() {
       setup('en');

@@ -8,7 +8,7 @@
       </span>
     </div>
     <div>
-      <a-card :bordered="false" :bodyStyle="{padding:0,}">
+      <a-card :bordered="false" :bodyStyle="{ padding: 0 }">
         <a-row>
           <a-col :span="8">
             <small>我的当前算龄</small>
@@ -31,13 +31,15 @@
         <a-row>
           <a-col :span="12">
             <small>當前你的算齡未達到標準算齡， 暫未獲得雙挖礦機的資格</small>
+            <!-- <small>您的当前增长速度15TD.人均增长速度98TD</small>
+            <small>您的当前增长速度100TD.人均增长速度98TD</small> -->
           </a-col>
           <a-col :span="12" class="t_right">
             <small class="color_y">入门算龄</small>
           </a-col>
         </a-row>
       </a-card>
-      <a-card :bordered="false" class="grade_div" :bodyStyle="{padding: 0,}">
+      <a-card :bordered="false" class="grade_div" :bodyStyle="{ padding: 0 }">
         <h2>收益區間排名</h2>
         <a-row>
           <a-col :span="15">
@@ -87,15 +89,27 @@
                   </div>
                 </a-col>
                 <a-col :span="1"></a-col>
-                <a-col :span="18">
+                <a-col :span="18" class="img_own">
                   <span class="color_y">算龄(1000-23187)</span>
+                  <img src="../../assets/image/account/iconmoren.png" alt="" />
                 </a-col>
               </a-row>
             </div>
           </a-col>
         </a-row>
       </a-card>
-      <a-alert message="您的算齡未達標，未獲得雙挖礦機資源，沒有機內排名區間，快去下單算力加速成長，成長越快，等級越高，權益越大" type="error" />
+      <a-alert
+        message="您的算齡未達標，未獲得雙挖礦機資源，沒有機內排名區間，快去下單算力加速成長，成長越快，等級越高，權益越大"
+        type="error"
+      />
+      <!-- <a-alert
+        message="您目前排名在P4区间（算龄低于80%位数），日增长速度比人均增长速度少80TD。快去下单算力加速成长，等级越高，权益越大。"
+        type="error"
+      />
+      <a-alert
+        message="您目前排名在P4区间（算龄低于80%位数），日增长速度比人均增长速度多80TD。坚持成长，等级越高，权益越大。"
+        type="error"
+      /> -->
       <div class="btn_div">
         <a-button type="primary">加速成長</a-button>
       </div>
@@ -165,5 +179,9 @@ small {
 }
 .grade_div .ant-card-body {
   padding: 0;
+}
+.img_own img {
+  display: inline-block;
+  width: 10%;
 }
 </style>

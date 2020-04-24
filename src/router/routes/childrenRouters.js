@@ -1,4 +1,3 @@
-
 const childrenRoute = [];
 const files = require.context('./childrenRoutes', false, /\.js$/);
 files.keys().forEach(key => {

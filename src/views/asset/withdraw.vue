@@ -15,12 +15,10 @@
                     <a-form :form="form">
                         <a-form-model-item label="选择币种">
                             <a-dropdown>
-                            <a-menu slot="overlay" @click="handleMenuClick">
-                                <a-menu-item key="1"><a-icon type="user" />USD</a-menu-item>
-                                <a-menu-item key="2"><a-icon type="user" />CNY</a-menu-item>
-                                <a-menu-item key="3"><a-icon type="user" />other</a-menu-item>
-                            </a-menu>
-                            <a-button style="margin-left: 8px"> USD <a-icon type="down" /> </a-button>
+                              <a-menu slot="overlay">
+                                  <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+                              </a-menu>
+                              <a-button style="margin-left: 8px" >{{defaultcurrency}}<a-icon type="down" /> </a-button>
                             </a-dropdown>
                         </a-form-model-item>
                        <a-form-model-item label="提现金额">
@@ -57,6 +55,8 @@
   
 <script>
 import { setup } from '@/locales';
+import { mapGetters} from 'vuex';
+import { getAssetList,changeCurrency } from '@/script/api';
 export default {
   data() {
     return {
@@ -64,7 +64,25 @@ export default {
       form: this.$form.createForm(this, { name: 'coordinated' }),
     };
   },
+  computed: {
+    ...mapGetters(['currency_list','defaultcurrency','lang','total','asset_list','deviceType']),
+  },
   methods: {
+    checkcurrency(index) {
+      this.$store.state.asset.defaultcurrency = this.currency_list[index];
+      changeCurrency({currency:this.defaultcurrency}).then((res) => {
+          console.log(res);
+      });
+      getAssetList().then((res)=>{
+        const {datas} = res;
+        if(datas.hasOwnProperty('error')){
+            return
+        }
+        // this.$store.state.asset.total = this.gettotal(datas.asset.asset_total,datas.balance.balance_total,datas.deposit.valuation,datas.total);
+        // this.$store.state.asset.coin_list = this.getcoin_list(datas.asset.asset_list);
+        // this.$store.state.asset.balance_list = this.getbalance_list(datas.balance.balance_list);
+      });
+    }, 
     handleSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
