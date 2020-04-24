@@ -59,13 +59,24 @@ export const resetPassword = data => post('/index.php?act=user&op=findPwd', data
 export const getMessageList = data => post('/index.php?act=article&op=index', data);
 
 /**
+ * @method 消息全部已读
+ */
+export const readAllMessage = () => post('/index.php?act=article&op=readAll');
+
+/**
  * @method 获取首页
  */
-export const getHome = () => post('//index.php?act=index');
+export const getHome = () => post('/index.php?act=index');
 
 /**
  * @method 获取实名状态
  */
 export const getVerifyStatus = () => post('/index.php?act=account&op=realNameVerifyStatus');
+
+/**
+ * @method 获取邀请列表
+ * @param page -- 页码
+ */
+export const getInviteList = data => post('/index.php?act=setting&op=inviterList', data);
 
 export const getAssetList = data => get('/index.php?act=asset&op=list', data);

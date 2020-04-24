@@ -3,6 +3,7 @@ import qs from 'qs';
 import { message } from 'ant-design-vue';
 import store from '@/store';
 import router from '@/router';
+import Vue from 'vue';
 
 const http = axios.create({
   baseURL: process.env.VUE_APP_BASIC_URL,
@@ -13,16 +14,16 @@ http.interceptors.request.use(
   config => {
     if (config.method === 'post') {
       const data = config.data || {};
-      data['token'] = store.state.user.token;
+      data['token'] = Vue.ls.get('user') && Vue.ls.get('user').token;
       data['app_version'] = '1.4.20';
-      data['lang'] = store.state.lang;
+      data['lang'] = Vue.ls.get('localeLanguage');
       config.data = data;
     }
     if (config.method === 'get') {
       const data = config.params || {};
-      data['token'] = store.state.user.token;
+      data['token'] = Vue.ls.get('user') && Vue.ls.get('user').token;
       data['app_version'] = '1.4.20';
-      data['lang'] = store.state.lang;
+      data['lang'] = Vue.ls.get('localeLanguage');
       config.params = data;
     }
     return config;
@@ -46,7 +47,7 @@ export const get = (url, data) =>
     } else if (res.datas.error || res.err_code) {
       if (res.err_code === 'need_login') {
         store.commit('removeUser');
-        router.push('/login');
+        router.push('/login/login');
       }
       message.error(res.datas.error || res.err_code);
       reject(res.datas.error);
@@ -63,7 +64,7 @@ export const post = (url, data) =>
     } else if (res.datas.error || res.err_code) {
       if (res.err_code === 'need_login') {
         store.commit('removeUser');
-        router.push('/login');
+        router.push('/login/login');
       }
       message.error(res.datas.error || res.err_code);
       reject(res.datas.error);

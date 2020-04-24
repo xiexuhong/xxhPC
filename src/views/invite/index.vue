@@ -5,13 +5,13 @@
         .title 我的專屬分享方式
         a-form(:form="form" @submit="submit")
             a-form-item(label="註冊鏈接")
-                a-input-search(addonBefore="Http://" defaultValue="")
+                a-input-search(addonBefore="Http://" v-decorator="['url',{}]")
                     a-button(slot="enterButton" type="primary") 复制
             a-form-item(label="邀请码")
-                a-input-search(defaultValue="")
+                a-input-search(v-decorator="['invite_code',{initialValue:invite_code}]")
                     a-button(slot="enterButton" type="primary") 复制
             a-form-item(label="邮箱")
-                a-input(defaultValue="")
+                a-input(v-decorator="['email',{}]")
             a-form-item()
                 a-button(type="primary") 发送
         .rules
@@ -23,23 +23,24 @@
                 span 開挖時間為次日00：00：00，獲贈算力收益將自動累加到您的礦場賬戶
         a-tabs(defaultActiveKey="1" @change="onChange")
             a-tab-pane(key="1" tab="邀請記錄") 
-                a-table(:columns="column1" :dataSource="data1")
+                a-table(:columns="column1" :dataSource="data1" :pagination="false")
             a-tab-pane(key="2" tab="邀請列表") 
-                a-table(:columns="column2" :dataSource="data2")
+                a-table(:columns="column2" :dataSource="data2" :pagination="false")
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
+import { getInviteList } from '@/script/api';
 const column1 = [
   {
     title: '邀请注册',
-    dataIndex: 'invite',
-    key: 'invite',
+    dataIndex: 'num',
+    key: 'num',
   },
   {
     title: '好友下单',
-    dataIndex: 'friend',
-    key: 'friend',
+    dataIndex: 'rent_num',
+    key: 'rent_num',
   },
   {
     title: '留存奖励算力',
@@ -75,34 +76,31 @@ export default {
     return {
       column1,
       column2,
-      data1: [
-        {
-          invite: 1,
-          friend: 1,
-          power: 0.1,
-        },
-      ],
-      data2: [
-        {
-          register: '2015-54-44',
-          first: '2018-11-12',
-          account: '181****5757',
-          power: 0.1,
-        },
-      ],
+      invite_code: null,
+      data1: [],
+      data2: [],
     };
   },
   computed: {
     ...mapGetters(['deviceType']),
   },
   methods: {
+    async requestInviteList(page) {
+      const { datas } = await getInviteList({ page });
+      const { list, invite_code } = datas;
+      this.invite_code = invite_code;
+      this.data1 = [{ num: list.num, rent_num: list.rent_num, power: list.power, key: 0 }];
+      this.data2 = list.list || [];
+    },
     onChange(val) {},
     submit() {},
   },
   beforeCreate() {
     this.form = this.$form.createForm(this, { name: 'invite' });
   },
-  created() {},
+  created() {
+    this.requestInviteList(1);
+  },
 };
 </script>
 

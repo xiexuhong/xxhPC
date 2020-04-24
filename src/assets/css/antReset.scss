@@ -43,3 +43,12 @@
     justify-content: flex-start;
   }
 }
+
+body {
+  & > div {
+    &:last-child {
+      position: fixed !important;
+      z-index: 10;
+    }
+  }
+}
