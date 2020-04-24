@@ -163,14 +163,14 @@ export default {
       /deep/.ant-table-thead > tr > th {
         background-color: #ffffff;
       }
+      /deep/.ant-pagination-item-active {
+        border: none;
+        background-color: #ffab32;
+        a {
+          color: #ffffff;
+        }
+      }
     }
-  }
-}
-/deep/.ant-pagination-item-active {
-  border: none;
-  background-color: #ffab32;
-  a {
-    color: #ffffff;
   }
 }
 

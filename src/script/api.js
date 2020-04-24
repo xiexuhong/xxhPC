@@ -62,7 +62,7 @@ export const getMessageList = data => post('/index.php?act=article&op=index', da
 /**
  * @method 获取首页
  */
-export const getHome = () => post('//index.php?act=index');
+export const getHome = () => post('/index.php?act=index');
 
 export const getAssetList = data => get('/index.php?act=asset&op=list', data);
 
@@ -82,10 +82,46 @@ export const getUserAccountInfo = data => post('/index.php?act=wallet&op=getUser
  */
 export const sendVerifyCode = data => post('/index.php?act=account&op=sendVerifyCode', data);
 
-export const getAssetList = data => get('/index.php?act=asset&op=list', data);
-
-//  获取算力列表
+/**
+ * @method 获取算力列表
+ */
 export const getPowerList = data => get('/index.php?act=power&op=get_power_list', data);
 
-//  获取增值服务列表
+/**
+ * @method 获取增值服务列表
+ */
 export const getInsuranceList = data => get('/index.php?act=insurance&op=myInsuranceList', data);
+
+/**
+ * @method 获取算力合约列表
+ */
+export const getContractList = data => get('/app2/index.php?act=order&op=mine', data);
+
+/**
+ * @method 获取协议
+ */
+export const getAgreement = data => get('/index.php?act=power&op=contract', data);
+
+/**
+ * @method 获取剩余算力
+ * @param type -- 算力余额查询类型
+ */
+export const getSurplusPower = data => post('/index.php?act=payment&op=index', data);
+
+/**
+ * @method 购买算力
+ * @param machine_id -- 矿机id
+ * @param machine_type -- 矿机类型
+ * @param num -- 租用数量
+ * @param payment_code -- 支付方式
+ */
+export const rentPower = data => post('/index.php?act=order&op=create', data);
+
+/**
+ * @method 购买算力
+ * @param machine_id -- 矿机id
+ * @param machine_type -- 矿机类型
+ * @param num -- 租用数量
+ * @param payment_code -- 支付方式
+ */
+export const getMinePowerContract = data => get('/app2/index.php?act=order&op=mine', data);

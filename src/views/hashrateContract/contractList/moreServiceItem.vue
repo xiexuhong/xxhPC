@@ -142,15 +142,16 @@ export default {
       display: inline-block;
       color: #ffab32;
     }
+    /deep/.ant-pagination-item-active {
+      border: none;
+      background-color: #ffab32;
+      a {
+        color: #ffffff;
+      }
+    }
   }
 }
-/deep/.ant-pagination-item-active {
-  border: none;
-  background-color: #ffab32;
-  a {
-    color: #ffffff;
-  }
-}
+
 @media screen and (max-width: 500px) {
   .serviceItemContainer {
     .serviceItemTable {
