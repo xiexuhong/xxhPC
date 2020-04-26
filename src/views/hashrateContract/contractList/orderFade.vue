@@ -8,11 +8,15 @@
       <ul>
         <li>
           <span>名称</span>
-          <span class="listTitleContent">BTC新手专享30天算力包</span>
+          <span class="listTitleContent">{{ power.name }}</span>
         </li>
         <li>
           <span>金额</span>
-          <span class="listTitleContent">2312.00 USDT</span>
+          <span class="listTitleContent">
+            {{ power.allow_cancel == 2 ? power.continue_total_deposit_coin :
+            (power.work_state != 0 ? power.raw_total_deposit :
+            power.total_deposit) }}{{ power.pay_currency }}
+          </span>
         </li>
         <li>
           <span>
@@ -25,29 +29,43 @@
             >
               <div slot="title">
                 <p style="color:#595959;textAlign:center">算力构成</p>
-                <p style="color:#999999;textAlign:center">720T=200.00+520.00</p>
+                <p
+                  style="color:#999999;textAlign:center"
+                >{{ (power.computing_power * power.num).toFixed(2) }}T</p>
               </div>
               <div slot="content">
                 <ul>
                   <li>
                     <span>基础算力</span>
-                    <span>5.00T</span>
+                    <span>{{ power.basePower }}T</span>
                   </li>
                   <li>
                     <span>浮动算力</span>
-                    <span>6.50T</span>
+                    <span>{{ power.floatPower }}T</span>
                   </li>
                   <li>
                     <span>达标算力</span>
-                    <span>0.00T</span>
+                    <span>{{ power.pePower }}T</span>
                   </li>
                   <li>
                     <span>期货算力</span>
-                    <span>0.00T</span>
+                    <span>{{ power.futuresPower }}T</span>
                   </li>
                   <li>
                     <span>定期算力</span>
-                    <span>0.00T</span>
+                    <span>{{ power.regularPower }}T</span>
+                  </li>
+                  <li>
+                    <span>邀请算力</span>
+                    <span>{{ power.inviterPower }}T</span>
+                  </li>
+                  <li v-if="power.tdPower > 0">
+                    <span>成长算力</span>
+                    <span>{{ power.tdPower }}T</span>
+                  </li>
+                  <li v-if="power.couponPower > 0">
+                    <span>优惠券算力</span>
+                    <span>{{ power.couponPower }}T</span>
                   </li>
                 </ul>
               </div>
@@ -111,11 +129,18 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
       clicked: false, //点击气泡卡隐藏/显示
     };
+  },
+  created() {
+    console.log(this.power);
+  },
+  computed: {
+    ...mapGetters({ power: 'singleContract' }),
   },
   methods: {
     handleClickChange(visible) {

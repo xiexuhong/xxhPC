@@ -45,47 +45,76 @@
         :pagination="{
           pageSizeOptions: ['10', '20', '30', '40'],
           showSizeChanger: true,
+          onChange: onPageChange
         }"
         :rowKey="record => record.id"
+        :loading="tableLoading"
       >
-        <a-popover placement="rightTop" slot="totalHashrate" slot-scope="text">
+        <span slot="deposit" slot-scope="text, record">
+          {{ record.allow_cancel == 2 ? record.continue_total_deposit_coin :
+          (record.work_state != 0 ? record.raw_total_deposit :
+          record.total_deposit) }}{{ record.pay_currency }}
+        </span>
+        <span slot="regularDateNum" slot-scope="text">{{ text }}天</span>
+        <a-popover placement="rightTop" slot="computingPower" slot-scope="text, record">
           <div slot="title">
             <p style="color:#595959;textAlign:center">算力构成</p>
+            <p style="color:#999999;textAlign:center">{{ record.computingPower * record.num }}T</p>
           </div>
           <div slot="content">
             <ul>
               <li>
                 <span>基础算力</span>
-                <span>5.00T</span>
+                <span>{{ record.basePower }}T</span>
               </li>
               <li>
                 <span>浮动算力</span>
-                <span>6.50T</span>
+                <span>{{ record.floatPower }}T</span>
               </li>
               <li>
                 <span>达标算力</span>
-                <span>0.00T</span>
+                <span>{{ record.pePower }}T</span>
               </li>
               <li>
                 <span>期货算力</span>
-                <span>0.00T</span>
+                <span>{{ record.futuresPower }}T</span>
               </li>
               <li>
                 <span>定期算力</span>
-                <span>0.00T</span>
+                <span>{{ record.regularPower }}T</span>
               </li>
               <li>
-                <span>定期算力</span>
-                <span>0.00T</span>
+                <span>邀请算力</span>
+                <span>{{ record.inviterPower }}T</span>
+              </li>
+              <li v-if="record.tdPower > 0">
+                <span>成长算力</span>
+                <span>{{ record.tdPower }}T</span>
+              </li>
+              <li v-if="record.couponPower > 0">
+                <span>优惠券算力</span>
+                <span>{{ record.couponPower }}T</span>
               </li>
             </ul>
           </div>
-          <span class="totalHashrate">{{ text }} T</span>
+          <span class="totalHashrate">{{ record.computingPower * record.num }}T</span>
         </a-popover>
-        <span class="action" slot="action">
-          <router-link to="/hashrateContract/hashrateTransfer">转让</router-link>
-          <router-link to="/hashrateContract/contractList/orderFade">退单</router-link>
-          <router-link to="/hashrateContract/contractList/orderReorder">续单</router-link>
+        <span class="action" slot="action" slot-scope="text, record">
+          <!-- 暂时不出
+            <router-link
+            to="/hashrateContract/hashrateTransfer"
+            v-show="record.work_state != 0|| record.returnable == 0"
+            @click.native="setSingleContract(record)"
+          >转让</router-link>-->
+          <router-link
+            to="/hashrateContract/contractList/orderFade"
+            @click.native="setSingleContract(record)"
+          >退单</router-link>
+          <router-link
+            to="/hashrateContract/contractList/orderReorder"
+            v-show="(record.work_state != 0) || record.allow_cancel == 2 || record.returnable == 0"
+            @click.native="setSingleContract(record)"
+          >续单</router-link>
         </span>
       </a-table>
     </div>
@@ -93,54 +122,20 @@
 </template>
 
 <script>
-import { getMinePowerContract } from '@/script/api';
-const columns = [
-  {
-    title: '名称',
-    dataIndex: 'name',
-  },
-  {
-    title: '金额',
-    dataIndex: 'amountOfMoney',
-    scopedSlots: { customRender: 'amountOfMoney' },
-  },
-  {
-    title: '到手总算力',
-    dataIndex: 'computing_power',
-    width: '10%',
-    scopedSlots: { customRender: 'totalHashrate' },
-  },
-  {
-    title: '合约期限',
-    dataIndex: 'contractDate',
-    width: '7%',
-  },
-  {
-    title: '合约状态',
-    dataIndex: 'contractState',
-    width: '7%',
-  },
-  {
-    title: '开挖时间',
-    dataIndex: 'beginTime',
-  },
-  {
-    title: '下单时间',
-    dataIndex: 'orderTime',
-  },
-  {
-    title: '操作',
-    dataIndex: 'action',
-    scopedSlots: { customRender: 'action' },
-    width: '12%',
-  },
-];
+import { mapMutations } from 'vuex';
+import { getContractList } from '@/script/api';
 export default {
-  props: ['rentedList'], //  继承的数据
+  props: {
+    //  继承的数据
+    rentedList: {
+      type: Array,
+      default: [],
+    },
+  },
   data() {
     return {
       datas: [], //  单元格数据
-      columns, //  表头
+      columns: [], //  表头
       chioce: {
         //  筛选选项
         type: 'all', //  矿机类型
@@ -148,34 +143,106 @@ export default {
         dateType: 'all', //  锁定期限
         payType: 'all', //  订单类型
       },
-      pageNum: 1, //  表格页数
+      tableLoading: false, //  数据加载过程中状态loading
+      // page: '1', //  表格页数
     };
   },
-  // created() {
-  //   this.datas = this.rentedList;
-  //   console.log(this.datas);
-  // },
+  created() {
+    //  表格表头
+    const columns = [
+      {
+        title: '名称',
+        dataIndex: 'name',
+      },
+      {
+        title: '金额',
+        dataIndex: 'deposit',
+        scopedSlots: { customRender: 'deposit' },
+      },
+      {
+        title: '到手总算力',
+        dataIndex: 'computingPower',
+        width: '10%',
+        scopedSlots: { customRender: 'computingPower' },
+      },
+      {
+        title: '合约期限',
+        dataIndex: 'regularDateNum',
+        scopedSlots: { customRender: 'regularDateNum' },
+        width: '7%',
+      },
+      {
+        title: '合约状态',
+        dataIndex: 'display_status',
+        width: '7%',
+      },
+      {
+        title: '开挖时间',
+        dataIndex: 'time_income',
+      },
+      {
+        title: '下单时间',
+        dataIndex: 'time_creat',
+      },
+      {
+        title: '操作',
+        dataIndex: 'action',
+        scopedSlots: { customRender: 'action' },
+        width: '12%',
+      },
+    ];
+    this.columns = columns;
+    // this.datas = this.rentedList;
+    // console.log(this.datas);
+  },
   //  不能放在created，因为props异步传输数据，created只工作一次，拿到的是父组件传入的初始值，不是直接请求到的数据，watch会监听数据变化，不会拿到空值
   watch: {
     rentedList() {
+      this.tableLoading = true;
       this.datas = this.rentedList;
-      console.log(this.datas);
+      // console.log(this.datas);
+      this.tableLoading = false;
     },
   },
   methods: {
     //  筛选数据
     onChoiceChange() {
+      this.tableLoading = true;
       //  获取选项发送请求，获取数据
-      getMinePowerContract({
-        page: this.pageNum,
+      getContractList({
+        page: '1',
         type: this.chioce.type,
         work_type: this.chioce.workType,
         date_type: this.chioce.dateType,
         pay_type: this.chioce.payType,
       }).then(resp => {
         this.datas = resp.datas.rented_list;
-        console.log(this.datas);
+        // console.log(this.datas);
+        this.tableLoading = false;
       });
+    },
+    //  页码变化
+    onPageChange(page) {
+      this.tableLoading = true;
+      // this.page = page;
+      //  获取选项发送请求，获取数据
+      getContractList({
+        page: page,
+        type: this.chioce.type,
+        work_type: this.chioce.workType,
+        date_type: this.chioce.dateType,
+        pay_type: this.chioce.payType,
+      }).then(resp => {
+        this.datas = resp.datas.rented_list;
+        // console.log(this.datas);
+        this.tableLoading = false;
+      });
+    },
+    //  乘法
+    mult: (power, num) => (power * num).toFixed(2),
+    ...mapMutations(['GET_SINGLE_CONTRACT']),
+    setSingleContract(singleContract) {
+      this.$store.commit('GET_SINGLE_CONTRACT', singleContract);
     },
   },
 };
@@ -200,19 +267,6 @@ export default {
         .chooseTitle {
           display: inline-block;
           width: 100px;
-        }
-        .ant-radio-button-wrapper {
-          border: none;
-          box-shadow: none;
-        }
-        .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled),
-        .ant-radio-button-wrapper:hover {
-          color: #ffab32;
-          box-shadow: none;
-        }
-        .ant-radio-button-wrapper > .ant-radio-button,
-        .ant-radio-button-wrapper:not(:first-child)::before {
-          display: none;
         }
       }
     }
@@ -244,9 +298,58 @@ export default {
         color: #ffffff;
       }
     }
+    /deep/.ant-select-open .ant-select-selection {
+      border-color: #999999;
+      box-shadow: none;
+    }
+    /deep/.ant-select-focused .ant-select-selection,
+    /deep/.ant-select-selection:hover,
+    /deep/.ant-select-selection:focus,
+    /deep/.ant-select-selection:active,
+    /deep/.ant-select-focused {
+      border-color: #ffab32;
+    }
+    /deep/.ant-select-dropdown-menu-item-selected,
+    /deep/.ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled) {
+      background-color: #ffab32;
+      color: #ffffff;
+    }
   }
 }
-
+.ant-popover-inner {
+  width: 100%;
+  border-bottom: 1px solid #f4f4f6;
+  .ant-popover-inner-content {
+    color: #999999;
+    ul {
+      width: 100%;
+      li {
+        height: 2em;
+        span {
+          display: inline-block;
+          width: 50%;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+.ant-radio-button-wrapper {
+  border: none;
+  box-shadow: none;
+  margin-right: 5px !important;
+}
+.ant-radio-button-wrapper:hover {
+  color: #ffab32;
+}
+.ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+  color: #ffab32 !important;
+  box-shadow: none;
+}
+.ant-radio-button-wrapper > .ant-radio-button,
+.ant-radio-button-wrapper:not(:first-child)::before {
+  display: none;
+}
 @media screen and (max-width: 500px) {
   .contractItemContainer {
     .contractItemChoose {
@@ -274,6 +377,9 @@ export default {
         width: 100%;
       }
     }
+  }
+  /deep/.ant-pagination-options {
+    display: inline-block;
   }
 }
 </style>

@@ -149,6 +149,22 @@ export default {
         color: #ffffff;
       }
     }
+    /deep/.ant-select-open .ant-select-selection {
+      border-color: #999999;
+      box-shadow: none;
+    }
+    /deep/.ant-select-focused .ant-select-selection,
+    /deep/.ant-select-selection:hover,
+    /deep/.ant-select-selection:focus,
+    /deep/.ant-select-selection:active,
+    /deep/.ant-select-focused {
+      border-color: #ffab32;
+    }
+    /deep/.ant-select-dropdown-menu-item-selected,
+    /deep/.ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled) {
+      background-color: #ffab32;
+      color: #ffffff;
+    }
   }
 }
 
@@ -165,6 +181,9 @@ export default {
         width: 40px;
       }
     }
+  }
+  /deep/.ant-pagination-options {
+    display: inline-block;
   }
 }
 </style>

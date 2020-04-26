@@ -18,16 +18,9 @@
             >
               <div slot="title">
                 <p style="color:#595959;textAlign:center">算力构成</p>
-                <p style="color:#999999;textAlign:center">
-                  {{ powerCount.computing_power }}T = {{ powerCount.base_power }}T +
-                  {{
-                  Number(powerCount.float_power) +
-                  Number(powerCount.pe_power) +
-                  Number(powerCount.futures_power) +
-                  Number(powerCount.regular_power) +
-                  Number(powerCount.inviter_power)
-                  }}T
-                </p>
+                <p
+                  style="color:#999999;textAlign:center"
+                >{{ powerCount.computing_power }}T = {{ powerCount.base_power }} + {{ powerCount.additional_power }}</p>
               </div>
               <div slot="content">
                 <ul>
@@ -51,6 +44,14 @@
                     <span>邀请算力</span>
                     <span>{{ powerCount.inviter_power }}T</span>
                   </li>
+                  <li v-if="powerCount.td_power > 0">
+                    <span>成长算力</span>
+                    <span>{{ powerCount.td_power }}T</span>
+                  </li>
+                  <li v-if="powerCount.coupon_power > 0">
+                    <span>优惠券算力</span>
+                    <span>{{ powerCount.coupon_power }}T</span>
+                  </li>
                 </ul>
               </div>
               <span class="infoIcon">!</span>
@@ -64,7 +65,7 @@
         </li>
         <li style="border:none">
           <span>算龄</span>
-          <span class="listTitleContent">{{ powerCount.my_td }}*D</span>
+          <span class="listTitleContent">{{ powerCount.my_td }}T*天</span>
         </li>
       </ul>
     </div>
@@ -94,20 +95,30 @@ export default {
     return {
       clicked: false, //点击气泡卡隐藏/显示
       powerCount: {}, //  当前用户算力相关信息
-      orderList: [], // ???
       rentedList: [], //  当前用户算力合约信息
     };
   },
-  created() {
+  async created() {
+    //  获取合约算力列表
     getContractList().then(resp => {
       // console.log(resp.datas);
+      //  算力总览
       this.powerCount = resp.datas.power_count;
-      // this.orderList = resp.datas.orderList;
+      //  算力详情
       this.rentedList = resp.datas.rented_list;
       // console.log(this.powerCount);
-      // console.log(this.orderList);
       // console.log(this.rentedList);
     });
+    // const { datas } = await getContractList({
+    //   page: '1',
+    //   coin: 'BTC',
+    //   type: 'ALL',
+    //   work_type: 'ALL',
+    //   date_type: 'ALL',
+    //   pay_type: 'ALL',
+    // });
+    // this.powerCount = datas.power_count;
+    // this.rentedList = datas.rented_list;
   },
   methods: {
     handleClickChange(visible) {
