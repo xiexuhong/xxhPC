@@ -188,7 +188,7 @@ export const getPowerList = data => post('/index.php?act=power&op=get_power_list
 export const getInsuranceList = data => post('/index.php?act=insurance&op=myInsuranceList', data);
 
 /**
- * @method 购买算力
+ * @method 我的算力
  * @param machine_id -- 矿机id
  * @param machine_type -- 矿机类型
  * @param num -- 租用数量
@@ -215,3 +215,17 @@ export const getSurplusPower = data => post('/index.php?act=payment&op=index', d
  * @param payment_code -- 支付方式
  */
 export const rentPower = data => post('/index.php?act=order&op=create', data);
+
+/**
+ * @method 获取收益列表
+ * @param curpage -- 当前页
+ * @param pagesize -- 每页显示数量
+ */
+export const getProfitList = data => post('/index.php?act=profit&op=list', data);
+
+/**
+ * @method 获取收益列表
+ * @param curpage -- 当前页
+ * @param pagesize -- 每页显示数量
+ */
+// export const getProfitList = data => post('/index.php?act=profit&op=list', data);

@@ -95,7 +95,7 @@ export default {
     return {
       clicked: false, //点击气泡卡隐藏/显示
       powerCount: {}, //  当前用户算力相关信息
-      rentedList: [], //  当前用户算力合约信息
+      rentedList: {}, //  当前用户算力合约信息
     };
   },
   async created() {
@@ -105,7 +105,7 @@ export default {
       //  算力总览
       this.powerCount = resp.datas.power_count;
       //  算力详情
-      this.rentedList = resp.datas.rented_list;
+      this.rentedList = resp.datas;
       // console.log(this.powerCount);
       // console.log(this.rentedList);
     });

@@ -45,7 +45,8 @@
         :pagination="{
           pageSizeOptions: ['10', '20', '30', '40'],
           showSizeChanger: true,
-          onChange: onPageChange
+          onChange: onPageChange,
+          total: totalNum,
         }"
         :rowKey="record => record.id"
         :loading="tableLoading"
@@ -112,9 +113,8 @@
           >退单</router-link>
           <router-link
             to="/hashrateContract/contractList/orderReorder"
-            v-show="(record.work_state != 0) || record.allow_cancel == 2 || record.returnable == 0"
             @click.native="setSingleContract(record)"
-          >续单</router-link>
+          >{{ record.isRegular == '1' && allow_renewal == true ? '续单' : '转期' }}</router-link>
         </span>
       </a-table>
     </div>
@@ -125,17 +125,12 @@
 import { mapMutations } from 'vuex';
 import { getContractList } from '@/script/api';
 export default {
-  props: {
-    //  继承的数据
-    rentedList: {
-      type: Array,
-      default: [],
-    },
-  },
+  props: ['rentedList'],
   data() {
     return {
       datas: [], //  单元格数据
       columns: [], //  表头
+      totalNum: 0, //  列表总数
       chioce: {
         //  筛选选项
         type: 'all', //  矿机类型
@@ -144,7 +139,6 @@ export default {
         payType: 'all', //  订单类型
       },
       tableLoading: false, //  数据加载过程中状态loading
-      // page: '1', //  表格页数
     };
   },
   created() {
@@ -199,8 +193,9 @@ export default {
   watch: {
     rentedList() {
       this.tableLoading = true;
-      this.datas = this.rentedList;
-      // console.log(this.datas);
+      this.datas = this.rentedList.rented_list;
+      this.totalNum = this.rentedList.totalNum;
+      console.log(this.datas);
       this.tableLoading = false;
     },
   },

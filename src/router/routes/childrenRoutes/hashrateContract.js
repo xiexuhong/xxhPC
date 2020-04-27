@@ -1,4 +1,5 @@
 export default [
+  //  asset 入口已做登录权限判定，这里子路由可不再添加登录权限判定
   {
     name: 'hashrateContract', //算力合约
     path: '/hashrateContract',

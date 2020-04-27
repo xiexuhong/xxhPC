@@ -13,7 +13,7 @@
         <li>
           <span>金额</span>
           <span class="listTitleContent">
-            {{ power.allow_cancel == 2 ? power.continue_total_deposit_coin :
+            {{ power.allow_cancel == 2 ? power.continueTotalDeposit :
             (power.work_state != 0 ? power.raw_total_deposit :
             power.total_deposit) }}{{ power.pay_currency }}
           </span>
@@ -37,64 +37,64 @@
                 <ul>
                   <li>
                     <span>基础算力</span>
-                    <span>{{ power.basePower }}T</span>
+                    <span>{{ power.basePower * power.num }}T</span>
                   </li>
                   <li>
                     <span>浮动算力</span>
-                    <span>{{ power.floatPower }}T</span>
+                    <span>{{ power.floatPower * power.num }}T</span>
                   </li>
                   <li>
                     <span>达标算力</span>
-                    <span>{{ power.pePower }}T</span>
+                    <span>{{ power.pePower * power.num }}T</span>
                   </li>
                   <li>
                     <span>期货算力</span>
-                    <span>{{ power.futuresPower }}T</span>
+                    <span>{{ power.futuresPower * power.num }}T</span>
                   </li>
                   <li>
                     <span>定期算力</span>
-                    <span>{{ power.regularPower }}T</span>
+                    <span>{{ power.regularPower * power.num }}T</span>
                   </li>
-                  <li>
+                  <li v-if="power.inviterPower > 0">
                     <span>邀请算力</span>
-                    <span>{{ power.inviterPower }}T</span>
+                    <span>{{ power.inviterPower * power.num }}T</span>
                   </li>
                   <li v-if="power.tdPower > 0">
                     <span>成长算力</span>
-                    <span>{{ power.tdPower }}T</span>
+                    <span>{{ power.tdPower * power.num }}T</span>
                   </li>
                   <li v-if="power.couponPower > 0">
                     <span>优惠券算力</span>
-                    <span>{{ power.couponPower }}T</span>
+                    <span>{{ power.couponPower * power.num }}T</span>
                   </li>
                 </ul>
               </div>
               <span
                 class="listTitleContent"
                 style="color:#FFAB32;borderBottom: 1px solid #FFAB32;cursor:pointer"
-              >720.00T</span>
+              >{{ power.computingPower * power.num }}T</span>
             </a-popover>
           </span>
         </li>
         <li>
           <span>合约期限</span>
-          <span class="listTitleContent">600天</span>
+          <span class="listTitleContent">{{ power.regularDateNum }}天</span>
         </li>
         <li>
           <span>状态</span>
-          <span class="listTitleContent">进行中</span>
+          <span class="listTitleContent">{{ power.display_status }}</span>
         </li>
         <li>
           <span>开挖时间</span>
-          <span class="listTitleContent">{{new Date().toString()}}</span>
+          <span class="listTitleContent">{{ power.time_income }}</span>
         </li>
         <li>
           <span>下单时间</span>
-          <span class="listTitleContent">{{new Date().toString()}}</span>
+          <span class="listTitleContent">{{ power.time_creat }}</span>
         </li>
         <li>
           <span>锁定时间</span>
-          <span class="listTitleContent">{{new Date().toString()}}</span>
+          <span class="listTitleContent">{{power.time_creat}}</span>
         </li>
       </ul>
     </div>
@@ -106,20 +106,22 @@
         <a-input-number
           id="fadeAmount"
           name="fadeAmount"
-          defaultValue="1"
           :min="1"
-          :max="1000"
+          :max="power.num"
           style="width:30%"
+          v-model="fadeNum"
         />
       </p>
-      <p style="marginTop:5px">拥有算力份数：200份</p>
+      <p style="marginTop:5px">拥有算力份数：{{ power.num }}份</p>
       <p>
         <label for="fadeMethod">退单方式：</label>
         <a-radio checked>现金金额</a-radio>
       </p>
       <p>
         退单金额：
-        <span style="color:#595959">3000 USDT</span>
+        <span
+          style="color:#595959"
+        >{{(power.total_deposit_coin/power.num*fadeNum).toFixed(2)}}{{power.pay_currency}}</span>
       </p>
       <p>
         <a-button size="large">立即购买</a-button>
@@ -134,13 +136,16 @@ export default {
   data() {
     return {
       clicked: false, //点击气泡卡隐藏/显示
+      fadeNum: 1, //  退单数量
+      power: {}, //  退单信息
     };
   },
   created() {
+    this.power = this.singleContract;
     console.log(this.power);
   },
   computed: {
-    ...mapGetters({ power: 'singleContract' }),
+    ...mapGetters(['singleContract']),
   },
   methods: {
     handleClickChange(visible) {
@@ -168,9 +173,9 @@ export default {
       width: 100%;
       display: flex;
       align-items: flex-start;
-      flex-wrap: wrap;
+      flex-wrap: no-wrap;
       li {
-        width: 12%;
+        // width: 12%;
         color: #999999;
         text-align: center;
         margin-right: 5px;
@@ -240,6 +245,7 @@ export default {
         font-size: 12px;
       }
       ul {
+        flex-wrap: wrap;
         li {
           width: 30%;
           margin-right: 2px;
