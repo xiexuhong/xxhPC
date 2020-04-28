@@ -14,8 +14,8 @@
           <span>金额</span>
           <span class="listTitleContent">
             {{ power.allow_cancel == 2 ? power.continueTotalDeposit :
-            (power.work_state != 0 ? power.raw_total_deposit :
-            power.total_deposit) }}{{ power.pay_currency }}
+            (power.work_state != 0 ? power.rawTotalDeposit :
+            power.totalDeposit) }}{{ power.pay_currency }}
           </span>
         </li>
         <li>
@@ -28,10 +28,10 @@
               placement="rightTop"
             >
               <div slot="title">
-                <p style="color:#595959;textAlign:center">算力构成</p>
+                <p style="color:#595959;textAlign:center">总算力</p>
                 <p
                   style="color:#999999;textAlign:center"
-                >{{ (power.computing_power * power.num).toFixed(2) }}T</p>
+                >{{ (power.computingPower * power.num).toFixed(2) }}T</p>
               </div>
               <div slot="content">
                 <ul>
@@ -72,7 +72,7 @@
               <span
                 class="listTitleContent"
                 style="color:#FFAB32;borderBottom: 1px solid #FFAB32;cursor:pointer"
-              >{{ power.computingPower * power.num }}T</span>
+              >{{(power.computingPower * power.num).toFixed(2)}} T</span>
             </a-popover>
           </span>
         </li>
@@ -94,7 +94,7 @@
         </li>
         <li>
           <span>锁定时间</span>
-          <span class="listTitleContent">{{power.time_creat}}</span>
+          <span class="listTitleContent">{{power.auto_stop_date}}</span>
         </li>
       </ul>
     </div>
@@ -114,43 +114,107 @@
       </p>
       <p style="marginTop:5px">拥有算力份数：{{ power.num }}份</p>
       <p>
-        <label for="fadeMethod">退单方式：</label>
-        <a-radio checked>现金金额</a-radio>
+        <span>退单方式：</span>
+        <span>金额将按照下单金额退还</span>
       </p>
       <p>
         退单金额：
         <span
           style="color:#595959"
-        >{{(power.total_deposit_coin/power.num*fadeNum).toFixed(2)}}{{power.pay_currency}}</span>
+        >{{(power.unit_price*fadeNum).toFixed(2)}} {{power.pay_currency}}</span>
       </p>
-      <p>
-        <a-button size="large">立即购买</a-button>
-      </p>
+      <div>
+        <a-button size="large" @click="onFadeClick">立即退单</a-button>
+        <div class="hashrateNodal">
+          <a-modal
+            title="退单损失"
+            centered
+            v-model="fadeVisible"
+            okText="确认退单"
+            cancelText="取消"
+            width="350px"
+            @ok="confirmFade"
+          >
+            <p>{{ fadeDatas }}</p>
+          </a-modal>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { getOrderInfo, getOrderFadeLoss, fadeOrder } from '@/script/api';
 import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
       clicked: false, //点击气泡卡隐藏/显示
+      fadeVisible: false, //点击弹窗隐藏/显示
       fadeNum: 1, //  退单数量
-      power: {}, //  退单信息
+      power: {}, //  退单订单详情
+      fadeDatas: '', //  退单损失提示信息
+      orderId: '', //  路由传过来的订单编号
     };
   },
   created() {
-    this.power = this.singleContract;
-    console.log(this.power);
+    // console.log(this.orderId);
+    // getOrderInfo({ order_id: this.orderId }).then(resp => {
+    //   this.power = resp.datas.info;
+    //   // console.log(this.power);
+    // });
+  },
+  mounted() {
+    // this.$nextTick(function() {
+    //   sessionStorage.setItem('reOrderId', this.$route.params.orderId);
+    //   this.orderId = this.$route.params.orderId
+    //     ? this.$route.params.orderId
+    //     : sessionStorage.getItem('reOrderId');
+    //   console.log(this.orderId);
+    //   getOrderInfo({ order_id: this.orderId }).then(resp => {
+    //     this.power = resp.datas.info;
+    //     // console.log(this.power);
+    //   });
+    // });
   },
   computed: {
-    ...mapGetters(['singleContract']),
+    // ...mapGetters({ orderId: 'orderId' }),
   },
   methods: {
     handleClickChange(visible) {
       //点击气泡卡隐藏/显示
       this.clicked = visible;
+    },
+    //  立即退单
+    onFadeClick() {
+      //  弹出交易框
+      this.fadeVisible = true;
+      //提交购买
+      getOrderFadeLoss({
+        order_id: this.orderId, // 订单id
+        return_num: this.fadeNum, // 数量
+      }).then(resp => {
+        // console.log(resp);
+        this.fadeDatas = resp.datas;
+      });
+    },
+    confirmFade() {
+      fadeOrder({
+        order_id: this.orderId, // 订单id
+        return_num: this.fadeNum, // 数量
+      })
+        .then(resp => {
+          console.log(resp);
+          this.$message.info('退单成功！！！');
+          //  退单成功，隐藏交易框
+          this.fadeVisible = false;
+          //提交成功之后，返回到上个页面
+          this.$router.go(-1);
+        })
+        .catch(() => {
+          //  退单成功，隐藏交易框
+          this.fadeVisible = false;
+        });
     },
   },
 };
@@ -200,14 +264,15 @@ export default {
     font-size: 14px;
     color: #999999;
     min-height: 500px;
-    p {
+    p,
+    div {
       margin-bottom: 20px;
-      .ant-btn {
-        background-color: #ffab32;
-        border-radius: 2px;
-        color: #ffffff;
-        width: 20%;
-      }
+    }
+    .ant-btn {
+      background-color: #ffab32;
+      border-radius: 2px;
+      color: #ffffff;
+      width: 20%;
     }
   }
   /deep/.ant-radio-checked .ant-radio-inner {
@@ -263,11 +328,8 @@ export default {
     .listContent {
       padding: 10px;
       font-size: 10px;
-      p {
-        margin-bottom: 20px;
-        .ant-btn {
-          width: 100%;
-        }
+      div .ant-btn {
+        width: 100%;
       }
     }
   }

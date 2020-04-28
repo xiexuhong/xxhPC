@@ -98,7 +98,7 @@ export default {
       rentedList: {}, //  当前用户算力合约信息
     };
   },
-  async created() {
+  created() {
     //  获取合约算力列表
     getContractList().then(resp => {
       // console.log(resp.datas);

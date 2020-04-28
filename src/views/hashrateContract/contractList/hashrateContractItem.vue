@@ -66,35 +66,35 @@
             <ul>
               <li>
                 <span>基础算力</span>
-                <span>{{ record.basePower }}T</span>
+                <span>{{ record.basePower * record.num }}T</span>
               </li>
               <li>
                 <span>浮动算力</span>
-                <span>{{ record.floatPower }}T</span>
+                <span>{{ (record.floatPower * record.num).toFixed(2) }}T</span>
               </li>
               <li>
                 <span>达标算力</span>
-                <span>{{ record.pePower }}T</span>
+                <span>{{ record.pePower * record.num }}T</span>
               </li>
               <li>
                 <span>期货算力</span>
-                <span>{{ record.futuresPower }}T</span>
+                <span>{{ record.futuresPower * record.num }}T</span>
               </li>
               <li>
                 <span>定期算力</span>
-                <span>{{ record.regularPower }}T</span>
+                <span>{{ record.regularPower * record.num }}T</span>
               </li>
-              <li>
+              <li v-if="record.inviterPower > 0">
                 <span>邀请算力</span>
-                <span>{{ record.inviterPower }}T</span>
+                <span>{{ record.inviterPower * record.num }}T</span>
               </li>
               <li v-if="record.tdPower > 0">
                 <span>成长算力</span>
-                <span>{{ record.tdPower }}T</span>
+                <span>{{ record.tdPower * record.num }}T</span>
               </li>
               <li v-if="record.couponPower > 0">
                 <span>优惠券算力</span>
-                <span>{{ record.couponPower }}T</span>
+                <span>{{ record.couponPower * record.num }}T</span>
               </li>
             </ul>
           </div>
@@ -107,14 +107,14 @@
             v-show="record.work_state != 0|| record.returnable == 0"
             @click.native="setSingleContract(record)"
           >转让</router-link>-->
-          <router-link
+          <!-- <router-link
             to="/hashrateContract/contractList/orderFade"
-            @click.native="setSingleContract(record)"
-          >退单</router-link>
-          <router-link
-            to="/hashrateContract/contractList/orderReorder"
-            @click.native="setSingleContract(record)"
-          >{{ record.isRegular == '1' && allow_renewal == true ? '续单' : '转期' }}</router-link>
+            @click.native="setSingleContract(record.orderId)"
+          >退单</router-link>-->
+          <a @click="setSingleContract(record.orderId)">tuidan</a>
+          <a
+            @click="setSingleContract(record.orderId)"
+          >{{ record.isRegular == '1' && allow_renewal == true ? '续单' : '转期' }}</a>
         </span>
       </a-table>
     </div>
@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+// import { mapMutations } from 'vuex';
 import { getContractList } from '@/script/api';
 export default {
   props: ['rentedList'],
@@ -194,8 +194,8 @@ export default {
     rentedList() {
       this.tableLoading = true;
       this.datas = this.rentedList.rented_list;
-      this.totalNum = this.rentedList.totalNum;
-      console.log(this.datas);
+      this.totalNum = Number(this.rentedList.totalNum);
+      // console.log(this.datas);
       this.tableLoading = false;
     },
   },
@@ -235,9 +235,11 @@ export default {
     },
     //  乘法
     mult: (power, num) => (power * num).toFixed(2),
-    ...mapMutations(['GET_SINGLE_CONTRACT']),
-    setSingleContract(singleContract) {
-      this.$store.commit('GET_SINGLE_CONTRACT', singleContract);
+    // ...mapMutations(['GET_ORDER_ID']),
+    //  传ID到vuex，退单、续期、转期、转让都通过这个ID新发请求
+    setSingleContract(OrderId) {
+      // this.$store.commit('GET_ORDER_ID', OrderId);
+      // this.$router.push({ name: 'orderFade', params: { orderId: OrderId } });
     },
   },
 };

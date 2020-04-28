@@ -224,8 +224,29 @@ export const rentPower = data => post('/index.php?act=order&op=create', data);
 export const getProfitList = data => post('/index.php?act=profit&op=list', data);
 
 /**
- * @method 获取收益列表
+ * @method 获取算力合约详情信息
  * @param curpage -- 当前页
  * @param pagesize -- 每页显示数量
  */
-// export const getProfitList = data => post('/index.php?act=profit&op=list', data);
+export const getOrderInfo = data => post('/index.php?act=order&op=info', data);
+
+/**
+ * @method 获取退单损失
+ * @param order_id -- 订单id
+ * @param return_num -- 数量
+ */
+export const getOrderFadeLoss = data => post('/index.php?act=order&op=loss', data);
+
+/**
+ * @method 退单
+ * @param order_id -- 订单id
+ * @param return_num -- 数量
+ */
+export const fadeOrder = data => post('/app2/index.php?act=order&op=cancel', data);
+
+/**
+ * @method 转期、续期
+ * @param order_id -- 订单id
+ * @param regular_date_num -- 数量
+ */
+export const reOrder = data => post('/app2/index.php?act=order&op=renewal', data);

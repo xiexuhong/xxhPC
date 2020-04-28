@@ -114,7 +114,7 @@ export default {
         pagesize: pagesize,
       }).then(resp => {
         this.datas = resp.datas.profit_list;
-        console.log(this.datas);
+        // console.log(this.datas);
         this.tableLoading = false;
       });
     },

@@ -181,10 +181,10 @@
                   title="安全验证"
                   centered
                   v-model="chargeVisible"
-                  okText="提交"
+                  okText="确认购买"
                   cancelText="取消"
                   width="350px"
-                  @ok="() => (chargeVisible = false)"
+                  @ok="confirmCharge"
                 >
                   <p>交易密码</p>
                   <p>
@@ -284,22 +284,27 @@ export default {
       } else {
         //  余额充足，弹出交易框
         this.chargeVisible = true;
-
-        //交易密码验证
-        if (true) return false;
-
-        //提交购买
-        rentPower({
-          machine_id: this.power.machine_id, // 矿机id
-          machine_type, // 矿机类型
-          num: this.chargeAmount, // 租用数量
-          payment_code: this.currencyValue, // 支付方式
-        }).then(resp => {
-          console.log(resp);
-          //提交成功之后，返回到上个页面
-          this.$router.go(-1);
-        });
       }
+    },
+    //  确认购买
+    confirmCharge() {
+      //交易密码验证            可能需要专门提出来写
+      if (true) return false;
+
+      //提交购买
+      rentPower({
+        machine_id: this.power.machine_id, // 矿机id
+        machine_type, // 矿机类型
+        num: this.chargeAmount, // 租用数量
+        payment_code: this.currencyValue, // 支付方式
+      }).then(resp => {
+        console.log(resp);
+        this.$message.info('恭喜您购买成功！！！');
+        //  购买成功，弹出交易框
+        this.chargeVisible = false;
+        //提交成功之后，返回到上个页面
+        this.$router.go(-1);
+      });
     },
   },
 };
