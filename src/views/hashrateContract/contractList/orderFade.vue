@@ -145,8 +145,8 @@
 
 <script>
 import { getOrderInfo, getOrderFadeLoss, fadeOrder } from '@/script/api';
-import { mapGetters } from 'vuex';
 export default {
+  props: ['orderId'],
   data() {
     return {
       clicked: false, //点击气泡卡隐藏/显示
@@ -154,31 +154,14 @@ export default {
       fadeNum: 1, //  退单数量
       power: {}, //  退单订单详情
       fadeDatas: '', //  退单损失提示信息
-      orderId: '', //  路由传过来的订单编号
     };
   },
   created() {
-    // console.log(this.orderId);
-    // getOrderInfo({ order_id: this.orderId }).then(resp => {
-    //   this.power = resp.datas.info;
-    //   // console.log(this.power);
-    // });
-  },
-  mounted() {
-    // this.$nextTick(function() {
-    //   sessionStorage.setItem('reOrderId', this.$route.params.orderId);
-    //   this.orderId = this.$route.params.orderId
-    //     ? this.$route.params.orderId
-    //     : sessionStorage.getItem('reOrderId');
-    //   console.log(this.orderId);
-    //   getOrderInfo({ order_id: this.orderId }).then(resp => {
-    //     this.power = resp.datas.info;
-    //     // console.log(this.power);
-    //   });
-    // });
-  },
-  computed: {
-    // ...mapGetters({ orderId: 'orderId' }),
+    // console.log(this.$route.query.orderId);
+    getOrderInfo({ order_id: this.$route.query.orderId }).then(resp => {
+      this.power = resp.datas.info;
+      // console.log(this.power);
+    });
   },
   methods: {
     handleClickChange(visible) {
@@ -191,7 +174,7 @@ export default {
       this.fadeVisible = true;
       //提交购买
       getOrderFadeLoss({
-        order_id: this.orderId, // 订单id
+        order_id: this.$route.query.orderId, // 订单id
         return_num: this.fadeNum, // 数量
       }).then(resp => {
         // console.log(resp);
@@ -200,19 +183,17 @@ export default {
     },
     confirmFade() {
       fadeOrder({
-        order_id: this.orderId, // 订单id
+        order_id: this.$route.query.orderId, // 订单id
         return_num: this.fadeNum, // 数量
       })
         .then(resp => {
           console.log(resp);
           this.$message.info('退单成功！！！');
-          //  退单成功，隐藏交易框
-          this.fadeVisible = false;
           //提交成功之后，返回到上个页面
           this.$router.go(-1);
         })
-        .catch(() => {
-          //  退单成功，隐藏交易框
+        .finally(() => {
+          //  隐藏交易框
           this.fadeVisible = false;
         });
     },

@@ -250,3 +250,21 @@ export const fadeOrder = data => post('/app2/index.php?act=order&op=cancel', dat
  * @param regular_date_num -- 数量
  */
 export const reOrder = data => post('/app2/index.php?act=order&op=renewal', data);
+
+/**
+ * @method 转让列表
+ * @param page -- 页数
+ */
+export const myTransferList = data => post('/index.php?act=transfer&op=myTransferList', data);
+
+/**
+ * @method 转让列表
+ * @param page -- 页数
+ */
+export const cancelTransfer = data => post('/index.php?act=transfer&op=cancelTransfer', data);
+
+/**
+ * @method 承接列表
+ * @param page -- 页数
+ */
+export const myUndertakeList = data => post('/index.php?act=transfer&op=myUndertakeList', data);

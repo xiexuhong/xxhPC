@@ -3,7 +3,7 @@
     <div class="contractItemChoose">
       <ul>
         <li>
-          <label class="chooseTitle">选择交互方式:</label>
+          <label class="chooseTitle">矿机类型:</label>
           <a-radio-group v-model="chioce.type" @change="onChoiceChange">
             <a-radio-button value="all">全部</a-radio-button>
             <a-radio-button value="PT">单挖</a-radio-button>
@@ -107,14 +107,22 @@
             v-show="record.work_state != 0|| record.returnable == 0"
             @click.native="setSingleContract(record)"
           >转让</router-link>-->
-          <!-- <router-link
-            to="/hashrateContract/contractList/orderFade"
-            @click.native="setSingleContract(record.orderId)"
-          >退单</router-link>-->
-          <a @click="setSingleContract(record.orderId)">tuidan</a>
-          <a
-            @click="setSingleContract(record.orderId)"
-          >{{ record.isRegular == '1' && allow_renewal == true ? '续单' : '转期' }}</a>
+          <router-link
+            :to="{
+            path: '/hashrateContract/contractList/orderFade',
+            query: {
+              orderId: record.orderId
+            }
+          }"
+          >退单</router-link>
+          <router-link
+            :to="{
+            path: '/hashrateContract/contractList/orderReorder',
+            query: {
+              orderId: record.orderId
+            }
+          }"
+          >{{ record.isRegular == '1' && record.allow_renewal == true ? '续单' : '转期' }}</router-link>
         </span>
       </a-table>
     </div>
@@ -122,7 +130,6 @@
 </template>
 
 <script>
-// import { mapMutations } from 'vuex';
 import { getContractList } from '@/script/api';
 export default {
   props: ['rentedList'],
@@ -235,12 +242,6 @@ export default {
     },
     //  乘法
     mult: (power, num) => (power * num).toFixed(2),
-    // ...mapMutations(['GET_ORDER_ID']),
-    //  传ID到vuex，退单、续期、转期、转让都通过这个ID新发请求
-    setSingleContract(OrderId) {
-      // this.$store.commit('GET_ORDER_ID', OrderId);
-      // this.$router.push({ name: 'orderFade', params: { orderId: OrderId } });
-    },
   },
 };
 </script>

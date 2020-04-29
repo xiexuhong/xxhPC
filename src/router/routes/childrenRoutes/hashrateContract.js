@@ -14,6 +14,7 @@ export default [
     name: 'orderFade', //算力合约/合约列表/退单
     path: '/hashrateContract/contractList/orderFade',
     component: () => import('@/views/hashrateContract/contractList/orderFade'),
+    props: true,
   },
   {
     name: 'orderReorder', //算力合约/合约列表/续单

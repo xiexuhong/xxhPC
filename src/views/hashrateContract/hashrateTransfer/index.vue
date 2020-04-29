@@ -8,7 +8,7 @@
     margin: 0}"
       >
         <a-tab-pane tab="我承接的" key="1">
-          <Continue></Continue>
+          <Undertake></Undertake>
         </a-tab-pane>
         <a-tab-pane tab="我转让的" key="2">
           <Transfer></Transfer>
@@ -19,11 +19,11 @@
 </template>
 
 <script>
-import Continue from './continue';
+import Undertake from './undertake';
 import Transfer from './transfer';
 export default {
   components: {
-    Continue,
+    Undertake,
     Transfer,
   },
 };

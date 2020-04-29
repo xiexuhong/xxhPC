@@ -306,8 +306,8 @@
 
 <script>
 import { getOrderInfo, reOrder } from '@/script/api';
-import { mapGetters } from 'vuex';
 export default {
+  // props: ['orderId'],
   data() {
     return {
       reorderMethods: 90, //续期方式单选框值
@@ -328,8 +328,8 @@ export default {
     };
   },
   created() {
-    // console.log(this.orderId);
-    getOrderInfo({ order_id: this.orderId }).then(resp => {
+    // console.log(this.$route.query.orderId);
+    getOrderInfo({ order_id: this.$route.query.orderId }).then(resp => {
       this.power = resp.datas.info;
       let renewalInfo = JSON.parse(JSON.stringify(resp.datas.info.renewal_info));
       this.renewalInfo_90 = renewalInfo.new_90;
@@ -338,9 +338,6 @@ export default {
       // console.log(renewalInfo);
     });
     this.gettime(this.reorderMethods);
-  },
-  computed: {
-    ...mapGetters({ orderId: 'orderId' }),
   },
   methods: {
     //点击气泡卡隐藏/显示--title--到手总算力
@@ -391,19 +388,27 @@ export default {
         addPower = (oldPowers - powers).toFixed(2);
         addLang = '减少';
       }
-      this.reorderDatas = `续单后，您的合约包锁定到期日为${this.time}(延长${this.reorderMethods}天)到手算力为${powers}"T("${addLang}${addPower}T)，即时生效。确定要续单吗？`;
+      this.reorderDatas = `续单后，您的合约包锁定到期日为${this.time}
+        (延长${this.reorderMethods}天)到手算力为${powers}"T("
+        ${addLang}${addPower}T)，即时生效。
+        确定要续单吗？`;
     },
     //  确认转期、续期
     confirmReOrder() {
       reOrder({
-        order_id: this.orderId,
+        order_id: this.$route.query.orderId,
         regular_date_num: this.reorderMethods,
       })
         .then(resp => {
+          this.$message.info('操作成功！！！');
           // console.log(resp);
+          //  操作成功，隐藏交易框
           this.fadeVisible = false;
+          //提交成功之后，返回到上个页面
+          this.$router.go(-1);
         })
         .catch(() => {
+          //  操作失败，隐藏交易框
           this.fadeVisible = false;
         });
     },
