@@ -4,7 +4,8 @@ const type = {
 };
 // 算力市场共享数据
 const state = {
-  singleList: JSON.parse(sessionStorage.getItem('singleList')) || '', //接收算力商城或增值服务中查看详情/立即购买推进来的单条信息
+  singleList: JSON.parse(sessionStorage.getItem('singleList')) || '', //接收算力商城中查看详情/立即购买推进来的单条信息
+  singleInsurance: JSON.parse(sessionStorage.getItem('singleInsurance')) || '', //接收增值服务中查看详情/立即购买推进来的单条信息
 };
 const mutations = {
   //  获取单条数据

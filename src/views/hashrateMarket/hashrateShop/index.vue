@@ -207,11 +207,6 @@ export default {
     background-color: #cfcfcf;
   }
 }
-@media screen and (max-width: 1000px) {
-  .hashContent {
-    width: 90%;
-  }
-}
 @media screen and (max-width: 500px) {
   .hashContent {
     width: 100%;
@@ -220,15 +215,15 @@ export default {
   .hashHeader {
     li:nth-child(1) img {
       top: 0;
+      display: none;
     }
     li:nth-child(2) {
       font-size: 15px;
-      padding-right: 80px;
+      display: block;
     }
     li:nth-child(3) {
       font-size: 8px;
       padding: 3px;
-      margin-left: 40px;
     }
     li:nth-child(4) {
       font-size: 8px;
