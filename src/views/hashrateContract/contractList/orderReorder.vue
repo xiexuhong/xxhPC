@@ -17,59 +17,12 @@
         <li>
           <span>
             到手总算力
-            <a-popover
-              trigger="click"
-              :visible="clicked"
-              @visibleChange="handleClickChangeTit"
-              placement="rightTop"
-            >
-              <div slot="title">
-                <p style="color:#595959;textAlign:center">总算力</p>
-                <p
-                  style="color:#999999;textAlign:center"
-                >{{(power.computingPower * power.num).toFixed(2)}} T</p>
-              </div>
-              <div slot="content">
-                <ul>
-                  <li>
-                    <span>基础算力</span>
-                    <span>{{ power.basePower * power.num }}T</span>
-                  </li>
-                  <li>
-                    <span>浮动算力</span>
-                    <span>{{ power.floatPower * power.num }}T</span>
-                  </li>
-                  <li>
-                    <span>达标算力</span>
-                    <span>{{ power.pePower * power.num }}T</span>
-                  </li>
-                  <li>
-                    <span>期货算力</span>
-                    <span>{{ power.futuresPower * power.num }}T</span>
-                  </li>
-                  <li>
-                    <span>定期算力</span>
-                    <span>{{ power.regularPower * power.num }}T</span>
-                  </li>
-                  <li v-if="power.inviterPower > 0">
-                    <span>邀请算力</span>
-                    <span>{{ power.inviterPower * power.num }}T</span>
-                  </li>
-                  <li v-if="power.tdPower > 0">
-                    <span>成长算力</span>
-                    <span>{{ power.tdPower * power.num }}T</span>
-                  </li>
-                  <li v-if="power.couponPower > 0">
-                    <span>优惠券算力</span>
-                    <span>{{ power.couponPower * power.num }}T</span>
-                  </li>
-                </ul>
-              </div>
+            <popover :power="power" :num="power.num">
               <span
                 class="listTitleContent"
                 style="color:#FFAB32;borderBottom: 1px solid #FFAB32;cursor:pointer"
-              >{{(power.computingPower * power.num).toFixed(2)}} T</span>
-            </a-popover>
+              >{{mult(power.computingPower, power.num)}} T</span>
+            </popover>
           </span>
         </li>
         <li>
@@ -109,132 +62,11 @@
           <span>{{ power.rawTotalDeposit }} {{ power.pay_currency }}</span>
         </span>
         <span class="reorderInfoItem">
-          <span>到手总算力</span>
-          <a-popover
-            trigger="click"
-            :visible="reorderTotalHash"
-            @visibleChange="handleClickChangeReoderT"
-            placement="rightTop"
+          到手总算力
+          <popover
+            :power="reorderMethods == 90 ? renewalInfo_90 : renewalInfo_180"
+            :num="power.num"
           >
-            <div slot="title">
-              <p style="color:#595959;textAlign:center">总算力</p>
-              <p style="color:#999999;textAlign:center">
-                {{
-                reorderMethods == 90
-                ?
-                (renewalInfo_90.computing_power*power.num).toFixed(2)
-                :
-                (renewalInfo_180.computing_power*power.num).toFixed(2)
-                }} T
-              </p>
-            </div>
-            <div slot="content">
-              <ul>
-                <li>
-                  <span>基础算力</span>
-                  <span>
-                    {{
-                    reorderMethods == 90
-                    ?
-                    (renewalInfo_90.base_power*power.num).toFixed(2)
-                    :
-                    (renewalInfo_180.base_power*power.num).toFixed(2)
-                    }} T
-                  </span>
-                </li>
-                <li>
-                  <span>浮动算力</span>
-                  <span>
-                    {{
-                    reorderMethods == 90
-                    ?
-                    (renewalInfo_90.float_power*power.num).toFixed(2)
-                    :
-                    (renewalInfo_180.float_power*power.num).toFixed(2)
-                    }} T
-                  </span>
-                </li>
-                <li>
-                  <span>达标算力</span>
-                  <span>
-                    {{
-                    reorderMethods == 90
-                    ?
-                    (renewalInfo_90.pe_power*power.num).toFixed(2)
-                    :
-                    (renewalInfo_180.pe_power*power.num).toFixed(2)
-                    }} T
-                  </span>
-                </li>
-                <li>
-                  <span>期货算力</span>
-                  <span>
-                    {{
-                    reorderMethods == 90
-                    ?
-                    (renewalInfo_90.futures_power*power.num).toFixed(2)
-                    :
-                    (renewalInfo_180.futures_power*power.num).toFixed(2)
-                    }} T
-                  </span>
-                </li>
-                <li>
-                  <span>定期算力</span>
-                  <span>
-                    {{
-                    reorderMethods == 90
-                    ?
-                    (renewalInfo_90.regular_power*power.num).toFixed(2)
-                    :
-                    (renewalInfo_180.regular_power*power.num).toFixed(2)
-                    }} T
-                  </span>
-                </li>
-                <li
-                  v-if="renewalInfo_90.inviter_power*power.num > 0 || renewalInfo_180.inviter_power*power.num > 0"
-                >
-                  <span>邀请算力</span>
-                  <span>{{ power.inviter_power * power.num }}T</span>
-                  <span>
-                    {{
-                    reorderMethods == 90
-                    ?
-                    (renewalInfo_90.inviter_power*power.num).toFixed(2)
-                    :
-                    (renewalInfo_180.inviter_power*power.num).toFixed(2)
-                    }} T
-                  </span>
-                </li>
-                <li
-                  v-if="renewalInfo_90.td_power*power.num > 0 || renewalInfo_180.td_power*power.num > 0"
-                >
-                  <span>成长算力</span>
-                  <span>
-                    {{
-                    reorderMethods == 90
-                    ?
-                    (renewalInfo_90.td_power*power.num).toFixed(2)
-                    :
-                    (renewalInfo_180.td_power*power.num).toFixed(2)
-                    }} T
-                  </span>
-                </li>
-                <li
-                  v-if="renewalInfo_90.coupon_power*power.num > 0 || renewalInfo_180.coupon_power*power.num > 0"
-                >
-                  <span>优惠券算力</span>
-                  <span>
-                    {{
-                    reorderMethods == 90
-                    ?
-                    (renewalInfo_90.coupon_power*power.num).toFixed(2)
-                    :
-                    (renewalInfo_180.coupon_power*power.num).toFixed(2)
-                    }} T
-                  </span>
-                </li>
-              </ul>
-            </div>
             <span
               class="listTitleContent"
               style="color:#FFAB32;borderBottom: 1px solid #FFAB32;cursor:pointer"
@@ -242,12 +74,12 @@
               {{
               reorderMethods == 90
               ?
-              (renewalInfo_90.computing_power*power.num).toFixed(2)
+              mult(renewalInfo_90.computing_power, power.num)
               :
-              (renewalInfo_180.computing_power*power.num).toFixed(2)
+              mult(renewalInfo_180.computing_power, power.num)
               }} T
             </span>
-          </a-popover>
+          </popover>
         </span>
         <span class="reorderInfoItem">
           <span>{{ power.regular_power == 0 ? renewal.renewal1[1] : renewal.renewal2[1] }}</span>
@@ -305,15 +137,18 @@
 </template>
 
 <script>
+import popover from '@/components/popover';
 import { getOrderInfo, reOrder } from '@/script/api';
+import { mult } from '@/script/utils';
 export default {
   // props: ['orderId'],
+  components: {
+    popover,
+  },
   data() {
     return {
       reorderMethods: 90, //续期方式单选框值
       fadeVisible: false, //点击弹窗隐藏/显示
-      clicked: false, //点击气泡卡隐藏/显示--title--到手总算力
-      reorderTotalHash: false, //点击气泡卡隐藏/显示--续期订单信息--到手总算力
       reorderAmountDiff: false, //点击气泡卡隐藏/显示--续期订单信息--金额差价
       power: {}, //  续单数据
       renewalInfo_90: {}, //  不同续期方式的数据
@@ -339,15 +174,10 @@ export default {
     });
     this.gettime(this.reorderMethods);
   },
+  computed: {
+    mult: () => mult,
+  },
   methods: {
-    //点击气泡卡隐藏/显示--title--到手总算力
-    handleClickChangeTit(visible) {
-      this.clicked = visible;
-    },
-    //点击气泡卡隐藏/显示--到手总算力
-    handleClickChangeReoderT(visible) {
-      this.reorderTotalHash = visible;
-    },
     //点击气泡卡隐藏/显示--金额差价
     handleClickChangeReoderA(visible) {
       this.reorderAmountDiff = visible;
@@ -376,16 +206,16 @@ export default {
       let powers = 0,
         addLang,
         addPower = 0,
-        oldPowers = (this.power.computing_power * this.power.num).toFixed(2);
+        oldPowers = this.mult(this.power.computing_power, this.power.num);
       powers =
         this.reorderMethods == 90
-          ? (this.renewalInfo_90.computing_power * this.power.num).toFixed(2)
-          : (this.renewalInfo_180.computing_power * this.power.num).toFixed(2);
+          ? this.mult(this.renewalInfo_90.computing_power, this.power.num)
+          : this.mult(this.renewalInfo_180.computing_power, this.power.num);
       if (Number(powers) >= Number(oldPowers)) {
-        addPower = (powers - oldPowers).toFixed(2);
+        addPower = this.mult(powers - oldPowers);
         addLang = '增加';
       } else {
-        addPower = (oldPowers - powers).toFixed(2);
+        addPower = this.mult(oldPowers - powers);
         addLang = '减少';
       }
       this.reorderDatas = `续单后，您的合约包锁定到期日为${this.time}

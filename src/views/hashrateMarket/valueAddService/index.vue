@@ -115,8 +115,6 @@ export default {
       singleInsurance.detail = detail;
       this.$store.commit('GET_SINGLE_INSURANCE', singleInsurance);
     },
-    // 乘法
-    mult: (basePrice, number) => number * basePrice,
   },
 };
 </script>

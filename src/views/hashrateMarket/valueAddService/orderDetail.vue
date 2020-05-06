@@ -31,7 +31,7 @@
                       </span>
                       <span class="leftInfoRight">
                         <span class="leftInfoRightTitle">总算力</span>
-                        <span>{{ (data.computing_power * data.num).toFixed(2) }}T</span>
+                        <span>{{ mult(data.computing_power, data.num) }}T</span>
                       </span>
                     </p>
                     <p>
@@ -41,7 +41,7 @@
                       </span>
                       <span class="leftInfoRight">
                         <span class="leftInfoRightTitle">基础算力</span>
-                        <span>{{ (data.base_power * data.num).toFixed(2) }}T</span>
+                        <span>{{ mult(data.base_power, data.num) }}T</span>
                       </span>
                     </p>
                     <p>
@@ -51,7 +51,7 @@
                       </span>
                       <span class="leftInfoRight">
                         <span class="leftInfoRightTitle">奖励算力</span>
-                        <span>{{ ((data.computing_power - data.base_power) * data.num).toFixed(2) }}T</span>
+                        <span>{{ mult((data.computing_power - data.base_power), data.num) }}T</span>
                       </span>
                     </p>
                   </a-card>
@@ -157,6 +157,7 @@
 
 <script>
 import { getPurchasableOrder, getSurplusPower } from '@/script/api';
+import { mult } from '@/script/utils';
 import { mapGetters } from 'vuex';
 export default {
   data() {
@@ -188,6 +189,7 @@ export default {
   },
   computed: {
     ...mapGetters({ powerOrder: 'singleInsurance' }),
+    mult: () => mult,
   },
   methods: {
     handleClickChange(visible) {
@@ -197,13 +199,6 @@ export default {
     taggleIndeterminate() {
       //设置协议复选框选中状态样式
       this.indeterminate = !this.indeterminate;
-    },
-    // 乘法
-    mult: (basePrice, number, currency) => {
-      let fixnum;
-      currency == 'USDT' ? (fixnum = 4) : (fixnum = 2);
-      let result = (number * basePrice).toFixed(fixnum);
-      return result;
     },
     //  立即购买
     onChargeClick() {
