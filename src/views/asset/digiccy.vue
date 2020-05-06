@@ -137,50 +137,52 @@ export default {
     checkcurrency(index) {
       this.$store.state.asset.defaultcurrency = this.currency_list[index];
       changeCurrency({currency:this.defaultcurrency}).then((res) => {
-          console.log(res);
-          this.columns1 =  [
-        {
-          title: this.$t('assetoverview.assetoverview11'),
-          dataIndex: 'coin',
-          key: 'coin'
-        },
-        {
-          title: this.$t('assetoverview.assetoverview12'),
-          dataIndex: 'total',
-          key: 'total'
-        },
-        {
-          title: this.$t('assetoverview.assetoverview13')+`(${this.defaultcurrency})`,
-          dataIndex: 'valuation',
-          key: 'valuation'
-        },
-        {
-          title: this.$t('assetoverview.assetoverview14'),
-          dataIndex: 'available',
-          key: 'available'
-        },
-        {
-          title: this.$t('assetoverview.assetoverview15'),
-          dataIndex: 'freeze',
-          key: 'freeze'
-        },
-        {
-          title: this.$t('assetoverview.assetoverview16'),
-          key: 'action',
-          scopedSlots: { customRender: 'action' },
-        }
-      ];
-    this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
-      });
-       getAssetList().then((res)=>{
-        const {datas} = res;
-        if(datas.hasOwnProperty('error')){
-            return
-        }
-        this.$store.state.asset.total = this.gettotal(datas.asset.asset_total,datas.balance.balance_total,datas.deposit.valuation,datas.total);
-        this.$store.state.asset.coin_list = this.getcoin_list(datas.asset.asset_list);
-        this.$store.state.asset.balance_list = this.getbalance_list(datas.balance.balance_list);
-      });
+        console.log(res);
+        this.columns1 =  [
+          {
+            title: this.$t('assetoverview.assetoverview11'),
+            dataIndex: 'coin',
+            key: 'coin'
+          },
+          {
+            title: this.$t('assetoverview.assetoverview12'),
+            dataIndex: 'total',
+            key: 'total'
+          },
+          {
+            title: this.$t('assetoverview.assetoverview13')+`(${this.defaultcurrency})`,
+            dataIndex: 'valuation',
+            key: 'valuation'
+          },
+          {
+            title: this.$t('assetoverview.assetoverview14'),
+            dataIndex: 'available',
+            key: 'available'
+          },
+          {
+            title: this.$t('assetoverview.assetoverview15'),
+            dataIndex: 'freeze',
+            key: 'freeze'
+          },
+          {
+            title: this.$t('assetoverview.assetoverview16'),
+            key: 'action',
+            scopedSlots: { customRender: 'action' },
+          }
+        ];
+        this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
+      }).then(()=>{
+        getAssetList().then((res)=>{
+          const {datas} = res;
+          if(datas.hasOwnProperty('error')){
+              return
+          }
+          this.$store.state.asset.total = this.gettotal(datas.asset.asset_total,datas.balance.balance_total,datas.deposit.valuation,datas.total);
+          this.$store.state.asset.coin_list = this.getcoin_list(datas.asset.asset_list);
+          this.$store.state.asset.balance_list = this.getbalance_list(datas.balance.balance_list);
+        });
+      })
+      
     }, 
     getcoin_list:function(datas){
       var coin_list = [];

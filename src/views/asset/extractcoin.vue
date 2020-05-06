@@ -82,6 +82,7 @@
 <script>
 import { setup } from '@/locales';
 import { mapGetters } from 'vuex';
+import { getAddressList } from '@/script/api';
 export default {
     data(){
         return  {
@@ -98,6 +99,9 @@ export default {
     created(){
         this.form.coin = this.coin_list[0].coin;
         this.available= this.coin_list[0].available;
+        getAddressList({curpage:1,pagesize:10}).then((res)=>{
+            console.log(res)
+        })
     },
     computed:{
         ...mapGetters(['coin_list']),

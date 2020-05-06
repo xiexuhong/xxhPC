@@ -38,12 +38,15 @@ export default {
       const { datas } = res;
       this.$store.state.asset.currency_list = datas.currency;
       this.$store.state.asset.defaultcurrency = datas.default;
-      this.$store.state.asset.currency = datas.default;
     });
-    payment({ type: 'recharge' }).then(res => {
-      console.log(res.datas);
-      this.$store.state.asset.paymentlist = res.datas.list;
-    });
+    window.addEventListener("beforeunload",()=>{
+        sessionStorage.setItem("store",JSON.stringify(this.$store.state))
+    })
+    if (sessionStorage.getItem("store") ) {
+        console.log(this.$store);
+        this.$store.replaceState(Object.assign({}, this.$store.state,JSON.parse(sessionStorage.getItem("store"))));
+        console.log(this.$store);
+    }
   },
   computed: {
     ...mapGetters([
@@ -94,7 +97,7 @@ export default {
       total.deposit = total3;
       total.total = total4;
       return total;
-    },
+    }
   },
 };
 </script>
@@ -191,5 +194,37 @@ p {
   .ant-list-split .ant-list-header {
     border: none;
   }
+  .cover{
+        position: fixed;
+        background-color: rgba(0,0,0,0.5);
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 6;
+        .result{
+          width: 320px;
+          height: 270px;
+          padding: 10px;
+          background-color: #fff;
+          position: fixed;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          left: 0;
+          margin: auto;
+          border-radius: 4px;
+          z-index: 8;
+        }
+      }
+      .result{
+        .transferorder{
+          width: 500px;
+          margin: 0 auto;
+          background-color: #f8f8f8;
+          padding: 2vw;
+          margin-bottom: 2vw;
+        }
+      }
 }
 </style>

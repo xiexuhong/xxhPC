@@ -2,63 +2,91 @@
     <div id="extractcoinaddress">
         <header>
             <a-breadcrumb separator="">
-            <a-breadcrumb-item href=""><router-link to="/asset/assetoverview" class="fontcolor">资产总览</router-link></a-breadcrumb-item>
+            <a-breadcrumb-item href=""><router-link to="/asset/assetoverview" class="fontcolor">{{$t('asset.asset03')}}</router-link></a-breadcrumb-item>
             <a-breadcrumb-separator style="color:#ffab32">></a-breadcrumb-separator>
-            <a-breadcrumb-item><router-link to="/asset/extractcoin" class="fontcolor">提币</router-link></a-breadcrumb-item>
+            <a-breadcrumb-item><router-link to="/asset/extractcoin" class="fontcolor">{{$t('extractcoin.extractcoin01')}}</router-link></a-breadcrumb-item>
             <a-breadcrumb-separator style="color:#ffab32">></a-breadcrumb-separator>
-            <a-breadcrumb-item>提币地址管理</a-breadcrumb-item>
+            <a-breadcrumb-item>{{$t('extractcoin.extractcoin16')}}</a-breadcrumb-item>
             </a-breadcrumb>  
         </header>
         <template>
             <a-form-model :model="form">
                 <section>
-                    <a-form-model-item label="币种">
+                    <a-form-model-item :label="$t('extractcoin.extractcoin17')">
                         <a-dropdown>
                         <a-menu slot="overlay">
-                            <a-menu-item :key="index" v-for="(item,index) in list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+                            <a-menu-item :key="index" v-for="(item,index) in coin_list" @click="checkcurrency(index)"><a-icon type="user" />{{item.coin}}</a-menu-item>
                         </a-menu>
-                        <a-button>{{coin==''?defaultcurrency:coin}}<a-icon type="down" /> </a-button>
+                        <a-button>{{form.coin}}<a-icon type="down" /> </a-button>
                         </a-dropdown>
                     </a-form-model-item>
-                    <a-form-model-item label="提币地址">
-                        <a-input v-model="form.address" placeholder="请输入一个整数" />
+                    <a-form-model-item :label="$t('extractcoin.extractcoin06')">
+                        <a-input v-model="form.address" :placeholder="$t('extractcoin.extractcoin18')" />
                     </a-form-model-item>
-                    <a-form-model-item label="备注">
-                        <a-input v-model="form.note" placeholder="请输入付款人姓名" />
+                    <a-form-model-item :label="$t('extractcoin.extractcoin19')">
+                        <a-input v-model="form.note" :placeholder="$t('extractcoin.extractcoin20')" />
                     </a-form-model-item>
                 </section>
                 <a-form-model-item>
                     <a-button type="primary" @click="showModal()">
-                        添加
+                        {{$t('extractcoin.extractcoin21')}}
                     </a-button>
                     <a-modal
-                        title="安全验证"
+                        :title="$t('extractcoin.extractcoin22')"
                         style="top: 40%;"
                         :visible="visible"
                         @ok="handleOk"
-                        :confirmLoading="confirmLoading"
                         @cancel="handleCancel"
                         >
-                        <a-input v-model="tradersPassword" placeholder="请输入交易密码"/>
-                        <a-tooltip>
-                            忘记交易密码
-                        </a-tooltip>
+                        <a-input v-model="tradersPassword" :placeholder="$t('extractcoin.extractcoin23')"/>
+                        <a-button class="btn" @click="forgetPwd()">
+                           {{$t('extractcoin.extractcoin24')}}
+                        </a-button>
                     </a-modal>
+                    <template>
+                        <div class="cover" v-if="isDel">   
+                            <a-result
+                                class="result"
+                                status="warning"
+                                :title="$t('extractcoin.extractcoin25')"
+                                :subTitle="$t('extractcoin.extractcoin26')"
+                            >
+                                <template v-slot:extra>
+                                <a-button  key="cancel" @click="cancelConfirm('del')">{{$t('extractcoin.extractcoin27')}}</a-button>
+                                <a-button type="primary" key="confirm" @click="okConfirm('del')">{{$t('extractcoin.extractcoin28')}}</a-button>
+                                </template>
+                            </a-result>
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cover" v-if="isAdd">   
+                            <a-result
+                                class="result"
+                                status="warning"
+                                :title="$t('extractcoin.extractcoin29')"
+                                :subTitle="$t('extractcoin.extractcoin30')"
+                            >
+                                <template v-slot:extra>
+                                <a-button  key="cancel" @click="cancelConfirm('add')">{{$t('extractcoin.extractcoin27')}}</a-button>
+                                <a-button type="primary" key="confirm" @click="okConfirm('add')">{{$t('extractcoin.extractcoin31')}}</a-button>
+                                </template>
+                            </a-result>
+                        </div>
+                    </template>
                 </a-form-model-item>
             </a-form-model>
         </template>
         <a-table :columns="columns" :dataSource="data">
-          <!-- <a slot="name" slot-scope="text">{{ text }}</a> -->
-          <!-- <span slot="customTitle"><a-icon type="smile-o" /> Name</span> -->
           <span slot="action">
-           <a href = javascript:void(0) @click="showDeleteConfirm" type="dashed">删除</a>
+           <a href = javascript:void(0) @click="goDel()" type="dashed">{{$t('extractcoin.extractcoin32')}}</a>
           </span>
         </a-table>
     </div>
 </template>
 <script>
 import { setup } from '@/locales';
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex';
+import { addAddress,delAddress } from '@/script/api';
 export default {
     data(){
         return {
@@ -75,126 +103,77 @@ export default {
                 note: 'New York No. 1 Lake Park',
                 },
             ],
-            coin:"",
             columns: [
                 {
-                title: '币种',
-                dataIndex: 'coin',
-                key: 'coin',
-                scopedSlots: {
-                    filterDropdown: 'filterDropdown',
-                    filterIcon: 'filterIcon',
-                    customRender: 'customRender',
-                },
-                onFilter: (value, record) =>
-                    record.coin
-                    .toString()
-                    .toLowerCase()
-                    .includes(value.toLowerCase()),
-                onFilterDropdownVisibleChange: visible => {
-                    if (visible) {
-                    setTimeout(() => {
-                        this.searchInput.focus();
-                    }, 0);
-                    }
-                },
+                    title: this.$t('extractcoin.extractcoin17'),
+                    dataIndex: 'coin',
+                    key: 'coin'
                 },
                 {
-                title: '提币地址',
-                dataIndex: 'address',
-                key: 'address',
-                scopedSlots: {
-                    filterDropdown: 'filterDropdown',
-                    filterIcon: 'filterIcon',
-                    customRender: 'customRender',
-                },
-                onFilter: (value, record) =>
-                    record.address
-                    .toString()
-                    .toLowerCase()
-                    .includes(value.toLowerCase()),
-                onFilterDropdownVisibleChange: visible => {
-                    if (visible) {
-                    setTimeout(() => {
-                        this.searchInput.focus();
-                    });
-                    }
-                },
+                    title: this.$t('extractcoin.extractcoin06'),
+                    dataIndex: 'address',
+                    key: 'address'
                 },
                 {
-                title: '备注',
-                dataIndex: 'note',
-                key: 'note',
-                scopedSlots: {
-                    filterDropdown: 'filterDropdown',
-                    filterIcon: 'filterIcon',
-                    customRender: 'customRender',
-                },
-                onFilter: (value, record) =>
-                    record.note
-                    .toString()
-                    .toLowerCase()
-                    .includes(value.toLowerCase()),
-                onFilterDropdownVisibleChange: visible => {
-                    if (visible) {
-                    setTimeout(() => {
-                        this.searchInput.focus();
-                    });
-                    }
-                },
+                    title: this.$t('extractcoin.extractcoin19'),
+                    dataIndex: 'note',
+                    key: 'note'
                 },
                 {
-                title: '操作',
-                key: 'action',
-                scopedSlots: { customRender: 'action' },
+                    title: this.$t('assetoverview.assetoverview16'),
+                    key: 'action',
+                    scopedSlots: { customRender: 'action' },
                 },
             ],
             ModalText: 'Content of the modal',
             visible: false,
-            confirmLoading: false,
-            tradersPassword:''
+            tradersPassword:'',
+            isAdd:false,
+            isDel:false
         }
     },
-    computed: 
-        mapState({
-            list(e){
-            return e.asset.currencylist;
-            },
-            defaultcurrency(e){
-            return e.asset.defaultcurrency;
-            },
-        }),
+    created(){
+        this.form.coin = this.coin;
+    },
+    computed:{
+        ...mapGetters(['coin_list','coin']),
+    },
     methods:{
-        showModal() {
-                this.visible = true;
+        checkcurrency(index){
+            this.form.coin =  this.coin_list[index].coin;
         },
-        showDeleteConfirm() {
-            this.$confirm({
-                title: 'Are you sure delete this task?',
-                content: 'Some descriptions',
-                okText: 'Yes',
-                okType: 'danger',
-                cancelText: 'No',
-                onOk() {
-                console.log('OK');
-                },
-                onCancel() {
-                console.log('Cancel');
-                },
-            });
+        showModal() {
+            this.visible = true;
+        },
+        forgetPwd(){
+            
+        },
+        goDel(){
+            this.isDel = true;
         },
         handleOk(e) {
-            this.ModalText = 'The modal will be closed after two seconds';
-            this.confirmLoading = true;
-            setTimeout(() => {
-                this.visible = false;
-                this.confirmLoading = false;
-            }, 2000);
+            this.visible = false;
+            this.isAdd = true;
         },
         handleCancel(e) {
-            console.log('Clicked cancel button');
             this.visible = false;
         },
+        cancelConfirm(option){
+            if(option == "add"){
+                this.isAdd = false;
+            }
+            else if(option == "del"){
+                this.isDel = false;
+            }            
+        },
+        okConfirm(option){
+            if(option == "add"){
+                this.isAdd = false;
+            }
+            else if(option == "del"){
+                this.isDel = false;
+            }    
+        }
     }
 }
 </script>
@@ -217,5 +196,9 @@ export default {
                 }
             }
         }
+    }
+    .btn{
+        border: none;
+        outline: none;
     }
 </style>

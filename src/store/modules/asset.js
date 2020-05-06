@@ -18,8 +18,22 @@ const actions = {};
 const getters = {
   currency_list: state =>state.currency_list,
   defaultcurrency: state =>state.defaultcurrency,
-  currency: state =>state.currency,
-  coin: state =>state.coin,
+  currency: state =>{
+    if(state.currency){
+      return state.currency;
+    }
+    else{
+      return state.defaultcurrency;
+    } 
+  },
+  coin: state =>{
+    if(state.coin){
+      return state.coin;
+    }
+    else{
+      return state.coin_list[0].coin;
+    }
+  },
   available:state=>{
     for(let item of state.balance_list){
       if(item.coin == state.currency){

@@ -13,6 +13,8 @@ export default {
   data() {
     return {};
   },
+  created(){
+  },
   computed: {
     ...mapGetters(['lang']),
   },

@@ -84,57 +84,50 @@ export default {
                 currency:'',
                 amount: '',
                 name: '',
-                coinaddress:'ef48e4f8d8d52969qqw'
+                coinaddress:''
             },
             rechargeCoin:'',
             rechargestyle: 'general',            
             amountrange:'400~1000000',
-            list:[],
             is_support:''
         };
     },
     created(){
         this.form.currency = this.currency;
-        getCoinAddress({coin: 'USDT_OMNI'}).then((res)=>{
+        getCoinAddress({coin:'USDT_OMNI'}).then((res)=>{
             const {datas} = res;
-            console.log(datas.error);
             if(datas.hasOwnProperty('error')){
                 this.form.coinaddress = '48845sfre7ef4ef4efs';
             }
             else{                
                 this.form.coinaddress = datas;
             }
+        }).catch((err)=>{
+            console.log(err);
         });
-        payment({type:'recharge'}).then((res)=>{
-            console.log(res.datas);
-            this.list = res.datas.list;
-            for (var i = 0; i < this.list.length; i++) {
-                if (this.form.currency == this.list[i].currency) {
-                    this.is_support = this.list[i].is_support;
-                }
-            }
-        })
     },
     mounted() {
         var clipboard = new Clipboard('.paste');
         var _this = this;
+        var timeout = null;    
         clipboard.on('success', function(e) {
-            debounce(handle,1000)
+            console.log(_this.$message);
+           if(timeout !== null){
+                clearTimeout(timeout);   
+           }       
+            timeout = setTimeout(()=>{
+               _this.$message.success('copy success', 1.5)
+            },500);  
         });
         clipboard.on('error', function(e) {
-            _this.$message.success('复制失败');
+            if(timeout !== null){
+                clearTimeout(timeout);   
+           }       
+            timeout = setTimeout(()=>{
+                _this.$message.success('copy failed', [1]);
+                _this.message.destroy();
+            },1000);  
         });
-        function debounce(fn, wait) {    
-            var timeout = null;    
-            return function() {        
-                if(timeout !== null)   clearTimeout(timeout);        
-                timeout = setTimeout(fn, wait);    
-            }
-        }
-        // 处理函数
-        function handle() {    
-            this.$message.success('复制成功');
-        }
     },
     computed:{
     ...mapGetters(['currency_list','currency','lang','total','balance_list','available']),
@@ -143,11 +136,6 @@ export default {
         checkcurrency(index) {
             this.form.currency = this.currency_list[index];
             this.$store.state.asset.currency = this.form.currency;
-            for (var i = 0; i < this.list.length; i++) {
-                if (this.form.currency == this.list[i].currency) {
-                    this.is_support = this.list[i].is_support;
-                }
-            }
         }, 
         testNum() {
             var reg = /^\d$/;

@@ -70,11 +70,7 @@
     "assetbills03":"最近一周",
     "assetbills04":"最近一月",
     "assetbills05":"最近三月",
-    "assetbills06":"类型",
-    "assetbills07":"",
-    "assetbills08":"",
-    "assetbills09":"",
-    "assetbills10":""
+    "assetbills06":"类型"
   },
   "recharge":{
     "recharge01":"充值",
@@ -137,7 +133,12 @@
     "withdraw07":"申请提现",
     "withdraw08":"提现申请发起成功",
     "withdraw09":"我们将在1~3个工作日内转入个人提现申请账户",
-    "withdraw10":"返回提现首页"
+    "withdraw10":"返回提现首页",
+    "withdraw11":"验证码",
+    "withdraw12":"请输入验证码",
+    "withdraw13":"获取验证码",
+    "withdraw14":"重新获取验证码",
+    "withdraw15":"验证码验证成功"
   },
   "extractcoin":{
     "extractcoin01":"提币",
@@ -155,9 +156,24 @@
     "extractcoin13":"提示",
     "extractcoin14":["1. 提筆手續費為礦工費，RR Mine不會收取您的費用","2. 提必請務必保證提幣地址的準確性，否則資產將無法找回","3. 後台審核后一般0~60分鐘到賬，因網絡原因有可能延遲","4. 如長時間未到賬，請聯繫客服核查","5. BHPay不收取手續費"],
     "extractcoin15":"申请提币",
-    "extractcoin16":"",
-    "extractcoin17":"",
-    "extractcoin18":"",
-    "extractcoin19":""
+    "extractcoin16":"提币地址管理",
+    "extractcoin17":"币种",
+    "extractcoin18":"请输入一个整数",
+    "extractcoin19":"备注",
+    "extractcoin20":"请输入付款人姓名",
+    "extractcoin21":"添加",
+    "extractcoin22":"安全验证",
+    "extractcoin23":"请输入交易密码",
+    "extractcoin24":"忘记交易密码",
+    "extractcoin25":"刪除提幣地址",
+    "extractcoin26":"您確定要刪除該地址嗎？",
+    "extractcoin27":"取消",
+    "extractcoin28":"确定删除",
+    "extractcoin29":"添加提币地址",
+    "extractcoin30":"您確定要添加該地址嗎？",
+    "extractcoin31":"确定添加",
+    "extractcoin32":"删除",
+    "extractcoin33":"",
+    "extractcoin34":""
   }
 }

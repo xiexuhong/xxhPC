@@ -25,21 +25,36 @@
                 <a-form-item :label="$t('withdraw.withdraw05')">
                 <a-select
                     v-model="form.bankcard"
-                    @change="handleSelectChange"
                 >
                     <a-select-option v-for="(item,index) of data" :key="index">
-                      {{item.bank_info}}
+                      {{item.bank_info.account_number}}
                     </a-select-option>
                 </a-select>
                 <span class="ant-form-text fontcolor" @click="addBankCard()">{{$t('withdraw.withdraw06')}}</span>
                 </a-form-item>
+                <a-form-model-item :label="$t('withdraw.withdraw11')">
+                    <a-input v-model="form.code" :placeholder="$t('withdraw.withdraw12')" @keyup="testCode()"/>
+                    <span class="ant-form-text fontcolor" id="w_code" @click="getCode()">{{$t('withdraw.withdraw13')}}</span>
+                </a-form-model-item>
                 <a-form-item>
-                <a-button type="primary" @click="goWithdraw()">
+                <a-button type="primary" @click="goEnterPwd()">
                     {{$t('withdraw.withdraw07')}}
                 </a-button>
                 </a-form-item>
               </a-form>
             </div>
+            <a-modal
+              :title="$t('extractcoin.extractcoin22')"
+              style="top: 40%;"
+              :visible="visible"
+              @ok="handleOk"
+              @cancel="handleCancel"
+              >
+              <a-input v-model="tradersPassword" :placeholder="$t('extractcoin.extractcoin23')"/>
+              <span class="ant-form-text" @click="forgetPwd()">
+                  {{$t('extractcoin.extractcoin24')}}
+              </span>
+            </a-modal>
         </template>
         <template v-else>
             <a-result
@@ -57,8 +72,10 @@
   
 <script>
 import { setup } from '@/locales';
+import $ from 'jquery';
 import { mapGetters} from 'vuex';
-import { getAssetList,changeCurrency,getUserAccountInfo} from '@/script/api';
+import { getAssetList,changeCurrency,getUserAccountInfo,withdraw,sendVerifyCode,checkVerifyCode} from '@/script/api';
+import { log } from 'util';
 export default {
   data() {
     return {
@@ -66,9 +83,14 @@ export default {
       form: {
         currency:"",
         amount:"",
+        code:"",
         bankcard:""
       },
-      isSuccess:false
+      data:'',
+      count:"",
+      tradersPassword:"",
+      isSuccess:false,
+      visible:false
     };
   },
   created(){
@@ -91,25 +113,71 @@ export default {
             }
         }
     }, 
-    handleSubmit(e) {
-      e.preventDefault();
-      this.form.validateFields((err, values) => {
-        if (!err) {
-          console.log('Received values of form: ', values);
-        }
-      });
+    getCode(){ //获取验证码
+        var _t = $('#w_code');
+        if (_t.hasClass("dis_code")) {
+            return false;
+        };
+        var TIME_COUNT = 10;
+        this.count = TIME_COUNT;
+        _t.addClass("dis_code");
+        var thiz = this;
+        sendVerifyCode({type: "predeposit_withdraw"}).then(()=>{
+          _t.html(thiz.count + "s");
+          var timer = setInterval(()=>{
+            if(thiz.count>1){
+              thiz.count--;
+              _t.html(thiz.count + "s");
+            }
+            else{
+              clearInterval(timer);
+              _t.removeClass("dis_code");
+              _t.html(thiz.$t('withdraw.withdraw14'));
+            }
+          },1000)
+        }).catch((res)=>{
+          console.log(res)
+        });
     },
+    testCode() {
+      if(this.form.code.length < 6){
+        return
+      }
+      var _this = this;
+      var data={
+          type: "predeposit_withdraw",
+          verify: this.form.code
+      };
+      checkVerifyCode(data).then(()=>{
+        _this.$message.success(_this.$t('withdraw.withdraw15'),1);
+      }).catch((res)=>{
+        this.$message(res.datas.error)
+      });
+        
+    },    
     addBankCard(){
       this.$router.push({name:'addBankCard',params:{amount:this.form.amount}});
     },
-    handleSelectChange(value) {
-      console.log(value);
-      this.form.setFieldsValue({
-        note: `Hi, ${value === 'male' ? 'man' : 'lady'}!`,
-      });
+    handleOk(e) {
+        this.visible = false;
+        var data = {
+          verify: this.form.code,
+          withdraw_price: this.form.amount,
+          account_id: this.form.bankcard,
+          trade_pwd: this.tradersPassword,
+        };
+        // withdraw().then((res)=>{
+          // this.isSuccess = true;
+        // });
     },
-    goWithdraw(){
-      this.isSuccess = true;
+    handleCancel(e) {
+        this.visible = false;
+    },
+    forgetPwd(){
+
+    },
+    goEnterPwd(){
+      this.visible = true;     
     },
     goReturn(){
       this.isSuccess = false;
