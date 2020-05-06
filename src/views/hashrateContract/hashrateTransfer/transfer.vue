@@ -2,6 +2,7 @@
   <div class="contractItemContainer">
     <div class="contractItemChoose">
       <ul>
+        <!-- TODO 接口未添加筛选参数，功能未实现 -->
         <li>
           <label class="chooseTitle">矿机类型:</label>
           <a-radio-group v-model="chioce.type">

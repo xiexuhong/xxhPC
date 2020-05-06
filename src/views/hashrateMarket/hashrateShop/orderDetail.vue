@@ -25,6 +25,7 @@
                 </a-col>
                 <a-col :span="5">
                   <span class="contentTitle">達標算力:</span>
+                  <!-- TODO 达标算力计算有问题，没弄清计算逻辑 -->
                   <span>{{ mult(mult(power.base_power, chargeAmount), rewardPower) }} T</span>
                 </a-col>
               </a-row>
@@ -42,8 +43,17 @@
                 <a-col :span="6">
                   <span class="contentTitle">單價:</span>
                   <span>
-                    {{ unitPriceNum = currencyValue === 'USDT' ? power.deposit_arr[1].value : power.deposit_arr[0].value }}
-                    {{ currencyValue === 'USDT' ? power.deposit_arr[1].name : power.deposit_arr[0].name }}
+                    {{
+                    (unitPriceNum =
+                    currencyValue === 'USDT'
+                    ? power.deposit_arr[1].value
+                    : power.deposit_arr[0].value)
+                    }}
+                    {{
+                    currencyValue === 'USDT'
+                    ? power.deposit_arr[1].name
+                    : power.deposit_arr[0].name
+                    }}
                   </span>
                 </a-col>
                 <a-col :span="5">
@@ -65,6 +75,7 @@
                 <a-col :span="6">
                   <span class="contentTitle">算力來源:</span>
                   <span>京都資本</span>
+                  <!-- TODO  本页面没有算力来源字段 -->
                   <!-- <span>{{ power.power_node_name }}</span>   undefined -->
                 </a-col>
                 <a-col :span="5"></a-col>
@@ -103,10 +114,12 @@
               <a-row>
                 <a-col :span="8" class="chargeAmount">可用余额：</a-col>
                 <a-col :span="16" class="chargeAmount">
-                  {{ surplusPowerNum =
+                  {{
+                  (surplusPowerNum =
                   currencyValue === 'USDT'
                   ? surplusPower[0].payment_avail
-                  : surplusPower[1].payment_avail }}
+                  : surplusPower[1].payment_avail)
+                  }}
                 </a-col>
               </a-row>
             </div>
@@ -125,7 +138,8 @@
                     parseFloat(mult(mult(power.base_power, chargeAmount), rewardPower)) +
                     parseFloat(mult(power.futures_power, chargeAmount)) +
                     parseFloat(mult(power.regular_power, chargeAmount))
-                    }} T
+                    }}
+                    T
                   </span>
                 </span>
                 <span>
@@ -137,6 +151,7 @@
               </div>
             </div>
             <div class="hashrateAgreement">
+              <!-- TODO 协议跳转问题 -->
               <p>
                 <span>
                   <a-checkbox :indeterminate="indeterminate" @click="taggleIndeterminate">
@@ -157,6 +172,7 @@
                   width="350px"
                   @ok="confirmCharge"
                 >
+                  <!-- TODO 密码验证未做 -->
                   <p>交易密码</p>
                   <p>
                     <a-input />
@@ -264,7 +280,7 @@ export default {
       //提交购买
       rentPower({
         machine_id: this.power.machine_id, // 矿机id
-        machine_type, // 矿机类型
+        machine_type: this.power.type, // 矿机类型
         num: this.chargeAmount, // 租用数量
         payment_code: this.currencyValue, // 支付方式
       }).then(resp => {

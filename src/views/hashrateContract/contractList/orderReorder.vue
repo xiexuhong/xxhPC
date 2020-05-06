@@ -21,7 +21,8 @@
               <span
                 class="listTitleContent"
                 style="color:#FFAB32;borderBottom: 1px solid #FFAB32;cursor:pointer"
-              >{{mult(power.computingPower, power.num)}} T</span>
+                >{{ mult(power.computingPower, power.num) }} T</span
+              >
             </popover>
           </span>
         </li>
@@ -43,7 +44,7 @@
         </li>
         <li>
           <span>锁定时间</span>
-          <span class="listTitleContent">{{power.auto_stop_date}}</span>
+          <span class="listTitleContent">{{ power.auto_stop_date }}</span>
         </li>
       </ul>
     </div>
@@ -72,12 +73,11 @@
               style="color:#FFAB32;borderBottom: 1px solid #FFAB32;cursor:pointer"
             >
               {{
-              reorderMethods == 90
-              ?
-              mult(renewalInfo_90.computing_power, power.num)
-              :
-              mult(renewalInfo_180.computing_power, power.num)
-              }} T
+                reorderMethods == 90
+                  ? mult(renewalInfo_90.computing_power, power.num)
+                  : mult(renewalInfo_180.computing_power, power.num)
+              }}
+              T
             </span>
           </popover>
         </span>
@@ -87,12 +87,7 @@
         </span>
         <span class="reorderInfoItem">
           <span>金额差价</span>
-          <a-popover
-            trigger="click"
-            :visible="reorderAmountDiff"
-            @visibleChange="handleClickChangeReoderA"
-            placement="rightTop"
-          >
+          <a-popover placement="rightTop">
             <div slot="content" style="width:200px">
               <ul>
                 <li>
@@ -101,14 +96,17 @@
                 </li>
                 <li>
                   <span style="width:35%">现有金额</span>
-                  <span style="width:65%">{{ power.rawTotalDeposit }} {{ power.pay_currency }}</span>
+                  <span style="width:65%"
+                    >{{ power.rawTotalDeposit }} {{ power.pay_currency }}</span
+                  >
                 </li>
               </ul>
             </div>
             <span
               class="listTitleContent"
               style="color:#FFAB32;borderBottom: 1px solid #FFAB32;cursor:pointer"
-            >0.00 {{power.pay_currency}}</span>
+              >0.00 {{ power.pay_currency }}</span
+            >
           </a-popover>
         </span>
         <span class="reorderInfoItem lockTime">
@@ -117,7 +115,9 @@
         </span>
       </div>
       <div>
-        <a-button size="large" @click="onReOrder">{{ power.regular_power == 0 ? '转期' : '续期' }}</a-button>
+        <a-button size="large" @click="onReOrder">{{
+          power.regular_power == 0 ? '转期' : '续期'
+        }}</a-button>
         <div class="hashrateNodal">
           <a-modal
             title="提示"
@@ -140,7 +140,7 @@
 import popover from '@/components/popover';
 import { getOrderInfo, reOrder } from '@/script/api';
 import { mult } from '@/script/utils';
-import { Base64 } from 'js-base64'
+import { Base64 } from 'js-base64';
 export default {
   // props: ['orderId'],
   components: {
@@ -150,7 +150,6 @@ export default {
     return {
       reorderMethods: 90, //续期方式单选框值
       fadeVisible: false, //点击弹窗隐藏/显示
-      reorderAmountDiff: false, //点击气泡卡隐藏/显示--续期订单信息--金额差价
       power: {}, //  续单数据
       renewalInfo_90: {}, //  不同续期方式的数据
       renewalInfo_180: {}, //  不同续期方式的数据
@@ -179,10 +178,6 @@ export default {
     mult: () => mult,
   },
   methods: {
-    //点击气泡卡隐藏/显示--金额差价
-    handleClickChangeReoderA(visible) {
-      this.reorderAmountDiff = visible;
-    },
     //  获取到期时间
     gettime(reorderMethods) {
       let time = reorderMethods;
