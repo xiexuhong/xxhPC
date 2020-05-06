@@ -5,6 +5,9 @@ module.exports = {
       '/index.php': {
         target: 'http://api2.test.rrmine.superqr.cn',
       },
+      '/member': {
+        target: 'http://iappfront.t1.anmaicloud.com',
+      },
     },
   },
 };
