@@ -34,6 +34,7 @@ export const deepClone = (data, weak = new WeakMap()) => {
 export const extend = (target, ...args) => Object.assign(target, ...args);
 
 /*
+ * 乘法
  * 一个参数：保留两位小数
  * 两个参数：相乘保留两位小数，或，依据传入的'USD' 'USDT' 或其他 判断保留几位小数
  * 三个参数：相乘，然后，依据传入的'USD' 'USDT' 或其他 判断保留几位小数

@@ -52,9 +52,13 @@
         :loading="tableLoading"
       >
         <span slot="deposit" slot-scope="text, record">
-          {{ record.allow_cancel == 2 ? record.continue_total_deposit_coin :
-          (record.work_state != 0 ? record.raw_total_deposit :
-          record.total_deposit) }}{{ record.pay_currency }}
+          {{
+            record.allow_cancel == 2
+              ? record.continue_total_deposit_coin
+              : record.work_state != 0
+              ? record.raw_total_deposit
+              : record.total_deposit
+          }}{{ record.pay_currency }}
         </span>
         <span slot="regularDateNum" slot-scope="text">{{ text }}天</span>
         <popover slot="computingPower" slot-scope="text, record" :power="record" :num="record.num">
@@ -69,20 +73,24 @@
           >转让</router-link>-->
           <router-link
             :to="{
-            path: '/hashrateContract/contractList/orderFade',
-            query: {
-              orderId: record.orderId
-            }
-          }"
-          >退单</router-link>
+              path: '/hashrateContract/contractList/orderFade',
+              query: {
+                orderId: Base64.encode(record.orderId),
+              },
+            }"
+            >退单</router-link
+          >
           <router-link
             :to="{
-            path: '/hashrateContract/contractList/orderReorder',
-            query: {
-              orderId: record.orderId
-            }
-          }"
-          >{{ record.isRegular == '1' && record.allow_renewal == true ? '续单' : '转期' }}</router-link>
+              path: '/hashrateContract/contractList/orderReorder',
+              query: {
+                orderId: Base64.encode(record.orderId),
+              },
+            }"
+            >{{
+              record.isRegular == '1' && record.allow_renewal == true ? '续单' : '转期'
+            }}</router-link
+          >
         </span>
       </a-table>
     </div>
@@ -93,6 +101,7 @@
 import popover from '@/components/popover';
 import { getContractList } from '@/script/api';
 import { mult } from '@/script/utils';
+import { Base64 } from 'js-base64';
 export default {
   props: ['rentedList'],
   components: {
@@ -173,6 +182,7 @@ export default {
   },
   computed: {
     mult: () => mult,
+    Base64: () => Base64,
   },
   methods: {
     //  筛选数据
