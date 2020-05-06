@@ -12,6 +12,7 @@ const http = axios.create({
 });
 http.interceptors.request.use(
   config => {
+    store.commit('changeLoadingStatus', true);
     if (config.method === 'post') {
       const data = config.data || {};
       data['token'] = Vue.ls.get('user') && Vue.ls.get('user').token;
@@ -32,9 +33,11 @@ http.interceptors.request.use(
 );
 http.interceptors.response.use(
   response => {
+    store.commit('changeLoadingStatus', false);
     return response.data;
   },
   error => {
+    store.commit('changeLoadingStatus', false);
     return Promise.reject(error);
   },
 );
