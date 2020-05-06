@@ -15,19 +15,19 @@
           </span>
           <span>
             <span class="infoTopTitle">产币天数</span>
-            <span>{{data.period - data.surplus_days}} 天</span>
+            <span>{{ data.period - data.surplus_days }} 天</span>
           </span>
           <span>
             <span class="infoTopTitle">产币量</span>
-            <span>{{data.product}} BTC ≈ {{data.settle_price}} {{data.user_currency}}</span>
+            <span>{{ data.product }} BTC ≈ {{ data.settle_price }} {{ data.user_currency }}</span>
           </span>
           <span>
             <span class="infoTopTitle">距离结算天数</span>
-            <span style="color:#FFAB32">{{data.surplus_days}} 天</span>
+            <span style="color:#FFAB32">{{ data.surplus_days }} 天</span>
           </span>
           <span>
             <span class="infoTopTitle">合约周期</span>
-            <span style="color:#FFAB32">{{data.period}} 天</span>
+            <span style="color:#FFAB32">{{ data.period }} 天</span>
           </span>
           <span class="timeSet">
             <span class="infoTopTitle">生效时间</span>
@@ -41,7 +41,7 @@
         <div class="flex infoBottom">
           <span>
             <span class="infoTopTitle">止损率</span>
-            <span>{{data.low_limit}}%</span>
+            <span>{{ data.low_limit }}%</span>
           </span>
           <span>
             <span class="infoTopTitle">止损价</span>
@@ -49,7 +49,7 @@
           </span>
           <span>
             <span class="infoTopTitle">止盈率</span>
-            <span>{{data.high_limit}}%</span>
+            <span>{{ data.high_limit }}%</span>
           </span>
           <span>
             <span class="infoTopTitle">止盈价</span>
@@ -57,7 +57,7 @@
           </span>
           <span>
             <span class="infoTopTitle">合约费用</span>
-            <span>{{ data.amount }} {{data.currency}}</span>
+            <span>{{ data.amount }} {{ data.currency }}</span>
           </span>
           <span class="timeSet">
             <span class="infoTopTitle">结算时间</span>
@@ -65,7 +65,7 @@
           </span>
           <span class="timeSet">
             <span class="infoTopTitle">下单时间</span>
-            <span>{{data.create_at}}</span>
+            <span>{{ data.create_at }}</span>
           </span>
         </div>
       </div>
@@ -89,31 +89,31 @@
         <div class="totalInfo" v-if="data.settle_type">
           <span>
             <span class="infoTopTitle">算力产出</span>
-            <span>{{data.returns}} BTC ≈ {{data.product_price}} {{data.user_currency}}</span>
+            <span>{{ data.returns }} BTC ≈ {{ data.product_price }} {{ data.user_currency }}</span>
           </span>
           <span>
             <span class="infoTopTitle">结算币值</span>
-            <span>{{data.product_price}} {{data.user_currency}}</span>
+            <span>{{ data.product_price }} {{ data.user_currency }}</span>
           </span>
           <span>
             <span class="infoTopTitle">产出率</span>
-            <span>{{data.product_ray}}%</span>
+            <span>{{ data.product_ray }}%</span>
           </span>
           <span>
             <span class="infoTopTitle">结算类型</span>
-            <span>{{data.settle_type_desc}}</span>
+            <span>{{ data.settle_type_desc }}</span>
           </span>
           <span>
             <span class="infoTopTitle">结算率</span>
-            <span>{{data.settle_ray}}%</span>
+            <span>{{ data.settle_ray }}%</span>
           </span>
           <span>
             <span class="infoTopTitle">实际结算</span>
-            <span>{{data.settle_amount}} USDT ≈ {{data.settle_price}} CNY</span>
+            <span>{{ data.settle_amount }} USDT ≈ {{ data.settle_price }} CNY</span>
           </span>
           <span class="timeSet" style="textAlign:right">
             <span class="infoTopTitle">结算时间</span>
-            <span>{{data.settle_time}}</span>
+            <span>{{ data.settle_time }}</span>
           </span>
         </div>
         <div v-else class="totalInfo">
@@ -126,6 +126,7 @@
 
 <script>
 import { myInsuranceDetail } from '@/script/api';
+import { Base64 } from 'js-base64';
 
 //假数据
 import datas from './moreServiceDetail.json';
@@ -285,8 +286,8 @@ export default {
   created() {
     //假数据
     this.data = datas.datas;
-    // console.log(this.$route.query.ins_order_id);
-    // myInsuranceDetail({ ins_order_id: this.$route.query.ins_order_id }).then(resp => {
+    // console.log(Base64.decode(this.$route.query.ins_order_id));
+    // myInsuranceDetail({ ins_order_id: Base64.decode(this.$route.query.ins_order_id) }).then(resp => {
     //   console.log(resp);
     //   this.datas = resp.datas;
     // });

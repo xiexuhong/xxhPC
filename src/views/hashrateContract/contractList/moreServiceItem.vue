@@ -13,27 +13,30 @@
         :loading="tableLoading"
       >
         <span slot="name" slot-scope="text, record">{{ record.insurance_info.name }}</span>
-        <span
-          slot="amountOfMoney"
-          slot-scope="text, record"
-        >{{ record.insurance_info.amount }} {{ record.insurance_info.currency }}</span>
+        <span slot="amountOfMoney" slot-scope="text, record"
+          >{{ record.insurance_info.amount }} {{ record.insurance_info.currency }}</span
+        >
         <span slot="hedgeCycle" slot-scope="text, record">{{ record.insurance_info.period }}</span>
         <span slot="status" slot-scope="text, record">{{ record.workText }}</span>
-        <span slot="effectiveDate" slot-scope="text, record">{{ record.insurance_info.start_time }}</span>
-        <span
-          slot="settlementDate"
-          slot-scope="text, record"
-        >{{ record.insurance_info.settle_time }}</span>
-        <span slot="orderDate" slot-scope="text, record">{{ record.insurance_info.create_at }}</span>
+        <span slot="effectiveDate" slot-scope="text, record">{{
+          record.insurance_info.start_time
+        }}</span>
+        <span slot="settlementDate" slot-scope="text, record">{{
+          record.insurance_info.settle_time
+        }}</span>
+        <span slot="orderDate" slot-scope="text, record">{{
+          record.insurance_info.create_at
+        }}</span>
         <span class="action" slot="action" slot-scope="text, record">
           <router-link
             :to="{
-            path: '/hashrateContract/contractList/moreServiceDetail',
-            query: {
-              ins_order_id: record.insurance_info.id
-            }
-          }"
-          >查看详情</router-link>
+              path: '/hashrateContract/contractList/moreServiceDetail',
+              query: {
+                ins_order_id: Base64.encode(record.insurance_info.id),
+              },
+            }"
+            >查看详情</router-link
+          >
         </span>
       </a-table>
     </div>
@@ -42,6 +45,7 @@
 
 <script>
 import { myInsuranceList } from '@/script/api';
+import { Base64 } from 'js-base64';
 
 //假数据
 import falseDatas from './moreServiceItem.json';
@@ -109,6 +113,9 @@ export default {
     //  假数据
     this.datas = falseDatas.datas.rented_list;
     this.totalNum = Number(falseDatas.datas.total_page) * 10;
+  },
+  computed: {
+    Base64: () => Base64,
   },
   methods: {
     //  页码变化

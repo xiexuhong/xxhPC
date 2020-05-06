@@ -140,6 +140,7 @@
 import popover from '@/components/popover';
 import { getOrderInfo, reOrder } from '@/script/api';
 import { mult } from '@/script/utils';
+import { Base64 } from 'js-base64'
 export default {
   // props: ['orderId'],
   components: {
@@ -163,8 +164,8 @@ export default {
     };
   },
   created() {
-    // console.log(this.$route.query.orderId);
-    getOrderInfo({ order_id: this.$route.query.orderId }).then(resp => {
+    // console.log(Base64.decode(this.$route.query.orderId));
+    getOrderInfo({ order_id: Base64.decode(this.$route.query.orderId) }).then(resp => {
       this.power = resp.datas.info;
       let renewalInfo = JSON.parse(JSON.stringify(resp.datas.info.renewal_info));
       this.renewalInfo_90 = renewalInfo.new_90;
@@ -226,7 +227,7 @@ export default {
     //  确认转期、续期
     confirmReOrder() {
       reOrder({
-        order_id: this.$route.query.orderId,
+        order_id: Base64.decode(this.$route.query.orderId),
         regular_date_num: this.reorderMethods,
       })
         .then(resp => {
