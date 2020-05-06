@@ -6,7 +6,7 @@ import router from '@/router';
 import Vue from 'vue';
 
 const http = axios.create({
-  baseURL: process.env.VUE_APP_BASIC_URL,
+  baseURL: '', // TODO 生产环境添加
   timeout: 5000,
   transformRequest: [data => qs.stringify(data)],
 });
