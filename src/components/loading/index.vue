@@ -23,6 +23,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(204, 204, 204, 0.5);
+  background: rgba(204, 204, 204, 0.4);
 }
 </style>
