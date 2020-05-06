@@ -115,38 +115,9 @@
               <div>
                 <span>
                   到手总算力
-                  <a-popover
-                    trigger="click"
-                    :visible="clicked"
-                    @visibleChange="handleClickChange"
-                    placement="rightTop"
-                  >
-                    <div slot="content">
-                      <ul class="hashratePopover">
-                        <li>
-                          <span>基础算力</span>
-                          <span>{{ mult(power.base_power, chargeAmount) }} T</span>
-                        </li>
-                        <li>
-                          <span>浮动算力</span>
-                          <span>{{ mult(power.float_power, chargeAmount) }} T</span>
-                        </li>
-                        <li>
-                          <span>达标算力</span>
-                          <span>{{ mult(mult(power.base_power, chargeAmount), rewardPower) }} T</span>
-                        </li>
-                        <li>
-                          <span>期货算力</span>
-                          <span>{{ mult(power.futures_power, chargeAmount) }} T</span>
-                        </li>
-                        <li>
-                          <span>定期算力</span>
-                          <span>{{ mult(power.regular_power, chargeAmount) }} T</span>
-                        </li>
-                      </ul>
-                    </div>
+                  <popover :power="power" :num="chargeAmount" :rewardPower="rewardPower">
                     <span class="infoIcon">!</span>
-                  </a-popover>
+                  </popover>
                   <span class="totalNum">
                     {{
                     parseFloat(mult(power.base_power, chargeAmount)) +
@@ -204,12 +175,17 @@
 </template>
 
 <script>
+import popover from '@/components/popover';
 import { getAgreement, getSurplusPower, rentPower } from '@/script/api';
+import { mult } from '@/script/utils';
 import { mapGetters } from 'vuex';
 export default {
+  components: {
+    popover,
+  },
   data() {
     return {
-      clicked: false, //点击气泡卡隐藏/显示
+      // clicked: false, //点击气泡卡隐藏/显示
       chargeVisible: false, //点击弹窗隐藏/显示
       indeterminate: false, //设置协议复选框选中状态样式
       chargeAmount: 1, //  购买份数
@@ -238,22 +214,16 @@ export default {
   },
   computed: {
     ...mapGetters({ power: 'singleList' }),
+    mult: () => mult,
   },
   methods: {
-    handleClickChange(visible) {
-      //点击气泡卡隐藏/显示
-      this.clicked = visible;
-    },
+    // handleClickChange(visible) {
+    //   //点击气泡卡隐藏/显示
+    //   this.clicked = visible;
+    // },
     taggleIndeterminate() {
       //设置协议复选框选中状态样式
       this.indeterminate = !this.indeterminate;
-    },
-    // 乘法
-    mult: (basePrice, number, currency) => {
-      let fixnum;
-      currency == 'USDT' ? (fixnum = 4) : (fixnum = 2);
-      let result = (number * basePrice).toFixed(fixnum);
-      return result;
     },
     // 达标算力
     getReward: (power, powerList) => {
@@ -428,21 +398,21 @@ export default {
     }
   }
 }
-.ant-popover-inner {
-  .ant-popover-inner-content {
-    .hashratePopover {
-      li {
-        width: 130px;
-        display: flex;
-        justify-content: space-between;
-        span {
-          display: inline-block;
-          width: 45%;
-        }
-      }
-    }
-  }
-}
+// .ant-popover-inner {
+//   .ant-popover-inner-content {
+//     .hashratePopover {
+//       li {
+//         width: 130px;
+//         display: flex;
+//         justify-content: space-between;
+//         span {
+//           display: inline-block;
+//           width: 45%;
+//         }
+//       }
+//     }
+//   }
+// }
 
 a {
   color: #ffab32;

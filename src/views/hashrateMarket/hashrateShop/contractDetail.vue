@@ -110,6 +110,7 @@
 </template>
 
 <script>
+import { mult } from '@/script/utils';
 import { mapGetters } from 'vuex';
 export default {
   data() {
@@ -120,10 +121,7 @@ export default {
   },
   computed: {
     ...mapGetters({ power: 'singleList' }),
-  },
-  methods: {
-    // 乘法
-    mult: (basePrice, number) => number * basePrice,
+    mult: () => mult,
   },
 };
 </script>

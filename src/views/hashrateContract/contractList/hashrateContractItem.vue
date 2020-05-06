@@ -57,49 +57,9 @@
           record.total_deposit) }}{{ record.pay_currency }}
         </span>
         <span slot="regularDateNum" slot-scope="text">{{ text }}天</span>
-        <a-popover placement="rightTop" slot="computingPower" slot-scope="text, record">
-          <div slot="title">
-            <p style="color:#595959;textAlign:center">算力构成</p>
-            <p style="color:#999999;textAlign:center">{{ record.computingPower * record.num }}T</p>
-          </div>
-          <div slot="content">
-            <ul>
-              <li>
-                <span>基础算力</span>
-                <span>{{ record.basePower * record.num }}T</span>
-              </li>
-              <li>
-                <span>浮动算力</span>
-                <span>{{ (record.floatPower * record.num).toFixed(2) }}T</span>
-              </li>
-              <li>
-                <span>达标算力</span>
-                <span>{{ record.pePower * record.num }}T</span>
-              </li>
-              <li>
-                <span>期货算力</span>
-                <span>{{ record.futuresPower * record.num }}T</span>
-              </li>
-              <li>
-                <span>定期算力</span>
-                <span>{{ record.regularPower * record.num }}T</span>
-              </li>
-              <li v-if="record.inviterPower > 0">
-                <span>邀请算力</span>
-                <span>{{ record.inviterPower * record.num }}T</span>
-              </li>
-              <li v-if="record.tdPower > 0">
-                <span>成长算力</span>
-                <span>{{ record.tdPower * record.num }}T</span>
-              </li>
-              <li v-if="record.couponPower > 0">
-                <span>优惠券算力</span>
-                <span>{{ record.couponPower * record.num }}T</span>
-              </li>
-            </ul>
-          </div>
-          <span class="totalHashrate">{{ record.computingPower * record.num }}T</span>
-        </a-popover>
+        <popover slot="computingPower" slot-scope="text, record" :power="record" :num="record.num">
+          <span class="totalHashrate">{{ mult(record.computingPower, record.num) }}T</span>
+        </popover>
         <span class="action" slot="action" slot-scope="text, record">
           <!-- 暂时不出
             <router-link
@@ -130,9 +90,14 @@
 </template>
 
 <script>
+import popover from '@/components/popover';
 import { getContractList } from '@/script/api';
+import { mult } from '@/script/utils';
 export default {
   props: ['rentedList'],
+  components: {
+    popover,
+  },
   data() {
     return {
       datas: [], //  单元格数据
@@ -206,6 +171,9 @@ export default {
       this.tableLoading = false;
     },
   },
+  computed: {
+    mult: () => mult,
+  },
   methods: {
     //  筛选数据
     onChoiceChange() {
@@ -240,8 +208,6 @@ export default {
         this.tableLoading = false;
       });
     },
-    //  乘法
-    mult: (power, num) => (power * num).toFixed(2),
   },
 };
 </script>
@@ -311,24 +277,6 @@ export default {
     /deep/.ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled) {
       background-color: #ffab32;
       color: #ffffff;
-    }
-  }
-}
-.ant-popover-inner {
-  width: 100%;
-  border-bottom: 1px solid #f4f4f6;
-  .ant-popover-inner-content {
-    color: #999999;
-    ul {
-      width: 100%;
-      li {
-        height: 2em;
-        span {
-          display: inline-block;
-          width: 50%;
-          text-align: center;
-        }
-      }
     }
   }
 }

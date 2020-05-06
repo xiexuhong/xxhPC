@@ -21,59 +21,12 @@
         <li>
           <span>
             到手总算力
-            <a-popover
-              trigger="click"
-              :visible="clicked"
-              @visibleChange="handleClickChange"
-              placement="rightTop"
-            >
-              <div slot="title">
-                <p style="color:#595959;textAlign:center">总算力</p>
-                <p
-                  style="color:#999999;textAlign:center"
-                >{{ (power.computingPower * power.num).toFixed(2) }}T</p>
-              </div>
-              <div slot="content">
-                <ul>
-                  <li>
-                    <span>基础算力</span>
-                    <span>{{ power.basePower * power.num }}T</span>
-                  </li>
-                  <li>
-                    <span>浮动算力</span>
-                    <span>{{ power.floatPower * power.num }}T</span>
-                  </li>
-                  <li>
-                    <span>达标算力</span>
-                    <span>{{ power.pePower * power.num }}T</span>
-                  </li>
-                  <li>
-                    <span>期货算力</span>
-                    <span>{{ power.futuresPower * power.num }}T</span>
-                  </li>
-                  <li>
-                    <span>定期算力</span>
-                    <span>{{ power.regularPower * power.num }}T</span>
-                  </li>
-                  <li v-if="power.inviterPower > 0">
-                    <span>邀请算力</span>
-                    <span>{{ power.inviterPower * power.num }}T</span>
-                  </li>
-                  <li v-if="power.tdPower > 0">
-                    <span>成长算力</span>
-                    <span>{{ power.tdPower * power.num }}T</span>
-                  </li>
-                  <li v-if="power.couponPower > 0">
-                    <span>优惠券算力</span>
-                    <span>{{ power.couponPower * power.num }}T</span>
-                  </li>
-                </ul>
-              </div>
+            <popover :power="power" :num="power.num">
               <span
                 class="listTitleContent"
                 style="color:#FFAB32;borderBottom: 1px solid #FFAB32;cursor:pointer"
-              >{{(power.computingPower * power.num).toFixed(2)}} T</span>
-            </a-popover>
+              >{{mult(power.computingPower, power.num)}} T</span>
+            </popover>
           </span>
         </li>
         <li>
@@ -121,7 +74,7 @@
         退单金额：
         <span
           style="color:#595959"
-        >{{(power.unit_price*fadeNum).toFixed(2)}} {{power.pay_currency}}</span>
+        >{{mult(power.unit_price, fadeNum, power.pay_currency)}} {{ power.pay_currency }}</span>
       </p>
       <div>
         <a-button size="large" @click="onFadeClick">立即退单</a-button>
@@ -144,12 +97,16 @@
 </template>
 
 <script>
+import popover from '@/components/popover';
 import { getOrderInfo, getOrderFadeLoss, fadeOrder } from '@/script/api';
+import { mult } from '@/script/utils';
 export default {
   props: ['orderId'],
+  components: {
+    popover,
+  },
   data() {
     return {
-      clicked: false, //点击气泡卡隐藏/显示
       fadeVisible: false, //点击弹窗隐藏/显示
       fadeNum: 1, //  退单数量
       power: {}, //  退单订单详情
@@ -163,11 +120,10 @@ export default {
       // console.log(this.power);
     });
   },
+  computed: {
+    mult: () => mult,
+  },
   methods: {
-    handleClickChange(visible) {
-      //点击气泡卡隐藏/显示
-      this.clicked = visible;
-    },
     //  立即退单
     onFadeClick() {
       //  弹出交易框
@@ -261,24 +217,6 @@ export default {
   }
   /deep/.ant-radio-inner::after {
     background-color: #ffab32;
-  }
-}
-.ant-popover-inner {
-  width: 100%;
-  border-bottom: 1px solid #f4f4f6;
-  .ant-popover-inner-content {
-    color: #999999;
-    ul {
-      width: 100%;
-      li {
-        height: 2em;
-        span {
-          display: inline-block;
-          width: 50%;
-          text-align: center;
-        }
-      }
-    }
   }
 }
 @media screen and (max-width: 500px) {

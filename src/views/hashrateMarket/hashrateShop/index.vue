@@ -103,6 +103,7 @@
 <script>
 import { mapMutations } from 'vuex';
 import { getPowerList } from '@/script/api';
+import { mult } from '@/script/utils';
 export default {
   data() {
     return {
@@ -116,10 +117,10 @@ export default {
       this.powerList = resp.datas.machine_list;
     });
   },
-  computed: {},
+  computed: {
+    mult: () => mult,
+  },
   methods: {
-    // 乘法
-    mult: (basePrice, number) => number * basePrice,
     //  获取单调数据并传给vuex共享
     ...mapMutations(['GET_SINGLE_LIST']),
     setSingleList(powerItem) {
