@@ -9,17 +9,14 @@
             </span>
           </span>
         </div>
-        <a-card-meta :description="'上次登录时间：' + datas.old_login_time ">
+        <a-card-meta :description="'上次登录时间：' + datas.old_login_time">
           <template slot="title">
             <div>
-              <span>{{ datas.nick_name}}</span>
+              <span>{{ datas.nick_name }}</span>
               <img src="../../../assets/image/account/iconbianji.png" alt />
             </div>
           </template>
-          <a-avatar
-            slot="avatar"
-            :src="datas.avatar"
-          />
+          <a-avatar slot="avatar" :src="datas.avatar" />
         </a-card-meta>
         <a-card class="m_top">
           <a-row>
@@ -59,7 +56,9 @@
                       <div class="ant-list-item-meta-description">
                         <span>
                           <span class="security-list-description">
-                            <small>綁定手機後，您即可享受手機登錄、動態碼登錄、找回密碼等。為了賬號安全，建議您在更換手機後第一時間更換綁定手機</small>
+                            <small
+                              >綁定手機後，您即可享受手機登錄、動態碼登錄、找回密碼等。為了賬號安全，建議您在更換手機後第一時間更換綁定手機</small
+                            >
                           </span>
                         </span>
                       </div>
@@ -85,7 +84,9 @@
                       <div class="ant-list-item-meta-description">
                         <span>
                           <span class="security-list-description">
-                            <small>國際領先的區塊鏈數字資產錢包，支持主流貨幣的場外交易和兌換</small>
+                            <small
+                              >國際領先的區塊鏈數字資產錢包，支持主流貨幣的場外交易和兌換</small
+                            >
                           </span>
                         </span>
                       </div>
@@ -97,7 +98,8 @@
                         :to="isAssociated ? '/account/associated_bhpay' : '/account/rela_bhpay'"
                         class="color_b"
                         :class="{ color_y: !isAssociated }"
-                      >{{ isAssociated ? '已關聯BHPay' : '關聯BHPay' }}</router-link>
+                        >{{ isAssociated ? '已關聯BHPay' : '關聯BHPay' }}</router-link
+                      >
                     </li>
                   </ul>
                 </li>
@@ -115,7 +117,9 @@
                       <div class="ant-list-item-meta-description">
                         <span>
                           <span class="security-list-description">
-                            <small>安全性高的密碼可以使賬號更安全。建議您定期更換密碼，且設置一個包含數字和字母，並且長度超過6位以上的密碼</small>
+                            <small
+                              >安全性高的密碼可以使賬號更安全。建議您定期更換密碼，且設置一個包含數字和字母，並且長度超過6位以上的密碼</small
+                            >
                           </span>
                         </span>
                       </div>
@@ -133,16 +137,49 @@
                       >
                         <a-from :form="form" @submit="changeLoginPwd">
                           <a-form-item label="短信验证码">
-                            <a-input placeholder="请输入短信验证码" v-decorator="['code',{ rules: [{ required: true, message: 'Please input your verify code!' }] },]" @blur="validateCode()">
-                              <span slot="suffix" class="color_y" @click="sendCode()"> {{ codeText }} </span>
+                            <a-input
+                              placeholder="请输入短信验证码"
+                              v-decorator="[
+                                'code',
+                                {
+                                  rules: [
+                                    { required: true, message: 'Please input your verify code!' },
+                                  ],
+                                },
+                              ]"
+                              @blur="validateCode()"
+                            >
+                              <span slot="suffix" class="color_y" @click="sendCode()">
+                                {{ codeText }}
+                              </span>
                             </a-input>
                             <!-- <span class="code_til_text">輸入您的手機 {{ datas.account }} 收到的驗證碼</span> -->
                           </a-form-item>
                           <a-form-item label="新密碼">
-                            <a-input placeholder="6~16位字母、數字和特殊符號" v-decorator="['new_pwd',{ rules: [{ required: true, message: 'Please input your old Password!' }] },]" />
+                            <a-input
+                              placeholder="6~16位字母、數字和特殊符號"
+                              v-decorator="[
+                                'new_pwd',
+                                {
+                                  rules: [
+                                    { required: true, message: 'Please input your old Password!' },
+                                  ],
+                                },
+                              ]"
+                            />
                           </a-form-item>
                           <a-form-item label="确认新密碼">
-                            <a-input placeholder="请再次输入新密碼" v-decorator="['re_pwd',{ rules: [{ required: true, message: '输入的密码不一致，请重新输入' }] },]" />
+                            <a-input
+                              placeholder="请再次输入新密碼"
+                              v-decorator="[
+                                're_pwd',
+                                {
+                                  rules: [
+                                    { required: true, message: '输入的密码不一致，请重新输入' },
+                                  ],
+                                },
+                              ]"
+                            />
                           </a-form-item>
                           <a-form-item class="t_center">
                             <a-button type="primary" html-type="submit">确认修改</a-button>
@@ -238,33 +275,33 @@ export default {
   },
   ...mapMutations(['hasVerified']),
   async created() {
-      const { datas } = await getAccountInfo();
-      this.datas = datas;
-      console.log("datas: ", datas);
-      this.isAssociated = !!datas.bhpay_account;
-      this.verifyStatus ? isVerified : !isVerified;
-      this.$ls.set('userInfo',{
-        mobile: datas.account
-      })
+    const { datas } = await getAccountInfo();
+    this.datas = datas;
+    console.log('datas: ', datas);
+    this.isAssociated = !!datas.bhpay_account;
+    this.verifyStatus ? isVerified : !isVerified;
+    this.$ls.set('userInfo', {
+      mobile: datas.account,
+    });
 
-      // BHPay认证后信息
-      this.$ls.set('BHPayInfo', {
-        isRelated: this.isAssociated,
-        account: datas.account,
-        bhpay_account: datas.bhpay_account,
-        true_name: datas.true_name,
-        nick_name: datas.nick_name,
-        BHPay_date: datas.BHPay_date,
-        bhpay_quick_payment: datas.bhpay_quick_payment
-      });
-      // 人人矿场对应信息
-      this.$ls.set('renrenInfo', {
-        uid: datas.rrm_uid,
-        token: datas.rrm_token
-      });
+    // BHPay认证后信息
+    this.$ls.set('BHPayInfo', {
+      isRelated: this.isAssociated,
+      account: datas.account,
+      bhpay_account: datas.bhpay_account,
+      true_name: datas.true_name,
+      nick_name: datas.nick_name,
+      BHPay_date: datas.BHPay_date,
+      bhpay_quick_payment: datas.bhpay_quick_payment,
+    });
+    // 人人矿场对应信息
+    this.$ls.set('renrenInfo', {
+      uid: datas.rrm_uid,
+      token: datas.rrm_token,
+    });
   },
   methods: {
-    sendCode(){
+    sendCode() {
       this.sendVerifyCode(this.datas.account, 'change_pwd');
     },
     changePwd(isOpenPwd) {
@@ -276,27 +313,27 @@ export default {
     goVerify() {
       this.requestVerifyStatus(this.userInfo.mobile, 'reset_trade_pwd');
     },
-    validateCode(){
+    validateCode() {
       this.form.validateFields(async (err, values) => {
-        console.log("values: "+ JSON.stringify(values));
-        // if (!err) {
-        //   const { verify_code } = values;
-        //   await checkSmsCode({
-        //     mobile: account,
-        //     areacode: this.country.number,
-        //     type: 1,
-        //     verify: verify,
-        //   });
-        //   const { datas } = await register({
-        //     account,
-        //     password,
-        //     invite_code,
-        //     country: this.country.short,
-        //     areacode: this.country.number,
-        //   });
-        //   this.saveUser(datas);
-        //   this.$router.push('/');
-        // }
+        console.log('values: ' + JSON.stringify(values));
+        if (!err) {
+          const { verify_code } = values;
+          await checkSmsCode({
+            mobile: account,
+            areacode: this.country.number,
+            type: 1,
+            verify: verify_code,
+          });
+          const { datas } = await register({
+            account,
+            password,
+            invite_code,
+            country: this.country.short,
+            areacode: this.country.number,
+          });
+          this.saveUser(datas);
+          this.$router.push('/');
+        }
       });
     },
     // validatePwdBlur(e){
@@ -313,24 +350,24 @@ export default {
 
     // },
     changeLoginPwd(e) {
-    //   e.preventDefault();
-    //   this.form.validateFields(async (err, values) => {
-    //     if (!err) {
-    //       console.log('Received values of form: ', values);
-    //       await changeLoginPwd({
-    //         new_pwd: values.new_pwd,
-    //         re_pwd: values.re_pwd,
-    //       });
-    //     } else {
-    //       console.log("err: ", err);
-    //     }
-    //   });
+      //   e.preventDefault();
+      //   this.form.validateFields(async (err, values) => {
+      //     if (!err) {
+      //       console.log('Received values of form: ', values);
+      //       await changeLoginPwd({
+      //         new_pwd: values.new_pwd,
+      //         re_pwd: values.re_pwd,
+      //       });
+      //     } else {
+      //       console.log("err: ", err);
+      //     }
+      //   });
     },
     // changeTraPwd() {},
   },
 };
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .content {
   background-color: transparent;
 }
