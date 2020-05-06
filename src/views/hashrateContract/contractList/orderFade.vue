@@ -13,9 +13,13 @@
         <li>
           <span>金额</span>
           <span class="listTitleContent">
-            {{ power.allow_cancel == 2 ? power.continueTotalDeposit :
-            (power.work_state != 0 ? power.rawTotalDeposit :
-            power.totalDeposit) }}{{ power.pay_currency }}
+            {{
+              power.allow_cancel == 2
+                ? power.continueTotalDeposit
+                : power.work_state != 0
+                ? power.rawTotalDeposit
+                : power.totalDeposit
+            }}{{ power.pay_currency }}
           </span>
         </li>
         <li>
@@ -25,7 +29,8 @@
               <span
                 class="listTitleContent"
                 style="color:#FFAB32;borderBottom: 1px solid #FFAB32;cursor:pointer"
-              >{{mult(power.computingPower, power.num)}} T</span>
+                >{{ mult(power.computingPower, power.num) }} T</span
+              >
             </popover>
           </span>
         </li>
@@ -47,7 +52,7 @@
         </li>
         <li>
           <span>锁定时间</span>
-          <span class="listTitleContent">{{power.auto_stop_date}}</span>
+          <span class="listTitleContent">{{ power.auto_stop_date }}</span>
         </li>
       </ul>
     </div>
@@ -72,9 +77,9 @@
       </p>
       <p>
         退单金额：
-        <span
-          style="color:#595959"
-        >{{mult(power.unit_price, fadeNum, power.pay_currency)}} {{ power.pay_currency }}</span>
+        <span style="color:#595959"
+          >{{ mult(power.unit_price, fadeNum, power.pay_currency) }} {{ power.pay_currency }}</span
+        >
       </p>
       <div>
         <a-button size="large" @click="onFadeClick">立即退单</a-button>
@@ -100,6 +105,7 @@
 import popover from '@/components/popover';
 import { getOrderInfo, getOrderFadeLoss, fadeOrder } from '@/script/api';
 import { mult } from '@/script/utils';
+import { Base64 } from 'js-base64';
 export default {
   props: ['orderId'],
   components: {
@@ -114,8 +120,7 @@ export default {
     };
   },
   created() {
-    // console.log(this.$route.query.orderId);
-    getOrderInfo({ order_id: this.$route.query.orderId }).then(resp => {
+    getOrderInfo({ order_id: Base64.decode(this.$route.query.orderId) }).then(resp => {
       this.power = resp.datas.info;
       // console.log(this.power);
     });
@@ -130,7 +135,7 @@ export default {
       this.fadeVisible = true;
       //提交购买
       getOrderFadeLoss({
-        order_id: this.$route.query.orderId, // 订单id
+        order_id: Base64.decode(this.$route.query.orderId), // 订单id
         return_num: this.fadeNum, // 数量
       }).then(resp => {
         // console.log(resp);
@@ -139,7 +144,7 @@ export default {
     },
     confirmFade() {
       fadeOrder({
-        order_id: this.$route.query.orderId, // 订单id
+        order_id: Base64.decode(this.$route.query.orderId), // 订单id
         return_num: this.fadeNum, // 数量
       })
         .then(resp => {

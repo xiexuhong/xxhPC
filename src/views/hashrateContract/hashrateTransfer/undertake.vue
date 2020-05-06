@@ -34,34 +34,36 @@
         :columns="columns"
         :dataSource="datas"
         :rowKey="record => record.id"
-        :pagination="{total: totalNum}"
+        :pagination="{ total: totalNum }"
       >
         <popover slot="totalHashrate" slot-scope="text, record" :power="record" :num="record.num">
-          <span class="totalHashrate">{{mult(record.computingPower, record.num)}} T</span>
+          <span class="totalHashrate">{{ mult(record.computingPower, record.num) }} T</span>
         </popover>
         <span slot="regularDateNum" slot-scope="text">{{ text }} 天</span>
-        <span
-          slot="goodsDeposit"
-          slot-scope="text, record"
-        >{{record.goods_deposit}} x {{record.num}} = {{record.total_deposit}} {{record.pay_currency}}</span>
+        <span slot="goodsDeposit" slot-scope="text, record"
+          >{{ record.goods_deposit }} x {{ record.num }} = {{ record.total_deposit }}
+          {{ record.pay_currency }}</span
+        >
         <span class="action" slot="action" slot-scope="text, record">
           <!-- <router-link to>转让</router-link> -->
           <router-link
             :to="{
-            path: '/hashrateContract/contractList/orderFade',
-            query: {
-              orderId: record.order_id
-            }
-          }"
-          >退单</router-link>
+              path: '/hashrateContract/contractList/orderFade',
+              query: {
+                orderId: Base64.encode(record.order_id),
+              },
+            }"
+            >退单</router-link
+          >
           <router-link
             :to="{
-            path: '/hashrateContract/contractList/orderReorder',
-            query: {
-              orderId: record.order_id
-            }
-          }"
-          >续单</router-link>
+              path: '/hashrateContract/contractList/orderReorder',
+              query: {
+                orderId: Base64.encode(record.order_id),
+              },
+            }"
+            >续单</router-link
+          >
         </span>
       </a-table>
     </div>
@@ -72,6 +74,7 @@
 import popover from '@/components/popover';
 import { myUndertakeList } from '@/script/api';
 import { mult } from '@/script/utils';
+import { Base64 } from 'js-base64';
 export default {
   components: {
     popover,
@@ -136,6 +139,7 @@ export default {
   },
   computed: {
     mult: () => mult,
+    Base64: () => Base64,
   },
 };
 </script>
