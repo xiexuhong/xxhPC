@@ -20,13 +20,17 @@
                 </div>
                 <div class="leftBodyCards" v-show="!totalNum || totalNum <= 0">没有数据...</div>
                 <div class="leftBodyCards" v-for="data in powerList" :key="data.id">
+                  <!-- TODO 未确定是否需要做页面到底自动加载下一页数据 -->
                   <a-card hoverable :title="data.name">
                     <p>
                       <span class="leftInfoLeft">
                         <span class="leftInfoTitle">总金额</span>
                         <span>
-                          {{ data.work_state != 0 ? data.raw_total_deposit_coin :
-                          data.total_deposit_coin }}{{ data.pay_currency }}
+                          {{
+                          data.work_state != 0
+                          ? data.raw_total_deposit_coin
+                          : data.total_deposit_coin
+                          }}{{ data.pay_currency }}
                         </span>
                       </span>
                       <span class="leftInfoRight">
@@ -51,7 +55,7 @@
                       </span>
                       <span class="leftInfoRight">
                         <span class="leftInfoRightTitle">奖励算力</span>
-                        <span>{{ mult((data.computing_power - data.base_power), data.num) }}T</span>
+                        <span>{{ mult(data.computing_power - data.base_power, data.num) }}T</span>
                       </span>
                     </p>
                   </a-card>
@@ -111,10 +115,12 @@
                   <a-radio-button value="USD">USD</a-radio-button>
                 </a-radio-group>
                 <p>
-                  可用餘額：{{ surplusPowerNum =
+                  可用餘額：{{
+                  (surplusPowerNum =
                   value === 'USDT'
                   ? surplusPower[0].payment_avail
-                  : surplusPower[1].payment_avail }}
+                  : surplusPower[1].payment_avail)
+                  }}
                 </p>
               </div>
               <div class="hashrateAgreement">

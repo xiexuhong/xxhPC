@@ -2,6 +2,7 @@
   <div class="contractItemContainer">
     <div class="contractItemChoose">
       <ul>
+        <!-- TODO 接口未添加筛选参数，功能未实现 -->
         <li>
           <label class="chooseTitle">矿机类型:</label>
           <a-radio-group v-model="chioce.type">
@@ -40,10 +41,10 @@
           <span class="totalHashrate">{{ mult(record.computingPower, record.num) }} T</span>
         </popover>
         <span slot="regularDateNum" slot-scope="text">{{ text }} 天</span>
-        <span slot="goodsDeposit" slot-scope="text, record"
-          >{{ record.goods_deposit }} x {{ record.num }} = {{ record.total_deposit }}
-          {{ record.pay_currency }}</span
-        >
+        <span slot="goodsDeposit" slot-scope="text, record">
+          {{ record.goods_deposit }} x {{ record.num }} = {{ record.total_deposit }}
+          {{ record.pay_currency }}
+        </span>
         <span class="action" slot="action" slot-scope="text, record">
           <!-- <router-link to>转让</router-link> -->
           <router-link
@@ -53,8 +54,7 @@
                 orderId: Base64.encode(record.order_id),
               },
             }"
-            >退单</router-link
-          >
+          >退单</router-link>
           <router-link
             :to="{
               path: '/hashrateContract/contractList/orderReorder',
@@ -62,8 +62,7 @@
                 orderId: Base64.encode(record.order_id),
               },
             }"
-            >续单</router-link
-          >
+          >续单</router-link>
         </span>
       </a-table>
     </div>

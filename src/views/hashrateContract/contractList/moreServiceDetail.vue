@@ -128,7 +128,7 @@
 import { myInsuranceDetail } from '@/script/api';
 import { Base64 } from 'js-base64';
 
-//假数据
+//TODO 假数据
 import datas from './moreServiceDetail.json';
 
 const columns = [
@@ -284,7 +284,7 @@ export default {
     };
   },
   created() {
-    //假数据
+    //TODO 假数据
     this.data = datas.datas;
     // console.log(Base64.decode(this.$route.query.ins_order_id));
     // myInsuranceDetail({ ins_order_id: Base64.decode(this.$route.query.ins_order_id) }).then(resp => {

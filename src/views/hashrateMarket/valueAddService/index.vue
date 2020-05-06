@@ -10,7 +10,7 @@
               <ul class="hashHeader">
                 <li>{{ item.name }}</li>
                 <li>合约周期</li>
-                <li>{{item.period}}天</li>
+                <li>{{ item.period }}天</li>
               </ul>
             </a-col>
           </a-row>
@@ -19,9 +19,9 @@
               <ul>
                 <li>起购金额（每T）</li>
                 <li style="color:#ffab32">
-                  {{item.price.final_price}}
-                  <small>{{currency}}</small>
-                  / {{item.price.final_usdt_price}}
+                  {{ item.price.final_price }}
+                  <small>{{ currency }}</small>
+                  / {{ item.price.final_usdt_price }}
                   <small>USDT</small>
                 </li>
               </ul>
@@ -29,19 +29,19 @@
             <a-col :span="6">
               <ul>
                 <li>剩余份额</li>
-                <li>{{item.inventory}}份</li>
+                <li>{{ item.inventory }}份</li>
               </ul>
             </a-col>
             <a-col :span="5">
               <ul>
                 <li>止损率</li>
-                <li>{{item.low_limit}}%</li>
+                <li>{{ item.low_limit }}%</li>
               </ul>
             </a-col>
             <a-col :span="5">
               <ul>
                 <li>止赢率</li>
-                <li>{{item.hign_limit}}%</li>
+                <li>{{ item.hign_limit }}%</li>
               </ul>
             </a-col>
           </a-row>
@@ -53,16 +53,18 @@
               <router-link
                 to="/hashrateMarket/valueAddService/contractDetail"
                 @click.native="onSingleInsurance(item)"
-              >查看详情 ></router-link>
+                >查看详情 ></router-link
+              >
             </a-col>
           </a-row>
           <a-row class="charge">
             <a-col :span="24">
-              <a-button v-show=" item.inventory > 0" size="large" block>
+              <a-button v-show="item.inventory > 0" size="large" block>
                 <router-link
                   to="/hashrateMarket/valueAddService/orderDetail"
                   @click.native="onSingleInsurance(item)"
-                >立即购买</router-link>
+                  >立即购买</router-link
+                >
               </a-button>
               <a-button
                 v-show="!item.inventory || item.inventory <= 0"
@@ -70,7 +72,8 @@
                 size="large"
                 block
                 disabled
-              >已售罄</a-button>
+                >已售罄</a-button
+              >
             </a-col>
           </a-row>
         </a-col>
@@ -83,7 +86,7 @@
 // import { getInsuranceList } from '@/script/api';
 import { mapMutations } from 'vuex';
 
-//  假数据
+//  TODO 假数据
 import indexData from './index.json';
 
 export default {
@@ -95,7 +98,7 @@ export default {
     };
   },
   created() {
-    //  假数据
+    //  TODO 假数据
     this.insuranceList = indexData.datas.data;
     this.totalNum = indexData.datas.total;
     this.currency = indexData.datas.currency;

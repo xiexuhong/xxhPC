@@ -14,11 +14,11 @@
           <span>金额</span>
           <span class="listTitleContent">
             {{
-              power.allow_cancel == 2
-                ? power.continueTotalDeposit
-                : power.work_state != 0
-                ? power.rawTotalDeposit
-                : power.totalDeposit
+            power.allow_cancel == 2
+            ? power.continueTotalDeposit
+            : power.work_state != 0
+            ? power.rawTotalDeposit
+            : power.totalDeposit
             }}{{ power.pay_currency }}
           </span>
         </li>
@@ -29,8 +29,7 @@
               <span
                 class="listTitleContent"
                 style="color:#FFAB32;borderBottom: 1px solid #FFAB32;cursor:pointer"
-                >{{ mult(power.computingPower, power.num) }} T</span
-              >
+              >{{ mult(power.computingPower, power.num) }} T</span>
             </popover>
           </span>
         </li>
@@ -52,7 +51,7 @@
         </li>
         <li>
           <span>锁定时间</span>
-          <span class="listTitleContent">{{ power.auto_stop_date }}</span>
+          <span class="listTitleContent">{{ power.regular_end_date }}</span>
         </li>
       </ul>
     </div>
@@ -77,9 +76,9 @@
       </p>
       <p>
         退单金额：
-        <span style="color:#595959"
-          >{{ mult(power.unit_price, fadeNum, power.pay_currency) }} {{ power.pay_currency }}</span
-        >
+        <span
+          style="color:#595959"
+        >{{ mult(power.unit_price, fadeNum, power.pay_currency) }} {{ power.pay_currency }}</span>
       </p>
       <div>
         <a-button size="large" @click="onFadeClick">立即退单</a-button>
