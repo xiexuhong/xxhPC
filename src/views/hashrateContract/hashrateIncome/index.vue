@@ -3,13 +3,9 @@
     <div class="listTitle">
       <p>算力收益</p>
       <ul>
-        <li>
-          <span>BTC</span>
-          <span class="listTitleContent">1.52377962</span>
-        </li>
-        <li>
-          <span>BHP</span>
-          <span class="listTitleContent">766.3224</span>
+        <li v-for="statInfoitem in statInfo" :key="statInfoitem.coin">
+          <span>{{ statInfoitem.coin }}</span>
+          <span class="listTitleContent">{{ statInfoitem.value }}</span>
         </li>
       </ul>
     </div>
@@ -18,94 +14,122 @@
       <div class="contentTable">
         <a-table
           :columns="columns"
-          :dataSource="data"
+          :dataSource="datas"
           :pagination="{
-          pageSizeOptions: ['10', '20', '30', '40'],
-          showSizeChanger: true,
-        }"
-        ></a-table>
+            pageSizeOptions: ['10', '20', '30', '40'],
+            showSizeChanger: true,
+            onChange: onPageChange,
+            onShowSizeChange: onShowPageSizeChange,
+            total: totalNum,
+          }"
+          :rowKey="record => record.id"
+          :loading="tableLoading"
+        >
+          <span slot="power" slot-scope="text">{{ text }}T</span>
+          <span slot="BTCProfit" slot-scope="text, record">
+            <span v-for="recordItem in record.coin_list" :key="recordItem.coin">
+              <span
+                v-if="recordItem.coin === 'BTC'"
+              >+{{ recordItem.profit }} {{ recordItem.coin }} ≈ {{ recordItem.profit_money }}</span>
+            </span>
+          </span>
+          <span slot="freezeProfit" slot-scope="text, record">
+            <span v-for="recordItem in record.coin_list" :key="recordItem.coin">
+              <span
+                v-if="recordItem.coin === 'BTC'"
+              >+{{ recordItem.freeze_profit }} {{ recordItem.coin }} ≈ {{ recordItem.freeze_profit_money }}</span>
+            </span>
+          </span>
+          <span slot="BHPProfit" slot-scope="text, record">
+            <span v-for="recordItem in record.coin_list" :key="recordItem.coin">
+              <span
+                v-if="recordItem.coin === 'BHP'"
+              >+{{ recordItem.profit }} {{ recordItem.coin }} ≈ {{ recordItem.profit_money }}</span>
+              <span v-else>0.0000</span>
+            </span>
+          </span>
+        </a-table>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-const columns = [
-  {
-    title: '产出日期',
-    dataIndex: 'outputTime',
-    key: 'outputTime',
-  },
-  {
-    title: '总算力',
-    dataIndex: 'totalHashrate',
-    key: 'totalHashrate',
-  },
-  {
-    title: '产出BTC(含冻结)',
-    dataIndex: 'allOutputBTC',
-    key: 'allOutputBTC',
-  },
-  {
-    title: '合约冻结',
-    key: 'contractFreeze',
-    dataIndex: 'contractFreeze',
-  },
-  {
-    title: '产出BHP',
-    dataIndex: 'outputBHP',
-    key: 'outputBHP',
-  },
-];
-
-const data = [
-  {
-    key: '1',
-    outputTime: new Date().toString(),
-    totalHashrate: '3243.00T',
-    allOutputBTC: '0.02607372 BTC≈24.80 USD',
-    contractFreeze: '0.00000000 BTC≈0.00 USD',
-    outputBHP: '17.8031 BHP≈1.93 USD',
-  },
-  {
-    key: '2',
-    outputTime: new Date().toString(),
-    totalHashrate: '3243.00T',
-    allOutputBTC: '0.02607372 BTC≈24.80 USD',
-    contractFreeze: '0.00000000 BTC≈0.00 USD',
-    outputBHP: '17.8031 BHP≈1.93 USD',
-  },
-  {
-    key: '3',
-    outputTime: new Date().toString(),
-    totalHashrate: '3243.00T',
-    allOutputBTC: '0.02607372 BTC≈24.80 USD',
-    contractFreeze: '0.00000000 BTC≈0.00 USD',
-    outputBHP: '17.8031 BHP≈1.93 USD',
-  },
-  {
-    key: '4',
-    outputTime: new Date().toString(),
-    totalHashrate: '3243.00T',
-    allOutputBTC: '0.02607372 BTC≈24.80 USD',
-    contractFreeze: '0.00000000 BTC≈0.00 USD',
-    outputBHP: '17.8031 BHP≈1.93 USD',
-  },
-  {
-    key: '5',
-    outputTime: new Date().toString(),
-    totalHashrate: '3243.00T',
-    allOutputBTC: '0.02607372 BTC≈24.80 USD',
-    contractFreeze: '0.00000000 BTC≈0.00 USD',
-    outputBHP: '17.8031 BHP≈1.93 USD',
-  },
-];
+import { getProfitList } from '@/script/api';
 export default {
   data() {
     return {
-      data,
-      columns,
+      datas: [], //  列表数据
+      columns: [], //  表头
+      statInfo: [], //  算力收益
+      tableLoading: false, //  数据缓冲中
+      totalNum: 0, //  列表总数
     };
+  },
+  created() {
+    this.tableLoading = true;
+    const columns = [
+      {
+        title: '产出日期',
+        dataIndex: 'add_date',
+      },
+      {
+        title: '总算力',
+        dataIndex: 'power',
+        scopedSlots: { customRender: 'power' },
+      },
+      {
+        title: '产出BTC(含冻结)',
+        dataIndex: 'BTCProfit',
+        scopedSlots: { customRender: 'BTCProfit' },
+      },
+      {
+        title: '合约冻结',
+        dataIndex: 'freezeProfit',
+        scopedSlots: { customRender: 'freezeProfit' },
+      },
+      {
+        title: '产出BHP',
+        dataIndex: 'BHPProfit',
+        scopedSlots: { customRender: 'BHPProfit' },
+      },
+    ];
+    this.columns = columns;
+    getProfitList({ page: '1', pagesize: '10' }).then(resp => {
+      // console.log(resp);
+      this.statInfo = resp.datas.stat_info;
+      this.datas = resp.datas.profit_list;
+      this.totalNum = resp.datas.total_page * 10;
+      this.tableLoading = false;
+    });
+  },
+  methods: {
+    //  页码变化
+    onPageChange(page, pagesize) {
+      this.tableLoading = true;
+      // this.page = page;
+      //  获取选项发送请求，获取数据
+      getProfitList({
+        curpage: page,
+        pagesize: pagesize,
+      }).then(resp => {
+        this.datas = resp.datas.profit_list;
+        // console.log(this.datas);
+        this.tableLoading = false;
+      });
+    },
+    onShowPageSizeChange(current, size) {
+      this.tableLoading = true;
+      //  获取选项发送请求，获取数据
+      getProfitList({
+        curpage: '1',
+        pagesize: size,
+      }).then(resp => {
+        this.datas = resp.datas.profit_list;
+        // console.log(this.datas);
+        this.tableLoading = false;
+      });
+    },
   },
 };
 </script>

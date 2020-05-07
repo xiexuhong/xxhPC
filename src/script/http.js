@@ -6,12 +6,13 @@ import router from '@/router';
 import Vue from 'vue';
 
 const http = axios.create({
-  baseURL: process.env.VUE_APP_BASIC_URL,
+  baseURL: '', // TODO 生产环境添加
   timeout: 5000,
   transformRequest: [data => qs.stringify(data)],
 });
 http.interceptors.request.use(
   config => {
+    store.commit('changeLoadingStatus', true);
     if (config.method === 'post') {
       const data = config.data || {};
       data['token'] = Vue.ls.get('user') && Vue.ls.get('user').token;
@@ -32,9 +33,11 @@ http.interceptors.request.use(
 );
 http.interceptors.response.use(
   response => {
+    store.commit('changeLoadingStatus', false);
     return response.data;
   },
   error => {
+    store.commit('changeLoadingStatus', false);
     return Promise.reject(error);
   },
 );

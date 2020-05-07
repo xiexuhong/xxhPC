@@ -1,14 +1,17 @@
 <template>
   <div id="app">
     <router-view />
+    <Loading v-if="showLoading" />
   </div>
 </template>
 
 <script>
 import { getCountry } from '@/script/api';
 import { AppDeviceEnquire } from '@/mixins/deviceMixin';
+import Loading from '@/components/loading';
 import { mapGetters } from 'vuex';
 export default {
+  components: { Loading },
   mixins: [AppDeviceEnquire],
   data() {
     return {};
@@ -16,7 +19,7 @@ export default {
   created(){
   },
   computed: {
-    ...mapGetters(['lang']),
+    ...mapGetters(['lang', 'showLoading']),
   },
   watch: {
     lang(val) {

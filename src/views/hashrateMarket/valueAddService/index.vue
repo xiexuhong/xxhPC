@@ -1,15 +1,16 @@
 <template>
   <!-- 算力市场/算力商城首页 -->
   <div class="hashContainer">
-    <div class="hashContent" v-for="insurance in insuranceList" :key="insurance.id">
+    <div class="hashContent" v-show="totalNum == 0">算力上架中...</div>
+    <div class="hashContent" v-for="item in insuranceList" :key="item.id">
       <a-row type="flex" justify="center" align="top">
         <a-col :span="19">
           <a-row>
             <a-col :span="24">
               <ul class="hashHeader">
-                <li>{{ insurance.name }}</li>
-                <li>合约限期</li>
-                <li>90天</li>
+                <li>{{ item.name }}</li>
+                <li>合约周期</li>
+                <li>{{ item.period }}天</li>
               </ul>
             </a-col>
           </a-row>
@@ -17,25 +18,30 @@
             <a-col :span="8">
               <ul>
                 <li>起购金额（每T）</li>
-                <li style="color:#ffab32">0.7704usd/0.7704usd</li>
+                <li style="color:#ffab32">
+                  {{ item.price.final_price }}
+                  <small>{{ currency }}</small>
+                  / {{ item.price.final_usdt_price }}
+                  <small>USDT</small>
+                </li>
               </ul>
             </a-col>
             <a-col :span="6">
               <ul>
                 <li>剩余份额</li>
-                <li>352分</li>
+                <li>{{ item.inventory }}份</li>
               </ul>
             </a-col>
             <a-col :span="5">
               <ul>
                 <li>止损率</li>
-                <li>90%</li>
+                <li>{{ item.low_limit }}%</li>
               </ul>
             </a-col>
             <a-col :span="5">
               <ul>
                 <li>止赢率</li>
-                <li>200%</li>
+                <li>{{ item.hign_limit }}%</li>
               </ul>
             </a-col>
           </a-row>
@@ -44,14 +50,30 @@
           <a-row class="showDetail">
             <a-col :span="24">
               <!-- <a href="#">查看详情 ></a> -->
-              <router-link to="/hashrateMarket/valueAddService/contractDetail">查看详情 ></router-link>
+              <router-link
+                to="/hashrateMarket/valueAddService/contractDetail"
+                @click.native="onSingleInsurance(item)"
+                >查看详情 ></router-link
+              >
             </a-col>
           </a-row>
           <a-row class="charge">
             <a-col :span="24">
-              <a-button size="large" block>
-                <router-link to="/hashrateMarket/valueAddService/orderDetail">立即购买</router-link>
+              <a-button v-show="item.inventory > 0" size="large" block>
+                <router-link
+                  to="/hashrateMarket/valueAddService/orderDetail"
+                  @click.native="onSingleInsurance(item)"
+                  >立即购买</router-link
+                >
               </a-button>
+              <a-button
+                v-show="!item.inventory || item.inventory <= 0"
+                class="disabled"
+                size="large"
+                block
+                disabled
+                >已售罄</a-button
+              >
             </a-col>
           </a-row>
         </a-col>
@@ -61,27 +83,40 @@
 </template>
 
 <script>
+// import { getInsuranceList } from '@/script/api';
 import { mapMutations } from 'vuex';
-import { getInsuranceList } from '@/script/api';
+
+//  TODO 假数据
+import indexData from './index.json';
+
 export default {
   data() {
     return {
       insuranceList: [], //  增值服务详情列表
+      totalNum: 0, //  增值服务详情列表
+      currency: '', //  币种
     };
   },
   created() {
-    getInsuranceList().then(resp => {
-      // console.log(resp.datas.rented_list);
-      this.insuranceList = resp.datas.rented_list;
-    });
+    //  TODO 假数据
+    this.insuranceList = indexData.datas.data;
+    this.totalNum = indexData.datas.total;
+    this.currency = indexData.datas.currency;
+    // console.log(this.totalNum);
+
+    // getInsuranceList().then(resp => {
+    //   // console.log(resp.datas.rented_list);
+    //   this.insuranceList = resp.datas.rented_list;
+    // });
   },
   methods: {
-    // 乘法
-    mult: (basePrice, number) => number * basePrice,
-    //  获取单调数据并传给vuex共享
-    ...mapMutations(['GET_SINGLE_INSURANCE']),
-    setSingleInsurance(insuranceItem) {
-      this.$store.commit('GET_SINGLE_LIST', this.insuranceList[insuranceItem]);
+    //  向vuex里面推数据，共享给详情和支付等页面
+    ...mapMutations['GET_SINGLE_INSURANCE'],
+    onSingleInsurance(detail) {
+      let singleInsurance = {};
+      singleInsurance.currency = this.currency;
+      singleInsurance.detail = detail;
+      this.$store.commit('GET_SINGLE_INSURANCE', singleInsurance);
     },
   },
 };
@@ -93,7 +128,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  word-break: break-all;
   ul {
     margin: 10px;
   }
@@ -110,7 +144,6 @@ export default {
       li:nth-child(1) {
         font-size: 24px;
         color: #262626;
-        padding: 5px;
       }
       li:nth-child(2) {
         font-size: 12px;
@@ -159,13 +192,10 @@ export default {
         border-radius: 2px;
         color: #ffffff;
       }
+      .disabled {
+        background-color: #cfcfcf;
+      }
     }
-  }
-}
-
-@media screen and (max-width: 1000px) {
-  .hashContainer .hashContent {
-    width: 90%;
   }
 }
 @media screen and (max-width: 500px) {
@@ -186,7 +216,9 @@ export default {
     }
     .hashHeader {
       li:nth-child(1) {
-        font-size: 20px;
+        font-size: 15px;
+        display: block;
+        // padding-right: 120px;
       }
       li:nth-child(2) {
         font-size: 8px;

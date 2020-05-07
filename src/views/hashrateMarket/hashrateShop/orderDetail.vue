@@ -25,6 +25,7 @@
                 </a-col>
                 <a-col :span="5">
                   <span class="contentTitle">達標算力:</span>
+                  <!-- TODO 达标算力计算有问题，没弄清计算逻辑 -->
                   <span>{{ mult(mult(power.base_power, chargeAmount), rewardPower) }} T</span>
                 </a-col>
               </a-row>
@@ -42,8 +43,17 @@
                 <a-col :span="6">
                   <span class="contentTitle">單價:</span>
                   <span>
-                    {{ unitPriceNum = currencyValue === 'USDT' ? power.deposit_arr[1].value : power.deposit_arr[0].value }}
-                    {{ currencyValue === 'USDT' ? power.deposit_arr[1].name : power.deposit_arr[0].name }}
+                    {{
+                    (unitPriceNum =
+                    currencyValue === 'USDT'
+                    ? power.deposit_arr[1].value
+                    : power.deposit_arr[0].value)
+                    }}
+                    {{
+                    currencyValue === 'USDT'
+                    ? power.deposit_arr[1].name
+                    : power.deposit_arr[0].name
+                    }}
                   </span>
                 </a-col>
                 <a-col :span="5">
@@ -65,6 +75,7 @@
                 <a-col :span="6">
                   <span class="contentTitle">算力來源:</span>
                   <span>京都資本</span>
+                  <!-- TODO  本页面没有算力来源字段 -->
                   <!-- <span>{{ power.power_node_name }}</span>   undefined -->
                 </a-col>
                 <a-col :span="5"></a-col>
@@ -103,10 +114,12 @@
               <a-row>
                 <a-col :span="8" class="chargeAmount">可用余额：</a-col>
                 <a-col :span="16" class="chargeAmount">
-                  {{ surplusPowerNum =
+                  {{
+                  (surplusPowerNum =
                   currencyValue === 'USDT'
                   ? surplusPower[0].payment_avail
-                  : surplusPower[1].payment_avail }}
+                  : surplusPower[1].payment_avail)
+                  }}
                 </a-col>
               </a-row>
             </div>
@@ -115,38 +128,9 @@
               <div>
                 <span>
                   到手总算力
-                  <a-popover
-                    trigger="click"
-                    :visible="clicked"
-                    @visibleChange="handleClickChange"
-                    placement="rightTop"
-                  >
-                    <div slot="content">
-                      <ul class="hashratePopover">
-                        <li>
-                          <span>基础算力</span>
-                          <span>{{ mult(power.base_power, chargeAmount) }} T</span>
-                        </li>
-                        <li>
-                          <span>浮动算力</span>
-                          <span>{{ mult(power.float_power, chargeAmount) }} T</span>
-                        </li>
-                        <li>
-                          <span>达标算力</span>
-                          <span>{{ mult(mult(power.base_power, chargeAmount), rewardPower) }} T</span>
-                        </li>
-                        <li>
-                          <span>期货算力</span>
-                          <span>{{ mult(power.futures_power, chargeAmount) }} T</span>
-                        </li>
-                        <li>
-                          <span>定期算力</span>
-                          <span>{{ mult(power.regular_power, chargeAmount) }} T</span>
-                        </li>
-                      </ul>
-                    </div>
+                  <popover :power="power" :num="chargeAmount" :rewardPower="rewardPower">
                     <span class="infoIcon">!</span>
-                  </a-popover>
+                  </popover>
                   <span class="totalNum">
                     {{
                     parseFloat(mult(power.base_power, chargeAmount)) +
@@ -154,7 +138,8 @@
                     parseFloat(mult(mult(power.base_power, chargeAmount), rewardPower)) +
                     parseFloat(mult(power.futures_power, chargeAmount)) +
                     parseFloat(mult(power.regular_power, chargeAmount))
-                    }} T
+                    }}
+                    T
                   </span>
                 </span>
                 <span>
@@ -166,6 +151,7 @@
               </div>
             </div>
             <div class="hashrateAgreement">
+              <!-- TODO 协议跳转问题 -->
               <p>
                 <span>
                   <a-checkbox :indeterminate="indeterminate" @click="taggleIndeterminate">
@@ -181,11 +167,12 @@
                   title="安全验证"
                   centered
                   v-model="chargeVisible"
-                  okText="提交"
+                  okText="确认购买"
                   cancelText="取消"
                   width="350px"
-                  @ok="() => (chargeVisible = false)"
+                  @ok="confirmCharge"
                 >
+                  <!-- TODO 密码验证未做 -->
                   <p>交易密码</p>
                   <p>
                     <a-input />
@@ -204,12 +191,17 @@
 </template>
 
 <script>
+import popover from '@/components/popover';
 import { getAgreement, getSurplusPower, rentPower } from '@/script/api';
+import { mult } from '@/script/utils';
 import { mapGetters } from 'vuex';
 export default {
+  components: {
+    popover,
+  },
   data() {
     return {
-      clicked: false, //点击气泡卡隐藏/显示
+      // clicked: false, //点击气泡卡隐藏/显示
       chargeVisible: false, //点击弹窗隐藏/显示
       indeterminate: false, //设置协议复选框选中状态样式
       chargeAmount: 1, //  购买份数
@@ -238,22 +230,16 @@ export default {
   },
   computed: {
     ...mapGetters({ power: 'singleList' }),
+    mult: () => mult,
   },
   methods: {
-    handleClickChange(visible) {
-      //点击气泡卡隐藏/显示
-      this.clicked = visible;
-    },
+    // handleClickChange(visible) {
+    //   //点击气泡卡隐藏/显示
+    //   this.clicked = visible;
+    // },
     taggleIndeterminate() {
       //设置协议复选框选中状态样式
       this.indeterminate = !this.indeterminate;
-    },
-    // 乘法
-    mult: (basePrice, number, currency) => {
-      let fixnum;
-      currency == 'USDT' ? (fixnum = 4) : (fixnum = 2);
-      let result = (number * basePrice).toFixed(fixnum);
-      return result;
     },
     // 达标算力
     getReward: (power, powerList) => {
@@ -284,22 +270,27 @@ export default {
       } else {
         //  余额充足，弹出交易框
         this.chargeVisible = true;
-
-        //交易密码验证
-        if (true) return false;
-
-        //提交购买
-        rentPower({
-          machine_id: this.power.machine_id, // 矿机id
-          machine_type, // 矿机类型
-          num: this.chargeAmount, // 租用数量
-          payment_code: this.currencyValue, // 支付方式
-        }).then(resp => {
-          console.log(resp);
-          //提交成功之后，返回到上个页面
-          this.$router.go(-1);
-        });
       }
+    },
+    //  确认购买
+    confirmCharge() {
+      //交易密码验证            可能需要专门提出来写
+      if (true) return false;
+
+      //提交购买
+      rentPower({
+        machine_id: this.power.machine_id, // 矿机id
+        machine_type: this.power.type, // 矿机类型
+        num: this.chargeAmount, // 租用数量
+        payment_code: this.currencyValue, // 支付方式
+      }).then(resp => {
+        console.log(resp);
+        this.$message.info('恭喜您购买成功！！！');
+        //  购买成功，弹出交易框
+        this.chargeVisible = false;
+        //提交成功之后，返回到上个页面
+        this.$router.go(-1);
+      });
     },
   },
 };
@@ -423,21 +414,21 @@ export default {
     }
   }
 }
-.ant-popover-inner {
-  .ant-popover-inner-content {
-    .hashratePopover {
-      li {
-        width: 130px;
-        display: flex;
-        justify-content: space-between;
-        span {
-          display: inline-block;
-          width: 45%;
-        }
-      }
-    }
-  }
-}
+// .ant-popover-inner {
+//   .ant-popover-inner-content {
+//     .hashratePopover {
+//       li {
+//         width: 130px;
+//         display: flex;
+//         justify-content: space-between;
+//         span {
+//           display: inline-block;
+//           width: 45%;
+//         }
+//       }
+//     }
+//   }
+// }
 
 a {
   color: #ffab32;

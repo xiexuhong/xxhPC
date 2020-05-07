@@ -3,7 +3,7 @@
     <div class="listTitle">
       <a-breadcrumb separator=">">
         <a-breadcrumb-item>合约列表</a-breadcrumb-item>
-        <a-breadcrumb-item>退单</a-breadcrumb-item>
+        <a-breadcrumb-item>合约详情列表</a-breadcrumb-item>
       </a-breadcrumb>
     </div>
     <div class="listContent">
@@ -11,61 +11,61 @@
         <div class="flex infoTop">
           <span>
             <span class="infoTopTitle">名称</span>
-            <span>算力宝</span>
+            <span>{{ data.name }}</span>
           </span>
           <span>
             <span class="infoTopTitle">产币天数</span>
-            <span>90</span>
+            <span>{{ data.period - data.surplus_days }} 天</span>
           </span>
           <span>
             <span class="infoTopTitle">产币量</span>
-            <span>0.3330095 BTC</span>
+            <span>{{ data.product }} BTC ≈ {{ data.settle_price }} {{ data.user_currency }}</span>
           </span>
           <span>
             <span class="infoTopTitle">距离结算天数</span>
-            <span style="color:#FFAB32">0</span>
+            <span style="color:#FFAB32">{{ data.surplus_days }} 天</span>
           </span>
           <span>
             <span class="infoTopTitle">合约周期</span>
-            <span style="color:#FFAB32">90天</span>
+            <span style="color:#FFAB32">{{ data.period }} 天</span>
           </span>
           <span class="timeSet">
             <span class="infoTopTitle">生效时间</span>
-            <span>{{new Date().toString()}}</span>
+            <span>{{ data.start_time }}</span>
           </span>
           <span>
             <span class="infoTopTitle">锁定算力指数</span>
-            <span>0.15587253 USD/T*D</span>
+            <span>{{ data.power_index }} {{ data.currency }}/T*天</span>
           </span>
         </div>
         <div class="flex infoBottom">
           <span>
             <span class="infoTopTitle">止损率</span>
-            <span>90%</span>
+            <span>{{ data.low_limit }}%</span>
           </span>
           <span>
             <span class="infoTopTitle">止损价</span>
-            <span>9000.0000 USDT</span>
+            <span>{{ data.low_price }} {{ data.currency }}</span>
           </span>
           <span>
             <span class="infoTopTitle">止盈率</span>
-            <span>200%</span>
+            <span>{{ data.high_limit }}%</span>
           </span>
           <span>
             <span class="infoTopTitle">止盈价</span>
-            <span>20000.0000 USDT</span>
+            <span>{{ data.high_price }} {{ data.currency }}</span>
           </span>
           <span>
             <span class="infoTopTitle">合约费用</span>
-            <span>25.00 USD</span>
+            <span>{{ data.amount }} {{ data.currency }}</span>
           </span>
           <span class="timeSet">
             <span class="infoTopTitle">结算时间</span>
-            <span>{{new Date().toString()}}</span>
+            <span>{{ data.settle_time }}</span>
           </span>
           <span class="timeSet">
             <span class="infoTopTitle">下单时间</span>
-            <span>{{new Date().toString()}}</span>
+            <span>{{ data.create_at }}</span>
           </span>
         </div>
       </div>
@@ -74,11 +74,11 @@
         <div class="table">
           <a-table
             :columns="columns"
-            :dataSource="data"
+            :dataSource="datass"
             :pagination="{
-          pageSizeOptions: ['10', '20', '30', '40'],
-          showSizeChanger: true,
-        }"
+              pageSizeOptions: ['10', '20', '30', '40'],
+              showSizeChanger: true,
+            }"
           >
             <span class="state" slot="state" style="color:#1EA584">挖矿中</span>
           </a-table>
@@ -86,35 +86,38 @@
       </div>
       <div class="contentTotal">
         <p class="totalTitle">结算统计</p>
-        <div class="totalInfo">
+        <div class="totalInfo" v-if="data.settle_type">
           <span>
             <span class="infoTopTitle">算力产出</span>
-            <span>0.03330095 BTC</span>
+            <span>{{ data.returns }} BTC ≈ {{ data.product_price }} {{ data.user_currency }}</span>
           </span>
           <span>
             <span class="infoTopTitle">结算币值</span>
-            <span>21043.56 USD</span>
+            <span>{{ data.product_price }} {{ data.user_currency }}</span>
           </span>
           <span>
             <span class="infoTopTitle">产出率</span>
-            <span>210%</span>
+            <span>{{ data.product_ray }}%</span>
           </span>
           <span>
             <span class="infoTopTitle">结算类型</span>
-            <span>止盈债回购</span>
+            <span>{{ data.settle_type_desc }}</span>
           </span>
           <span>
             <span class="infoTopTitle">结算率</span>
-            <span>200%</span>
+            <span>{{ data.settle_ray }}%</span>
           </span>
           <span>
             <span class="infoTopTitle">实际结算</span>
-            <span>667.40051369 USDT</span>
+            <span>{{ data.settle_amount }} USDT ≈ {{ data.settle_price }} CNY</span>
           </span>
           <span class="timeSet" style="textAlign:right">
             <span class="infoTopTitle">结算时间</span>
-            <span>{{new Date().toString()}}</span>
+            <span>{{ data.settle_time }}</span>
           </span>
+        </div>
+        <div v-else class="totalInfo">
+          <p>暂未到达结算日期</p>
         </div>
       </div>
     </div>
@@ -122,6 +125,12 @@
 </template>
 
 <script>
+import { myInsuranceDetail } from '@/script/api';
+import { Base64 } from 'js-base64';
+
+//TODO 假数据
+import datas from './moreServiceDetail.json';
+
 const columns = [
   {
     title: '订单号',
@@ -177,8 +186,7 @@ const columns = [
     width: '7%',
   },
 ];
-
-const data = [
+const datass = [
   {
     key: '1',
     ordernumber: '2019123012831237128',
@@ -271,9 +279,18 @@ const data = [
 export default {
   data() {
     return {
-      data,
-      columns,
+      datass, //  数据列表
+      columns, //  表格头
     };
+  },
+  created() {
+    //TODO 假数据
+    this.data = datas.datas;
+    // console.log(Base64.decode(this.$route.query.ins_order_id));
+    // myInsuranceDetail({ ins_order_id: Base64.decode(this.$route.query.ins_order_id) }).then(resp => {
+    //   console.log(resp);
+    //   this.datas = resp.datas;
+    // });
   },
 };
 </script>
@@ -304,7 +321,7 @@ export default {
       .flex {
         display: flex;
         justify-content: space-between;
-        flex-wrap: wrap;
+        flex-wrap: no-wrap;
         span {
           &.timeSet {
             width: 20%;
@@ -349,10 +366,11 @@ export default {
       }
       .totalInfo {
         background-color: #fafafa;
+        margin-top: 20px;
         padding: 20px;
         display: flex;
         justify-content: space-between;
-        flex-wrap: wrap;
+        flex-wrap: no-wrap;
         span {
           margin-bottom: 10px;
           &.timeSet {
@@ -417,11 +435,12 @@ export default {
           font-size: 16px;
         }
         .totalInfo {
-          padding: 10px;
+          padding: 5px;
+          flex-wrap: wrap;
           span {
             margin-bottom: 5px;
             &.timeSet {
-              width: 100%;
+              width: 40%;
             }
           }
         }

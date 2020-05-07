@@ -10,52 +10,9 @@
         <li>
           <span>
             总算力
-            <a-popover
-              trigger="click"
-              :visible="clicked"
-              @visibleChange="handleClickChange"
-              placement="rightTop"
-            >
-              <div slot="title">
-                <p style="color:#595959;textAlign:center">算力构成</p>
-                <p
-                  style="color:#999999;textAlign:center"
-                >{{ powerCount.computing_power }}T = {{ powerCount.base_power }} + {{ powerCount.additional_power }}</p>
-              </div>
-              <div slot="content">
-                <ul>
-                  <li>
-                    <span>浮动算力</span>
-                    <span>{{ powerCount.float_power }}T</span>
-                  </li>
-                  <li>
-                    <span>达标算力</span>
-                    <span>{{ powerCount.pe_power }}T</span>
-                  </li>
-                  <li>
-                    <span>期货算力</span>
-                    <span>{{ powerCount.futures_power }}T</span>
-                  </li>
-                  <li>
-                    <span>定期算力</span>
-                    <span>{{ powerCount.regular_power }}T</span>
-                  </li>
-                  <li>
-                    <span>邀请算力</span>
-                    <span>{{ powerCount.inviter_power }}T</span>
-                  </li>
-                  <li v-if="powerCount.td_power > 0">
-                    <span>成长算力</span>
-                    <span>{{ powerCount.td_power }}T</span>
-                  </li>
-                  <li v-if="powerCount.coupon_power > 0">
-                    <span>优惠券算力</span>
-                    <span>{{ powerCount.coupon_power }}T</span>
-                  </li>
-                </ul>
-              </div>
+            <popover :power="powerCount">
               <span class="infoIcon">!</span>
-            </a-popover>
+            </popover>
           </span>
           <span class="listTitleContent">{{ powerCount.computing_power }}T</span>
         </li>
@@ -89,23 +46,23 @@
 <script>
 import HashrateContractItem from './hashrateContractItem';
 import MoreServiceItem from './moreServiceItem';
+import popover from '@/components/popover';
 import { getContractList } from '@/script/api';
 export default {
   data() {
     return {
-      clicked: false, //点击气泡卡隐藏/显示
       powerCount: {}, //  当前用户算力相关信息
-      rentedList: [], //  当前用户算力合约信息
+      rentedList: {}, //  当前用户算力合约信息
     };
   },
-  async created() {
+  created() {
     //  获取合约算力列表
     getContractList().then(resp => {
       // console.log(resp.datas);
       //  算力总览
       this.powerCount = resp.datas.power_count;
       //  算力详情
-      this.rentedList = resp.datas.rented_list;
+      this.rentedList = resp.datas;
       // console.log(this.powerCount);
       // console.log(this.rentedList);
     });
@@ -120,15 +77,11 @@ export default {
     // this.powerCount = datas.power_count;
     // this.rentedList = datas.rented_list;
   },
-  methods: {
-    handleClickChange(visible) {
-      //点击气泡卡隐藏/显示
-      this.clicked = visible;
-    },
-  },
+  methods: {},
   components: {
     HashrateContractItem,
     MoreServiceItem,
+    popover,
   },
 };
 </script>
@@ -175,24 +128,6 @@ export default {
           font-style: italic;
           color: #cfcfcf;
           cursor: pointer;
-        }
-      }
-    }
-  }
-}
-.ant-popover-inner {
-  width: 100%;
-  border-bottom: 1px solid #f4f4f6;
-  .ant-popover-inner-content {
-    color: #999999;
-    ul {
-      width: 100%;
-      li {
-        height: 2em;
-        span {
-          display: inline-block;
-          width: 50%;
-          text-align: center;
         }
       }
     }

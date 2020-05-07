@@ -13,88 +13,45 @@
         <li>
           <span>金额</span>
           <span class="listTitleContent">
-            {{ power.allow_cancel == 2 ? power.continue_total_deposit_coin :
-            (power.work_state != 0 ? power.raw_total_deposit :
-            power.total_deposit) }}{{ power.pay_currency }}
+            {{
+            power.allow_cancel == 2
+            ? power.continueTotalDeposit
+            : power.work_state != 0
+            ? power.rawTotalDeposit
+            : power.totalDeposit
+            }}{{ power.pay_currency }}
           </span>
         </li>
         <li>
           <span>
             到手总算力
-            <a-popover
-              trigger="click"
-              :visible="clicked"
-              @visibleChange="handleClickChange"
-              placement="rightTop"
-            >
-              <div slot="title">
-                <p style="color:#595959;textAlign:center">算力构成</p>
-                <p
-                  style="color:#999999;textAlign:center"
-                >{{ (power.computing_power * power.num).toFixed(2) }}T</p>
-              </div>
-              <div slot="content">
-                <ul>
-                  <li>
-                    <span>基础算力</span>
-                    <span>{{ power.basePower }}T</span>
-                  </li>
-                  <li>
-                    <span>浮动算力</span>
-                    <span>{{ power.floatPower }}T</span>
-                  </li>
-                  <li>
-                    <span>达标算力</span>
-                    <span>{{ power.pePower }}T</span>
-                  </li>
-                  <li>
-                    <span>期货算力</span>
-                    <span>{{ power.futuresPower }}T</span>
-                  </li>
-                  <li>
-                    <span>定期算力</span>
-                    <span>{{ power.regularPower }}T</span>
-                  </li>
-                  <li>
-                    <span>邀请算力</span>
-                    <span>{{ power.inviterPower }}T</span>
-                  </li>
-                  <li v-if="power.tdPower > 0">
-                    <span>成长算力</span>
-                    <span>{{ power.tdPower }}T</span>
-                  </li>
-                  <li v-if="power.couponPower > 0">
-                    <span>优惠券算力</span>
-                    <span>{{ power.couponPower }}T</span>
-                  </li>
-                </ul>
-              </div>
+            <popover :power="power" :num="power.num">
               <span
                 class="listTitleContent"
                 style="color:#FFAB32;borderBottom: 1px solid #FFAB32;cursor:pointer"
-              >720.00T</span>
-            </a-popover>
+              >{{ mult(power.computingPower, power.num) }} T</span>
+            </popover>
           </span>
         </li>
         <li>
           <span>合约期限</span>
-          <span class="listTitleContent">600天</span>
+          <span class="listTitleContent">{{ power.regularDateNum }}天</span>
         </li>
         <li>
           <span>状态</span>
-          <span class="listTitleContent">进行中</span>
+          <span class="listTitleContent">{{ power.display_status }}</span>
         </li>
         <li>
           <span>开挖时间</span>
-          <span class="listTitleContent">{{new Date().toString()}}</span>
+          <span class="listTitleContent">{{ power.time_income }}</span>
         </li>
         <li>
           <span>下单时间</span>
-          <span class="listTitleContent">{{new Date().toString()}}</span>
+          <span class="listTitleContent">{{ power.time_creat }}</span>
         </li>
         <li>
           <span>锁定时间</span>
-          <span class="listTitleContent">{{new Date().toString()}}</span>
+          <span class="listTitleContent">{{ power.regular_end_date }}</span>
         </li>
       </ul>
     </div>
@@ -106,46 +63,99 @@
         <a-input-number
           id="fadeAmount"
           name="fadeAmount"
-          defaultValue="1"
           :min="1"
-          :max="1000"
+          :max="power.num"
           style="width:30%"
+          v-model="fadeNum"
         />
       </p>
-      <p style="marginTop:5px">拥有算力份数：200份</p>
+      <p style="marginTop:5px">拥有算力份数：{{ power.num }}份</p>
       <p>
-        <label for="fadeMethod">退单方式：</label>
-        <a-radio checked>现金金额</a-radio>
+        <span>退单方式：</span>
+        <span>金额将按照下单金额退还</span>
       </p>
       <p>
         退单金额：
-        <span style="color:#595959">3000 USDT</span>
+        <span
+          style="color:#595959"
+        >{{ mult(power.unit_price, fadeNum, power.pay_currency) }} {{ power.pay_currency }}</span>
       </p>
-      <p>
-        <a-button size="large">立即购买</a-button>
-      </p>
+      <div>
+        <a-button size="large" @click="onFadeClick">立即退单</a-button>
+        <div class="hashrateNodal">
+          <a-modal
+            title="退单损失"
+            centered
+            v-model="fadeVisible"
+            okText="确认退单"
+            cancelText="取消"
+            width="350px"
+            @ok="confirmFade"
+          >
+            <p>{{ fadeDatas }}</p>
+          </a-modal>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import popover from '@/components/popover';
+import { getOrderInfo, getOrderFadeLoss, fadeOrder } from '@/script/api';
+import { mult } from '@/script/utils';
+import { Base64 } from 'js-base64';
 export default {
+  props: ['orderId'],
+  components: {
+    popover,
+  },
   data() {
     return {
-      clicked: false, //点击气泡卡隐藏/显示
+      fadeVisible: false, //点击弹窗隐藏/显示
+      fadeNum: 1, //  退单数量
+      power: {}, //  退单订单详情
+      fadeDatas: '', //  退单损失提示信息
     };
   },
   created() {
-    console.log(this.power);
+    getOrderInfo({ order_id: Base64.decode(this.$route.query.orderId) }).then(resp => {
+      this.power = resp.datas.info;
+      // console.log(this.power);
+    });
   },
   computed: {
-    ...mapGetters({ power: 'singleContract' }),
+    mult: () => mult,
   },
   methods: {
-    handleClickChange(visible) {
-      //点击气泡卡隐藏/显示
-      this.clicked = visible;
+    //  立即退单
+    onFadeClick() {
+      //  弹出交易框
+      this.fadeVisible = true;
+      //提交购买
+      getOrderFadeLoss({
+        order_id: Base64.decode(this.$route.query.orderId), // 订单id
+        return_num: this.fadeNum, // 数量
+      }).then(resp => {
+        // console.log(resp);
+        this.fadeDatas = resp.datas;
+      });
+    },
+    confirmFade() {
+      fadeOrder({
+        order_id: Base64.decode(this.$route.query.orderId), // 订单id
+        return_num: this.fadeNum, // 数量
+      })
+        .then(resp => {
+          console.log(resp);
+          this.$message.info('退单成功！！！');
+          //提交成功之后，返回到上个页面
+          this.$router.go(-1);
+        })
+        .finally(() => {
+          //  隐藏交易框
+          this.fadeVisible = false;
+        });
     },
   },
 };
@@ -168,9 +178,9 @@ export default {
       width: 100%;
       display: flex;
       align-items: flex-start;
-      flex-wrap: wrap;
+      flex-wrap: no-wrap;
       li {
-        width: 12%;
+        // width: 12%;
         color: #999999;
         text-align: center;
         margin-right: 5px;
@@ -195,14 +205,15 @@ export default {
     font-size: 14px;
     color: #999999;
     min-height: 500px;
-    p {
+    p,
+    div {
       margin-bottom: 20px;
-      .ant-btn {
-        background-color: #ffab32;
-        border-radius: 2px;
-        color: #ffffff;
-        width: 20%;
-      }
+    }
+    .ant-btn {
+      background-color: #ffab32;
+      border-radius: 2px;
+      color: #ffffff;
+      width: 20%;
     }
   }
   /deep/.ant-radio-checked .ant-radio-inner {
@@ -210,24 +221,6 @@ export default {
   }
   /deep/.ant-radio-inner::after {
     background-color: #ffab32;
-  }
-}
-.ant-popover-inner {
-  width: 100%;
-  border-bottom: 1px solid #f4f4f6;
-  .ant-popover-inner-content {
-    color: #999999;
-    ul {
-      width: 100%;
-      li {
-        height: 2em;
-        span {
-          display: inline-block;
-          width: 50%;
-          text-align: center;
-        }
-      }
-    }
   }
 }
 @media screen and (max-width: 500px) {
@@ -240,6 +233,7 @@ export default {
         font-size: 12px;
       }
       ul {
+        flex-wrap: wrap;
         li {
           width: 30%;
           margin-right: 2px;
@@ -257,11 +251,8 @@ export default {
     .listContent {
       padding: 10px;
       font-size: 10px;
-      p {
-        margin-bottom: 20px;
-        .ant-btn {
-          width: 100%;
-        }
+      div .ant-btn {
+        width: 100%;
       }
     }
   }

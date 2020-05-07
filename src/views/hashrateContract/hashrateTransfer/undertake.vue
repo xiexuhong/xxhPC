@@ -19,6 +19,15 @@
             <a-radio-button value="ZRCG">转让成功</a-radio-button>
           </a-radio-group>
         </li>
+        <li>
+          <label class="chooseTitle">锁定期限:</label>
+          <a-radio-group v-model="chioce.workType">
+            <a-radio-button value="all">全部</a-radio-button>
+            <a-radio-button value="30">30天</a-radio-button>
+            <a-radio-button value="90">90天</a-radio-button>
+            <a-radio-button value="180">180天</a-radio-button>
+          </a-radio-group>
+        </li>
       </ul>
     </div>
     <div class="contractItemTable">
@@ -26,39 +35,34 @@
         :columns="columns"
         :dataSource="datas"
         :rowKey="record => record.id"
-        :pagination="{total: totalNum}"
-        :loading="tableLoading"
+        :pagination="{ total: totalNum }"
       >
-        <span
-          slot="goodsDeposit"
-          slot-scope="text, record"
-        >{{record.goods_deposit}} x {{record.num}} = {{record.total_deposit}} {{record.pay_currency}}</span>
-        <popover
-          slot="transferHashrate"
-          slot-scope="text, record"
-          :power="record"
-          :num="record.num"
-        >
-          <span class="totalHashrate">{{mult(record.computingPower, record.num)}} T</span>
+        <popover slot="totalHashrate" slot-scope="text, record" :power="record" :num="record.num">
+          <span class="totalHashrate">{{ mult(record.computingPower, record.num) }} T</span>
         </popover>
+        <span slot="regularDateNum" slot-scope="text">{{ text }} 天</span>
+        <span slot="goodsDeposit" slot-scope="text, record">
+          {{ record.goods_deposit }} x {{ record.num }} = {{ record.total_deposit }}
+          {{ record.pay_currency }}
+        </span>
         <span class="action" slot="action" slot-scope="text, record">
-          <div>
-            <a v-if="record.state==0" @click="() => (chargeVisible = true)">撤销</a>
-            <a v-else disabled style="color: #999999">无法撤销</a>
-          </div>
-          <div class="hashrateNodal">
-            <a-modal
-              title="撤销"
-              centered
-              v-model="chargeVisible"
-              okText="确定撤销"
-              cancelText="取消"
-              width="350px"
-              @ok="confirmCancel"
-            >
-              <p style="textAlign:center">您确定要撤消转让吗？</p>
-            </a-modal>
-          </div>
+          <!-- <router-link to>转让</router-link> -->
+          <router-link
+            :to="{
+              path: '/hashrateContract/contractList/orderFade',
+              query: {
+                orderId: Base64.encode(record.order_id),
+              },
+            }"
+          >退单</router-link>
+          <router-link
+            :to="{
+              path: '/hashrateContract/contractList/orderReorder',
+              query: {
+                orderId: Base64.encode(record.order_id),
+              },
+            }"
+          >续单</router-link>
         </span>
       </a-table>
     </div>
@@ -67,8 +71,9 @@
 
 <script>
 import popover from '@/components/popover';
-import { myTransferList, cancelTransfer } from '@/script/api';
+import { myUndertakeList } from '@/script/api';
 import { mult } from '@/script/utils';
+import { Base64 } from 'js-base64';
 export default {
   components: {
     popover,
@@ -82,9 +87,7 @@ export default {
       },
       datas: [], //  表格数据
       columns: [], //  表头
-      totalNum: 0, //  数据总数
-      chargeVisible: false, //点击弹窗隐藏/显示
-      tableLoading: false, //  数据加载中等待状态
+      totalNum: 0, //  总数据
     };
   },
   created() {
@@ -94,21 +97,30 @@ export default {
         dataIndex: 'name',
       },
       {
-        title: '转让金额',
+        title: '金额',
         dataIndex: 'goods_deposit',
         scopedSlots: { customRender: 'goodsDeposit' },
+      },
+      {
+        title: '到手总算力',
+        dataIndex: 'totalHashrate',
+        scopedSlots: { customRender: 'totalHashrate' },
+      },
+      {
+        title: '合约期限',
+        dataIndex: 'regular_date_num',
+        scopedSlots: { customRender: 'regularDateNum' },
       },
       {
         title: '合约状态',
         dataIndex: 'state_format',
       },
       {
-        title: '转让算力',
-        dataIndex: 'transferHashrate',
-        scopedSlots: { customRender: 'transferHashrate' },
+        title: '开挖时间',
+        dataIndex: 'time_income',
       },
       {
-        title: '转让时间',
+        title: '下单时间',
         dataIndex: 'time_creat',
       },
       {
@@ -118,51 +130,15 @@ export default {
       },
     ];
     this.columns = columns;
-    myTransferList().then(resp => {
-      // console.log(resp);
+    myUndertakeList().then(resp => {
+      console.log(resp);
       this.datas = resp.datas.lists;
-      this.totalNum = Number(resp.datas.total_page) * Number(resp.datas.pageSize);
-      // console.log(this.totalNum);
+      this.totalNum = resp.datas.totalNum;
     });
   },
   computed: {
     mult: () => mult,
-  },
-  methods: {
-    //  页码变化
-    onPageChange(page) {
-      this.tableLoading = true;
-      // this.page = page;
-      //  获取选项发送请求，获取数据
-      myTransferList({
-        page: page,
-      }).then(resp => {
-        this.datas = resp.datas.lists;
-        // console.log(this.datas);
-        this.tableLoading = false;
-      });
-    },
-    //  确认撤销
-    confirmCancel(orderId) {
-      cancelTransfer({ transfer_id: orderId })
-        .then(resp => {
-          console.log(resp);
-          this.tableLoading = true;
-          myTransferList().then(resp => {
-            console.log(resp);
-            this.datas = resp.datas.lists;
-            this.totalNum = Number(resp.datas.total_page) * Number(resp.datas.pageSize);
-            // console.log(this.totalNum);
-            this.tableLoading = false;
-          });
-        })
-        .catch(error => {
-          console.log(error);
-        })
-        .finally(() => {
-          this.chargeVisible = false;
-        });
-    },
+    Base64: () => Base64,
   },
 };
 </script>
@@ -178,7 +154,7 @@ export default {
     ul {
       width: 100%;
       li {
-        display: block;
+        display: inline-block;
         width: 100%;
         color: #595959;
         font-size: 14px;
@@ -200,6 +176,13 @@ export default {
     /deep/.ant-table-thead > tr > th {
       background-color: #ffffff;
     }
+    /deep/ .ant-pagination-item-active {
+      border: none;
+      background-color: #ffab32;
+      a {
+        color: #ffffff;
+      }
+    }
     .totalHashrate {
       color: #ffab32;
       border-bottom: 1px solid #ffab32;
@@ -209,13 +192,6 @@ export default {
       display: inline-block;
       color: #ffab32;
       margin: 5px 2px;
-    }
-    /deep/ .ant-pagination-item-active {
-      border: none;
-      background-color: #ffab32;
-      a {
-        color: #ffffff;
-      }
     }
     /deep/.ant-select-open .ant-select-selection {
       border-color: #999999;
@@ -255,12 +231,16 @@ export default {
         li {
           font-size: 10px;
           margin-bottom: 5px;
+          span {
+            width: 15%;
+          }
         }
       }
     }
     .contractItemTable {
       padding: 10px;
       font-size: 10px;
+      overflow: scroll;
       /deep/td {
         padding: 5px 1px;
       }

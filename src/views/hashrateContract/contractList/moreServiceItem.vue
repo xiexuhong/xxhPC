@@ -3,14 +3,40 @@
     <div class="serviceItemTable">
       <a-table
         :columns="columns"
-        :dataSource="data"
+        :dataSource="datas"
         :pagination="{
           pageSizeOptions: ['10', '20', '30', '40'],
           showSizeChanger: true,
+          onChange: onPageChange,
         }"
+        :rowKey="record => record.id"
+        :loading="tableLoading"
       >
-        <span class="action" slot="action">
-          <router-link to="/hashrateContract/contractList/moreServiceDetail">查看详情</router-link>
+        <span slot="name" slot-scope="text, record">{{ record.insurance_info.name }}</span>
+        <span slot="amountOfMoney" slot-scope="text, record"
+          >{{ record.insurance_info.amount }} {{ record.insurance_info.currency }}</span
+        >
+        <span slot="hedgeCycle" slot-scope="text, record">{{ record.insurance_info.period }}</span>
+        <span slot="status" slot-scope="text, record">{{ record.workText }}</span>
+        <span slot="effectiveDate" slot-scope="text, record">{{
+          record.insurance_info.start_time
+        }}</span>
+        <span slot="settlementDate" slot-scope="text, record">{{
+          record.insurance_info.settle_time
+        }}</span>
+        <span slot="orderDate" slot-scope="text, record">{{
+          record.insurance_info.create_at
+        }}</span>
+        <span class="action" slot="action" slot-scope="text, record">
+          <router-link
+            :to="{
+              path: '/hashrateContract/contractList/moreServiceDetail',
+              query: {
+                ins_order_id: Base64.encode(record.insurance_info.id),
+              },
+            }"
+            >查看详情</router-link
+          >
         </span>
       </a-table>
     </div>
@@ -18,109 +44,93 @@
 </template>
 
 <script>
-const columns = [
-  {
-    title: '名称',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: '金额',
-    dataIndex: 'amountOfMoney',
-    key: 'amountOfMoney',
-  },
-  {
-    title: '套保周期',
-    dataIndex: 'hedgeCycle',
-    key: 'hedgeCycle',
-  },
-  {
-    title: '状态',
-    key: 'state',
-    dataIndex: 'state',
-  },
-  {
-    title: '生效时间',
-    dataIndex: 'effectiveDate',
-    key: 'effectiveDate',
-  },
-  {
-    title: '结算时间',
-    dataIndex: 'settlementDate',
-    key: 'settlementDate',
-  },
-  {
-    title: '下单时间',
-    dataIndex: 'orderDate',
-    key: 'orderDate',
-  },
-  {
-    title: '操作',
-    dataIndex: 'action',
-    key: 'action',
-    scopedSlots: { customRender: 'action' },
-    width: '8%',
-  },
-];
+import { myInsuranceList } from '@/script/api';
+import { Base64 } from 'js-base64';
 
-const data = [
-  {
-    key: '1',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    hedgeCycle: '600天',
-    state: '进行中',
-    effectiveDate: '在挖',
-    settlementDate: new Date().toString(),
-    orderDate: new Date().toString(),
-  },
-  {
-    key: '2',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    hedgeCycle: '600天',
-    state: '进行中',
-    effectiveDate: '在挖',
-    settlementDate: new Date().toString(),
-    orderDate: new Date().toString(),
-  },
-  {
-    key: '3',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    hedgeCycle: '600天',
-    state: '进行中',
-    effectiveDate: '在挖',
-    settlementDate: new Date().toString(),
-    orderDate: new Date().toString(),
-  },
-  {
-    key: '4',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    hedgeCycle: '600天',
-    state: '进行中',
-    effectiveDate: '在挖',
-    settlementDate: new Date().toString(),
-    orderDate: new Date().toString(),
-  },
-  {
-    key: '5',
-    name: '邀请赠送算力',
-    amountOfMoney: '6000000.00 USD',
-    hedgeCycle: '600天',
-    state: '进行中',
-    effectiveDate: '在挖',
-    settlementDate: new Date().toString(),
-    orderDate: new Date().toString(),
-  },
-];
+//TODO 假数据
+import falseDatas from './moreServiceItem.json';
+
 export default {
   data() {
     return {
-      data,
-      columns,
+      datas: [], //  表格数据
+      columns: [], //  表头
+      totalNum: [], //  模拟总数
+      tableLoading: false, //  获取数据缓loading
     };
+  },
+  created() {
+    const columns = [
+      {
+        title: '名称',
+        dataIndex: 'name',
+        scopedSlots: { customRender: 'name' },
+      },
+      {
+        title: '金额',
+        dataIndex: 'amountOfMoney',
+        scopedSlots: { customRender: 'amountOfMoney' },
+      },
+      {
+        title: '套保周期',
+        dataIndex: 'hedgeCycle',
+        scopedSlots: { customRender: 'hedgeCycle' },
+      },
+      {
+        title: '状态',
+        dataIndex: 'status',
+        scopedSlots: { customRender: 'status' },
+      },
+      {
+        title: '生效时间',
+        dataIndex: 'effectiveDate',
+        scopedSlots: { customRender: 'effectiveDate' },
+      },
+      {
+        title: '结算时间',
+        dataIndex: 'settlementDate',
+        scopedSlots: { customRender: 'settlementDate' },
+      },
+      {
+        title: '下单时间',
+        dataIndex: 'orderDate',
+        scopedSlots: { customRender: 'orderDate' },
+      },
+      {
+        title: '操作',
+        dataIndex: 'action',
+        scopedSlots: { customRender: 'action' },
+      },
+    ];
+    this.columns = columns;
+    // myInsuranceList().then(resp => {
+    //   // console.log(resp);
+    //   this.datas = resp.datas.rented_list;
+    //   this.totalNum = Number(resp.datas.total_page) * 10;
+    //   // console.log(this.datas);
+    // });
+
+    //  TODO 假数据
+    this.datas = falseDatas.datas.rented_list;
+    this.totalNum = Number(falseDatas.datas.total_page) * 10;
+  },
+  computed: {
+    Base64: () => Base64,
+  },
+  methods: {
+    //  页码变化
+    onPageChange(page) {
+      this.tableLoading = true;
+      // this.page = page;
+      //  获取选项发送请求，获取数据
+      myInsuranceList({
+        page: page,
+      }).then(resp => {
+        this.datas = resp.datas.rented_list;
+        // console.log(this.datas);
+        this.tableLoading = false;
+      });
+    },
   },
 };
 </script>

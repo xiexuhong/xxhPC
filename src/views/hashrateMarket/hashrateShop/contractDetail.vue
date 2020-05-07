@@ -39,6 +39,7 @@
               </li>
               <li>
                 <span class="key">日挖礦收益:</span>
+                <!-- TODO 该字段没找到 -->
                 <span class="value">约0.18USD/份</span>
               </li>
               <li>
@@ -110,6 +111,7 @@
 </template>
 
 <script>
+import { mult } from '@/script/utils';
 import { mapGetters } from 'vuex';
 export default {
   data() {
@@ -120,10 +122,7 @@ export default {
   },
   computed: {
     ...mapGetters({ power: 'singleList' }),
-  },
-  methods: {
-    // 乘法
-    mult: (basePrice, number) => number * basePrice,
+    mult: () => mult,
   },
 };
 </script>

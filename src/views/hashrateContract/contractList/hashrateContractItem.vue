@@ -3,7 +3,7 @@
     <div class="contractItemChoose">
       <ul>
         <li>
-          <label class="chooseTitle">选择交互方式:</label>
+          <label class="chooseTitle">矿机类型:</label>
           <a-radio-group v-model="chioce.type" @change="onChoiceChange">
             <a-radio-button value="all">全部</a-radio-button>
             <a-radio-button value="PT">单挖</a-radio-button>
@@ -45,60 +45,25 @@
         :pagination="{
           pageSizeOptions: ['10', '20', '30', '40'],
           showSizeChanger: true,
-          onChange: onPageChange
+          onChange: onPageChange,
+          total: totalNum,
         }"
         :rowKey="record => record.id"
         :loading="tableLoading"
       >
         <span slot="deposit" slot-scope="text, record">
-          {{ record.allow_cancel == 2 ? record.continue_total_deposit_coin :
-          (record.work_state != 0 ? record.raw_total_deposit :
-          record.total_deposit) }}{{ record.pay_currency }}
+          {{
+          record.allow_cancel == 2
+          ? record.continue_total_deposit_coin
+          : record.work_state != 0
+          ? record.raw_total_deposit
+          : record.total_deposit
+          }}{{ record.pay_currency }}
         </span>
         <span slot="regularDateNum" slot-scope="text">{{ text }}天</span>
-        <a-popover placement="rightTop" slot="computingPower" slot-scope="text, record">
-          <div slot="title">
-            <p style="color:#595959;textAlign:center">算力构成</p>
-            <p style="color:#999999;textAlign:center">{{ record.computingPower * record.num }}T</p>
-          </div>
-          <div slot="content">
-            <ul>
-              <li>
-                <span>基础算力</span>
-                <span>{{ record.basePower }}T</span>
-              </li>
-              <li>
-                <span>浮动算力</span>
-                <span>{{ record.floatPower }}T</span>
-              </li>
-              <li>
-                <span>达标算力</span>
-                <span>{{ record.pePower }}T</span>
-              </li>
-              <li>
-                <span>期货算力</span>
-                <span>{{ record.futuresPower }}T</span>
-              </li>
-              <li>
-                <span>定期算力</span>
-                <span>{{ record.regularPower }}T</span>
-              </li>
-              <li>
-                <span>邀请算力</span>
-                <span>{{ record.inviterPower }}T</span>
-              </li>
-              <li v-if="record.tdPower > 0">
-                <span>成长算力</span>
-                <span>{{ record.tdPower }}T</span>
-              </li>
-              <li v-if="record.couponPower > 0">
-                <span>优惠券算力</span>
-                <span>{{ record.couponPower }}T</span>
-              </li>
-            </ul>
-          </div>
-          <span class="totalHashrate">{{ record.computingPower * record.num }}T</span>
-        </a-popover>
+        <popover slot="computingPower" slot-scope="text, record" :power="record" :num="record.num">
+          <span class="totalHashrate">{{ mult(record.computingPower, record.num) }}T</span>
+        </popover>
         <span class="action" slot="action" slot-scope="text, record">
           <!-- 暂时不出
             <router-link
@@ -107,14 +72,25 @@
             @click.native="setSingleContract(record)"
           >转让</router-link>-->
           <router-link
-            to="/hashrateContract/contractList/orderFade"
-            @click.native="setSingleContract(record)"
+            :to="{
+              path: '/hashrateContract/contractList/orderFade',
+              query: {
+                orderId: Base64.encode(record.orderId),
+              },
+            }"
           >退单</router-link>
           <router-link
-            to="/hashrateContract/contractList/orderReorder"
-            v-show="(record.work_state != 0) || record.allow_cancel == 2 || record.returnable == 0"
-            @click.native="setSingleContract(record)"
-          >续单</router-link>
+            :to="{
+              path: '/hashrateContract/contractList/orderReorder',
+              query: {
+                orderId: Base64.encode(record.orderId),
+              },
+            }"
+          >
+            {{
+            record.isRegular == '1' && record.allow_renewal == true ? '续单' : '转期'
+            }}
+          </router-link>
         </span>
       </a-table>
     </div>
@@ -122,20 +98,20 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import popover from '@/components/popover';
 import { getContractList } from '@/script/api';
+import { mult } from '@/script/utils';
+import { Base64 } from 'js-base64';
 export default {
-  props: {
-    //  继承的数据
-    rentedList: {
-      type: Array,
-      default: [],
-    },
+  props: ['rentedList'],
+  components: {
+    popover,
   },
   data() {
     return {
       datas: [], //  单元格数据
       columns: [], //  表头
+      totalNum: 0, //  列表总数
       chioce: {
         //  筛选选项
         type: 'all', //  矿机类型
@@ -144,7 +120,6 @@ export default {
         payType: 'all', //  订单类型
       },
       tableLoading: false, //  数据加载过程中状态loading
-      // page: '1', //  表格页数
     };
   },
   created() {
@@ -181,6 +156,7 @@ export default {
         dataIndex: 'time_income',
       },
       {
+        // TODO 本页面没有该字段，APP的该字段在每一条的详情页（另一条请求）
         title: '下单时间',
         dataIndex: 'time_creat',
       },
@@ -199,10 +175,15 @@ export default {
   watch: {
     rentedList() {
       this.tableLoading = true;
-      this.datas = this.rentedList;
+      this.datas = this.rentedList.rented_list;
+      this.totalNum = Number(this.rentedList.totalNum);
       // console.log(this.datas);
       this.tableLoading = false;
     },
+  },
+  computed: {
+    mult: () => mult,
+    Base64: () => Base64,
   },
   methods: {
     //  筛选数据
@@ -226,6 +207,7 @@ export default {
       this.tableLoading = true;
       // this.page = page;
       //  获取选项发送请求，获取数据
+      // TODO 是否需要pagesize
       getContractList({
         page: page,
         type: this.chioce.type,
@@ -237,12 +219,6 @@ export default {
         // console.log(this.datas);
         this.tableLoading = false;
       });
-    },
-    //  乘法
-    mult: (power, num) => (power * num).toFixed(2),
-    ...mapMutations(['GET_SINGLE_CONTRACT']),
-    setSingleContract(singleContract) {
-      this.$store.commit('GET_SINGLE_CONTRACT', singleContract);
     },
   },
 };
@@ -313,24 +289,6 @@ export default {
     /deep/.ant-select-dropdown-menu-item:hover:not(.ant-select-dropdown-menu-item-disabled) {
       background-color: #ffab32;
       color: #ffffff;
-    }
-  }
-}
-.ant-popover-inner {
-  width: 100%;
-  border-bottom: 1px solid #f4f4f6;
-  .ant-popover-inner-content {
-    color: #999999;
-    ul {
-      width: 100%;
-      li {
-        height: 2em;
-        span {
-          display: inline-block;
-          width: 50%;
-          text-align: center;
-        }
-      }
     }
   }
 }

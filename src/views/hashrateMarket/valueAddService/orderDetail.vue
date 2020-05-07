@@ -18,100 +18,44 @@
                   <p>1.结算前，关联算力不可进行退单/转让/续单操作;</p>
                   <p>2.合约创建后，若算力锁定时间早于结算时间，将自动延长至结算时间；</p>
                 </div>
-                <div class="leftBodyCards">
-                  <a-card hoverable title="BTC 90天算力包">
+                <div class="leftBodyCards" v-show="!totalNum || totalNum <= 0">没有数据...</div>
+                <div class="leftBodyCards" v-for="data in powerList" :key="data.id">
+                  <!-- TODO 未确定是否需要做页面到底自动加载下一页数据 -->
+                  <a-card hoverable :title="data.name">
                     <p>
                       <span class="leftInfoLeft">
                         <span class="leftInfoTitle">总金额</span>
-                        <span>4250.00 USD</span>
+                        <span>
+                          {{
+                          data.work_state != 0
+                          ? data.raw_total_deposit_coin
+                          : data.total_deposit_coin
+                          }}{{ data.pay_currency }}
+                        </span>
                       </span>
                       <span class="leftInfoRight">
                         <span class="leftInfoRightTitle">总算力</span>
-                        <span>10T</span>
+                        <span>{{ mult(data.computing_power, data.num) }}T</span>
                       </span>
                     </p>
                     <p>
                       <span class="leftInfoLeft">
                         <span class="leftInfoTitle">开挖时间</span>
-                        <span>06/02/2020 00:00:00</span>
+                        <span>{{ data.time_income }}</span>
                       </span>
                       <span class="leftInfoRight">
                         <span class="leftInfoRightTitle">基础算力</span>
-                        <span>5T</span>
+                        <span>{{ mult(data.base_power, data.num) }}T</span>
                       </span>
                     </p>
                     <p>
                       <span class="leftInfoLeft">
                         <span class="leftInfoTitle">锁定时间</span>
-                        <span>06/02/2020 00:00:00</span>
+                        <span>{{ data.regular_end_date }}</span>
                       </span>
                       <span class="leftInfoRight">
                         <span class="leftInfoRightTitle">奖励算力</span>
-                        <span>5T</span>
-                      </span>
-                    </p>
-                  </a-card>
-                  <a-card hoverable title="BTC 90天算力包">
-                    <p>
-                      <span class="leftInfoLeft">
-                        <span class="leftInfoTitle">总金额</span>
-                        <span>4250.00 USD</span>
-                      </span>
-                      <span class="leftInfoRight">
-                        <span class="leftInfoRightTitle">总算力</span>
-                        <span>10T</span>
-                      </span>
-                    </p>
-                    <p>
-                      <span class="leftInfoLeft">
-                        <span class="leftInfoTitle">开挖时间</span>
-                        <span>06/02/2020 00:00:00</span>
-                      </span>
-                      <span class="leftInfoRight">
-                        <span class="leftInfoRightTitle">基础算力</span>
-                        <span>5T</span>
-                      </span>
-                    </p>
-                    <p>
-                      <span class="leftInfoLeft">
-                        <span class="leftInfoTitle">锁定时间</span>
-                        <span>06/02/2020 00:00:00</span>
-                      </span>
-                      <span class="leftInfoRight">
-                        <span class="leftInfoRightTitle">奖励算力</span>
-                        <span>5T</span>
-                      </span>
-                    </p>
-                  </a-card>
-                  <a-card hoverable title="BTC 90天算力包">
-                    <p>
-                      <span class="leftInfoLeft">
-                        <span class="leftInfoTitle">总金额</span>
-                        <span>4250.00 USD</span>
-                      </span>
-                      <span class="leftInfoRight">
-                        <span class="leftInfoRightTitle">总算力</span>
-                        <span>10T</span>
-                      </span>
-                    </p>
-                    <p>
-                      <span class="leftInfoLeft">
-                        <span class="leftInfoTitle">开挖时间</span>
-                        <span>06/02/2020 00:00:00</span>
-                      </span>
-                      <span class="leftInfoRight">
-                        <span class="leftInfoRightTitle">基础算力</span>
-                        <span>5T</span>
-                      </span>
-                    </p>
-                    <p>
-                      <span class="leftInfoLeft">
-                        <span class="leftInfoTitle">锁定时间</span>
-                        <span>06/02/2020 00:00:00</span>
-                      </span>
-                      <span class="leftInfoRight">
-                        <span class="leftInfoRightTitle">奖励算力</span>
-                        <span>5T</span>
+                        <span>{{ mult(data.computing_power - data.base_power, data.num) }}T</span>
                       </span>
                     </p>
                   </a-card>
@@ -126,41 +70,41 @@
                 <p>
                   <span class="rightInfoLeft">
                     <span class="rightInfoTitle">名称：</span>
-                    <span>算力收益套保合约</span>
+                    <span>{{ powerOrder.detail.name }}</span>
                   </span>
                   <span>
                     <span class="rightInfoTitle">套保周期：</span>
-                    <span>90天</span>
+                    <span>{{ powerOrder.detail.period }}天</span>
                   </span>
                 </p>
                 <p>
                   <span class="rightInfoLeft">
                     <span class="rightInfoTitle">止损率：</span>
-                    <span>90%</span>
+                    <span>{{ powerOrder.detail.low_limit }}%</span>
                   </span>
                   <span>
                     <span class="rightInfoTitle">止损价：</span>
-                    <span>9000.0000 USDT</span>
+                    <span style="color: #ffab32;">9000.0000 USDT</span>
                   </span>
                 </p>
                 <p>
                   <span class="rightInfoLeft">
                     <span class="rightInfoTitle">止赢率：</span>
-                    <span>200%</span>
+                    <span>{{ powerOrder.detail.hign_limit }}%</span>
                   </span>
                   <span>
                     <span class="rightInfoTitle">止盈价：</span>
-                    <span>20000.0000 USDT</span>
+                    <span style="color: #ffab32;">20000.0000 USDT</span>
                   </span>
                 </p>
                 <p>
                   <span class="rightInfoLeft">
                     <span class="rightInfoTitle">生效时间：</span>
-                    <span>18/02/2020 00:00:00</span>
+                    <span>{{ powerOrder.detail.start_time }}</span>
                   </span>
                   <span>
                     <span class="rightInfoTitle">结算时间：</span>
-                    <span>19/05/2020 00:00:00</span>
+                    <span>{{ powerOrder.detail.settle_time }}</span>
                   </span>
                 </p>
               </div>
@@ -170,18 +114,44 @@
                   <a-radio-button value="USDT">USDT</a-radio-button>
                   <a-radio-button value="USD">USD</a-radio-button>
                 </a-radio-group>
-                <p>可用餘額：1000000000.0000</p>
+                <p>
+                  可用餘額：{{
+                  (surplusPowerNum =
+                  value === 'USDT'
+                  ? surplusPower[0].payment_avail
+                  : surplusPower[1].payment_avail)
+                  }}
+                </p>
               </div>
               <div class="hashrateAgreement">
                 <p>
                   <span>
                     <a-checkbox :indeterminate="indeterminate" @click="taggleIndeterminate">
                       我同意
-                      <span style="color:#FFAB32">《套保合約服務協議》</span>
+                      <a href style="color:#FFAB32">《套保合約服務協議》</a>
                     </a-checkbox>
                   </span>
                 </p>
-                <a-button size="large" block>立即购买</a-button>
+                <a-button :disabled="!indeterminate" size="large" block @click="onChargeClick">立即购买</a-button>
+                <div class="hashrateNodal">
+                  <a-modal
+                    title="安全验证"
+                    centered
+                    v-model="chargeVisible"
+                    okText="确认购买"
+                    cancelText="取消"
+                    width="350px"
+                    @ok="confirmCharge"
+                  >
+                    <p>交易密码</p>
+                    <p>
+                      <a-input />
+                    </p>
+                    <router-link to="/account/forget_trade_pwd">
+                      <p>忘记密码？</p>
+                    </router-link>
+                  </a-modal>
+                </div>
               </div>
             </div>
           </a-col>
@@ -192,17 +162,82 @@
 </template>
 
 <script>
+import { getPurchasableOrder, getSurplusPower } from '@/script/api';
+import { mult } from '@/script/utils';
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
+      chargeVisible: false, //点击弹窗隐藏/显示
       value: 'USDT', //USDT/USD单选框初始值
       indeterminate: false, //设置协议复选框选中状态样式
+      powerList: [], //  选择套保算力包
+      orderDetail: {}, //  套保订单详情
+      totalNum: 0, //  card总数
+      isSign: '', //  签名，用于下单
+      surplusPower: [{ payment_avail: '' }, { payment_avail: '' }], //  可用余额,解决属性初次加载不存在的报错
+      surplusPowerNum: [], //  可用余额依据不同选择方式的具体数额
     };
   },
+  created() {
+    getPurchasableOrder().then(resp => {
+      // console.log(resp);
+      this.powerList = resp.datas.rented_list;
+      this.totalNum = resp.datas.total;
+    });
+    getSurplusPower({ type: 'rent' }).then(resp => {
+      // console.log(resp);
+      this.surplusPower = resp.datas.list;
+      this.surplusPowerNum = this.surplusPower[0].payment_avail;
+      // console.log(this.surplusPower);
+    });
+    console.log(this.powerOrder);
+  },
+  computed: {
+    ...mapGetters({ powerOrder: 'singleInsurance' }),
+    mult: () => mult,
+  },
   methods: {
+    handleClickChange(visible) {
+      //点击气泡卡隐藏/显示
+      this.clicked = visible;
+    },
     taggleIndeterminate() {
       //设置协议复选框选中状态样式
       this.indeterminate = !this.indeterminate;
+    },
+    //  立即购买
+    onChargeClick() {
+      //  判断余额是否充足
+      if (
+        this.surplusPowerNum < 0 ||
+        this.surplusPowerNum < this.mult(this.unitPriceNum, this.chargeAmount, this.currencyValue)
+      ) {
+        this.$message.info('您的余额不足，请及时充值！！！');
+      } else {
+        //  余额充足，弹出交易框
+        this.chargeVisible = true;
+      }
+    },
+    //  确认购买
+    confirmCharge() {
+      //交易密码验证            可能需要专门提出来写
+      if (true) return false;
+
+      //提交购买
+      rentPower({
+        // machine_id: this.power.machine_id, // 矿机id
+        // machine_type, // 矿机类型
+        // num: this.chargeAmount, // 租用数量
+        // payment_code: this.currencyValue, // 支付方式
+      }).then(resp => {
+        console.log(resp);
+        this.$message.info('恭喜您购买成功！！！');
+        //  购买成功，弹出交易框
+        this.chargeVisible = false;
+        //提交成功之后，返回到上个页面
+        this.$router.go(-1);
+      });
     },
   },
 };
@@ -261,8 +296,8 @@ export default {
               .ant-card-head {
                 border: none;
               }
-              .ant-card-body {
-                padding: 0 24px 0 24px;
+              /deep/ .ant-card-body {
+                padding: 0 20px 0 20px;
                 span {
                   display: inline-block;
                 }
@@ -291,8 +326,9 @@ export default {
         }
       }
       .orderRight {
-        width: 100%;
+        width: 29%;
         padding-left: 20px;
+        position: fixed;
         .rightTitle {
           margin: 10px 0 20px 0;
           color: #262626;
@@ -372,12 +408,6 @@ export default {
     }
   }
 }
-
-@media screen and (max-width: 1000px) {
-  .detailContainer .detailContent {
-    width: 90%;
-  }
-}
 @media screen and (max-width: 500px) {
   .detailContainer {
     .detailContent {
@@ -410,8 +440,8 @@ export default {
               width: 100%;
               .ant-card {
                 margin-bottom: 10px;
-                .ant-card-body {
-                  padding: 0 10px 0 10px;
+                /deep/ .ant-card-body {
+                  padding: 0 5px 0 5px;
                   span {
                     display: block;
                   }
@@ -434,6 +464,7 @@ export default {
         }
         .orderRight {
           padding-left: 5px;
+          width: 49%;
           .rightTitle {
             margin: 10px 0 0 0;
             font-size: 15px;

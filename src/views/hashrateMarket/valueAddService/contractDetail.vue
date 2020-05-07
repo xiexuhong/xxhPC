@@ -11,35 +11,40 @@
             <a-row>
               <a-col :span="24">
                 <ul class="detailHeader">
-                  <li>算力包</li>
+                  <li>{{ power.detail.name }}</li>
                   <li>合约限期</li>
-                  <li>90天</li>
+                  <li>{{ power.detail.period }}天</li>
                 </ul>
               </a-col>
             </a-row>
             <a-row class="detailBody">
-              <a-col :span="24">
+              <a-col :span="8">
                 <ul>
                   <li>起购金额（每T）</li>
-                  <li style="color:#ffab32">0.7704usd/0.7704usd</li>
+                  <li style="color:#ffab32">
+                    {{power.detail.price.final_price}}
+                    <small>{{power.currency}}</small>
+                    / {{power.detail.price.final_usdt_price}}
+                    <small>USDT</small>
+                  </li>
                 </ul>
               </a-col>
-              <a-col :span="8">
+              <a-col :span="6">
                 <ul>
                   <li>剩余份额</li>
-                  <li>352分</li>
+                  <li>{{ power.detail.inventory }}份</li>
                 </ul>
               </a-col>
-              <a-col :span="8">
+              <a-col :span="5">
                 <ul>
                   <li>止损率</li>
-                  <li>90%</li>
+                  <li>{{ power.detail.low_limit }}%</li>
                 </ul>
               </a-col>
-              <a-col :span="8">
+              <a-col :span="5">
                 <ul>
                   <li>止赢率</li>
-                  <li>200%</li>
+                  <li>{{ power.detail.hign_limit }}%</li>
                 </ul>
               </a-col>
             </a-row>
@@ -47,9 +52,16 @@
           <a-col :span="6">
             <a-row class="charge">
               <a-col :span="24">
-                <a-button size="large" block>
+                <a-button v-show=" power.detail.inventory > 0" size="large" block>
                   <router-link to="/hashrateMarket/valueAddService/orderDetail">立即购买</router-link>
                 </a-button>
+                <a-button
+                  v-show=" !power.detail.inventory || power.detail.inventory <= 0"
+                  class="disabled"
+                  size="large"
+                  type="primary"
+                  disabled
+                >已售罄</a-button>
               </a-col>
             </a-row>
           </a-col>
@@ -63,22 +75,25 @@
                   <span>|</span>
                   <span>合約规则</span>
                 </p>
-                <p>1．创建合约时，以实时BTC算力指数、甲方佣户）所指定止盈率/止损率、合约周期、关联算力数额计算止盈价/止损介</p>
+                <p>{{ power.detail.rule }}</p>
+                <p style="fontSize: 14px; color: #999999">{{ power.detail.explain }}</p>
+                <!-- <p>1．创建合约时，以实时BTC算力指数、甲方佣户）所指定止盈率/止损率、合约周期、关联算力数额计算止盈价/止损介</p>
                 <p>2．合约期内关联算力所产出的BTC每日发放后即时锁仓，由本智能合约托管；</p>
                 <p>3．合约到期结算时，以合约周期内关联算力实际产出BTC数量、实时币价计算结算介</p>
                 <p style="textIndent:2em">3.1若止损价结算价止盈价，本智能合约将对关联算力所产出BTC解锁；</p>
                 <p style="textIndent:2em">3.2若结算价&#60;止损价，本智能合约将代乙方以止损价回购关联算力所产生的BTC，回购费以USDT向甲方支付；</p>
                 <p style="textIndent:2em">3.3若结算价>止盈价，本智能合约将代乙方以止盈价回购关联算力所产生的BTC，回购费以USDT向甲方支付；</p>
                 <p>4．本合约仅支持90/180天算力合约包，合约有效期内算力包不可进行除续期外的任何操作；</p>
-                <p style="fontSize: 14px; color: #999999">*本平台币价均取自币安、OKcoin、火币三大交易所均值，10秒更新一次。</p>
+                <p style="fontSize: 14px; color: #999999">*本平台币价均取自币安、OKcoin、火币三大交易所均值，10秒更新一次。</p>-->
               </li>
               <li>
                 <p>
                   <span>|</span>
                   <span>场景示例</span>
                 </p>
-                <p>小明持有一个10T算力包，到手算力30T，当前算力指数为1 CNY/T*天，可预估90天后将收入约1350元（30*1*90*50%）。为了降低收益波动风险，小明为这部分算力创建了一份止损率为90%，止盈率为200%的套保合约，合约期限90天，可算出合约的止损价为1215元，止盈价为2700元。合约生效后（创建次日0点生效），小明这部分算力每日产出的BTC将被冻结。</p>
-                <p>1.实际产出的BTC折合1400元，在止损/止盈价(1215-2700)之间，小明直接获得这部分BTC；</p>
+                <p>{{ power.detail.example }}</p>
+                <!-- <p>小明持有一个10T算力包，到手算力30T，当前算力指数为1 CNY/T*天，可预估90天后将收入约1350元（30*1*90*50%）。为了降低收益波动风险，小明为这部分算力创建了一份止损率为90%，止盈率为200%的套保合约，合约期限90天，可算出合约的止损价为1215元，止盈价为2700元。合约生效后（创建次日0点生效），小明这部分算力每日产出的BTC将被冻结。</p>
+                <p>1.实际产出的BTC折合1400元，在止损/止盈价(1215-2700)之间，小明直接获得这部分BTC；</p>-->
               </li>
             </ul>
           </a-col>
@@ -89,7 +104,21 @@
 </template>
 
 <script>
-export default {};
+import { getInsurancePrice } from '@/script/api';
+import { mapGetters } from 'vuex';
+export default {
+  data() {
+    return {
+      // datas: {},
+    };
+  },
+  created() {
+    // console.log(this.power);
+  },
+  computed: {
+    ...mapGetters({ power: 'singleInsurance' }),
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -155,6 +184,10 @@ export default {};
           border-radius: 2px;
           color: #ffffff;
         }
+        .disabled {
+          background-color: #cfcfcf;
+          width: 18%;
+        }
       }
       .detailIntro li {
         margin-bottom: 40px;
@@ -192,6 +225,7 @@ export default {};
         .detailHeader {
           li:nth-child(1) {
             font-size: 15px;
+            display: block;
           }
           li:nth-child(2) {
             font-size: 8px;

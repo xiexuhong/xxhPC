@@ -211,11 +211,45 @@ export const getPowerList = data => post('/index.php?act=power&op=get_power_list
 
 /**
  * @method 获取增值服务列表
+ * @param curpage -- 对应页码，默认1
  */
-export const getInsuranceList = data => post('/index.php?act=insurance&op=myInsuranceList', data);
+export const getInsuranceList = data => post('/index.php?act=insurance&op=index', data);
 
 /**
- * @method 购买算力
+ * @method 获取可购买增值服务订单
+ * @param curpage -- 对应页码，默认1
+ */
+export const getPurchasableOrder = data =>
+  post('/index.php?act=insurance&op=purchasableOrder', data);
+
+/**
+ * @method 增值服务详情
+ * @param orders -- 关联订单ID
+ * @param high_limit -- 止盈率
+ * @param low_limit -- 止损率
+ * @param period -- 锁定周期
+ * @param currency -- 法币（不传默认是用户自己的法币）
+ *
+ */
+export const getInsurancePrice = data => post('/index.php?act=insurance&op=getPrice', data);
+
+/**
+ * @method 增值服务下单
+ * @param high_limit -- 止盈率
+ * @param low_limit -- 止损率
+ * @param period -- 锁定周期
+ * @param insurance_id -- 套保ID
+ * @param orders -- 关联的订单ID
+ * @param currency -- 法币（CNY USD HKD TWD USDT）
+ * @param amount -- 金额
+ * @param isign -- 详情中返回的签名
+ * @param constract_id -- 合同ID
+ * @param btc_price -- 详情界面算力指数
+ */
+export const getInsuranceOrder = data => post('/index.php?act=insurance&op=order', data);
+
+/**
+ * @method 我的算力
  * @param machine_id -- 矿机id
  * @param machine_type -- 矿机类型
  * @param num -- 租用数量
@@ -242,3 +276,69 @@ export const getSurplusPower = data => post('/index.php?act=payment&op=index', d
  * @param payment_code -- 支付方式
  */
 export const rentPower = data => post('/index.php?act=order&op=create', data);
+
+/**
+ * @method 获取收益列表
+ * @param curpage -- 当前页
+ * @param pagesize -- 每页显示数量
+ */
+export const getProfitList = data => post('/index.php?act=profit&op=list', data);
+
+/**
+ * @method 获取算力合约详情信息
+ * @param curpage -- 当前页
+ * @param pagesize -- 每页显示数量
+ */
+export const getOrderInfo = data => post('/index.php?act=order&op=info', data);
+
+/**
+ * @method 获取退单损失
+ * @param order_id -- 订单id
+ * @param return_num -- 数量
+ */
+export const getOrderFadeLoss = data => post('/index.php?act=order&op=loss', data);
+
+/**
+ * @method 退单
+ * @param order_id -- 订单id
+ * @param return_num -- 数量
+ */
+export const fadeOrder = data => post('/app2/index.php?act=order&op=cancel', data);
+
+/**
+ * @method 转期、续期
+ * @param order_id -- 订单id
+ * @param regular_date_num -- 数量
+ */
+export const reOrder = data => post('/app2/index.php?act=order&op=renewal', data);
+
+/**
+ * @method 转让列表
+ * @param page -- 页数
+ */
+export const myTransferList = data => post('/index.php?act=transfer&op=myTransferList', data);
+
+/**
+ * @method 转让列表
+ * @param page -- 页数
+ */
+export const cancelTransfer = data => post('/index.php?act=transfer&op=cancelTransfer', data);
+
+/**
+ * @method 承接列表
+ * @param page -- 页数
+ */
+export const myUndertakeList = data => post('/index.php?act=transfer&op=myUndertakeList', data);
+
+/**
+ * @method 我的合约列表
+ * @param page -- 页数
+ */
+export const myInsuranceList = data => post('/index.php?act=insurance&op=myInsuranceList', data);
+
+/**
+ * @method 我的合约列表详情
+ * @param ins_order_id -- 合约ID
+ */
+export const myInsuranceDetail = data =>
+  post('/index.php?act=insurance&op=myInsuranceDetail', data);

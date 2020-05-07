@@ -103,6 +103,7 @@
 <script>
 import { mapMutations } from 'vuex';
 import { getPowerList } from '@/script/api';
+import { mult } from '@/script/utils';
 export default {
   data() {
     return {
@@ -116,10 +117,10 @@ export default {
       this.powerList = resp.datas.machine_list;
     });
   },
-  computed: {},
+  computed: {
+    mult: () => mult,
+  },
   methods: {
-    // 乘法
-    mult: (basePrice, number) => number * basePrice,
     //  获取单调数据并传给vuex共享
     ...mapMutations(['GET_SINGLE_LIST']),
     setSingleList(powerItem) {
@@ -207,11 +208,6 @@ export default {
     background-color: #cfcfcf;
   }
 }
-@media screen and (max-width: 1000px) {
-  .hashContent {
-    width: 90%;
-  }
-}
 @media screen and (max-width: 500px) {
   .hashContent {
     width: 100%;
@@ -220,15 +216,15 @@ export default {
   .hashHeader {
     li:nth-child(1) img {
       top: 0;
+      display: none;
     }
     li:nth-child(2) {
       font-size: 15px;
-      padding-right: 80px;
+      display: block;
     }
     li:nth-child(3) {
       font-size: 8px;
       padding: 3px;
-      margin-left: 40px;
     }
     li:nth-child(4) {
       font-size: 8px;
