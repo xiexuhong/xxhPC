@@ -43,7 +43,7 @@
                   class="avatar-uploader"
                   :showUploadList="false"
                   name="img"
-                  action="http://iappfront.t1.anmaicloud.com/member/upload-img"
+                  action="/member/upload-img"
                   method="post"
                   :data="renrenInfo"
                   :beforeUpload="beforeUpload"
@@ -103,10 +103,11 @@ export default {
   created() {
     this.userInfo = this.$ls.get('userInfo');
     this.renrenInfo = this.$ls.get('renrenInfo');
+    console.log('renrenInfo: ' + JSON.stringify(this.renrenInfo));
   },
   methods: {
     sendCode() {
-      this.sendVerifyCode(this.userInfo.mobile, 'reset_trade_pwd');
+      this.sendVerifyCode(this.userInfo.token, 'reset_trade_pwd');
     },
     handleChange(info) {
       if (info.file.status === 'uploading') {
@@ -115,6 +116,8 @@ export default {
       }
       if (info.file.status === 'done') {
         console.log('info: ', info);
+        this.imageUrl = info.file.originFileObj;
+        this.loading = false;
       }
     },
     beforeUpload(file) {

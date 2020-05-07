@@ -15,7 +15,7 @@
     "core-js": "^3.6.4",
     "echarts": "^4.7.0",
     "enquire.js": "^2.1.6",
-    "jquery": "^3.5.0",
+    "jquery": "^3.5.1",
     "libphonenumber-js": "^1.7.50",
     "lodash": "^4.17.15",
     "postcss-px-to-viewport": "^1.1.1",
