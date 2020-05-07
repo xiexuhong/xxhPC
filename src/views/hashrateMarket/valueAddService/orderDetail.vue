@@ -13,54 +13,56 @@
                 <span class="leftTitleLeft">選擇套保算力包</span>
                 <span class="leftTitleRight">最多關聯：100T(到手算力)</span>
               </div>
-              <div class="leftBody">
-                <div class="leftBodyIntro">
-                  <p>1.结算前，关联算力不可进行退单/转让/续单操作;</p>
-                  <p>2.合约创建后，若算力锁定时间早于结算时间，将自动延长至结算时间；</p>
-                </div>
-                <div class="leftBodyCards" v-show="!totalNum || totalNum <= 0">没有数据...</div>
-                <div class="leftBodyCards" v-for="data in powerList" :key="data.id">
-                  <!-- TODO 未确定是否需要做页面到底自动加载下一页数据 -->
-                  <a-card hoverable :title="data.name">
-                    <p>
-                      <span class="leftInfoLeft">
-                        <span class="leftInfoTitle">总金额</span>
-                        <span>
-                          {{
-                          data.work_state != 0
-                          ? data.raw_total_deposit_coin
-                          : data.total_deposit_coin
-                          }}{{ data.pay_currency }}
+              <a-spin :spinning="spinning" :delay="200">
+                <div class="leftBody">
+                  <div class="leftBodyIntro">
+                    <p>1.结算前，关联算力不可进行退单/转让/续单操作;</p>
+                    <p>2.合约创建后，若算力锁定时间早于结算时间，将自动延长至结算时间；</p>
+                  </div>
+                  <div class="leftBodyCards" v-show="!totalNum || totalNum <= 0">没有数据...</div>
+                  <div class="leftBodyCards" v-for="data in powerList" :key="data.id">
+                    <!-- TODO 未确定是否需要做页面到底自动加载下一页数据 -->
+                    <a-card hoverable :title="data.name">
+                      <p>
+                        <span class="leftInfoLeft">
+                          <span class="leftInfoTitle">总金额</span>
+                          <span>
+                            {{
+                            data.work_state != 0
+                            ? data.raw_total_deposit_coin
+                            : data.total_deposit_coin
+                            }}{{ data.pay_currency }}
+                          </span>
                         </span>
-                      </span>
-                      <span class="leftInfoRight">
-                        <span class="leftInfoRightTitle">总算力</span>
-                        <span>{{ mult(data.computing_power, data.num) }}T</span>
-                      </span>
-                    </p>
-                    <p>
-                      <span class="leftInfoLeft">
-                        <span class="leftInfoTitle">开挖时间</span>
-                        <span>{{ data.time_income }}</span>
-                      </span>
-                      <span class="leftInfoRight">
-                        <span class="leftInfoRightTitle">基础算力</span>
-                        <span>{{ mult(data.base_power, data.num) }}T</span>
-                      </span>
-                    </p>
-                    <p>
-                      <span class="leftInfoLeft">
-                        <span class="leftInfoTitle">锁定时间</span>
-                        <span>{{ data.regular_end_date }}</span>
-                      </span>
-                      <span class="leftInfoRight">
-                        <span class="leftInfoRightTitle">奖励算力</span>
-                        <span>{{ mult(data.computing_power - data.base_power, data.num) }}T</span>
-                      </span>
-                    </p>
-                  </a-card>
+                        <span class="leftInfoRight">
+                          <span class="leftInfoRightTitle">总算力</span>
+                          <span>{{ mult(data.computing_power, data.num) }}T</span>
+                        </span>
+                      </p>
+                      <p>
+                        <span class="leftInfoLeft">
+                          <span class="leftInfoTitle">开挖时间</span>
+                          <span>{{ data.time_income }}</span>
+                        </span>
+                        <span class="leftInfoRight">
+                          <span class="leftInfoRightTitle">基础算力</span>
+                          <span>{{ mult(data.base_power, data.num) }}T</span>
+                        </span>
+                      </p>
+                      <p>
+                        <span class="leftInfoLeft">
+                          <span class="leftInfoTitle">锁定时间</span>
+                          <span>{{ data.regular_end_date }}</span>
+                        </span>
+                        <span class="leftInfoRight">
+                          <span class="leftInfoRightTitle">奖励算力</span>
+                          <span>{{ mult(data.computing_power - data.base_power, data.num) }}T</span>
+                        </span>
+                      </p>
+                    </a-card>
+                  </div>
                 </div>
-              </div>
+              </a-spin>
             </div>
           </a-col>
           <a-col :span="12">
@@ -128,7 +130,11 @@
                   <span>
                     <a-checkbox :indeterminate="indeterminate" @click="taggleIndeterminate">
                       我同意
-                      <a href style="color:#FFAB32">《套保合約服務協議》</a>
+                      <router-link
+                        target="_blank"
+                        :to="{path: '/contract', query: {type: '5'}}"
+                        style="color:#FFAB32"
+                      >《套保合約服務協議》</router-link>
                     </a-checkbox>
                   </span>
                 </p>
@@ -169,6 +175,7 @@ export default {
   data() {
     return {
       chargeVisible: false, //点击弹窗隐藏/显示
+      spinning: false, //  数据加载loading
       value: 'USDT', //USDT/USD单选框初始值
       indeterminate: false, //设置协议复选框选中状态样式
       powerList: [], //  选择套保算力包
@@ -180,11 +187,16 @@ export default {
     };
   },
   created() {
+    //  加载中的loading
+    this.spinning = true;
+    //  获取可购买服务订单
     getPurchasableOrder().then(resp => {
       // console.log(resp);
       this.powerList = resp.datas.rented_list;
       this.totalNum = resp.datas.total;
+      this.spinning = false;
     });
+    //  获取剩余算力
     getSurplusPower({ type: 'rent' }).then(resp => {
       // console.log(resp);
       this.surplusPower = resp.datas.list;

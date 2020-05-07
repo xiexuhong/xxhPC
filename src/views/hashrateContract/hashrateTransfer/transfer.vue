@@ -2,21 +2,21 @@
   <div class="contractItemContainer">
     <div class="contractItemChoose">
       <ul>
-        <!-- TODO 接口未添加筛选参数，功能未实现 -->
         <li>
           <label class="chooseTitle">矿机类型:</label>
-          <a-radio-group v-model="chioce.type">
-            <a-radio-button value="all">全部</a-radio-button>
-            <a-radio-button value="PT">单挖</a-radio-button>
-            <a-radio-button value="SW">双挖</a-radio-button>
+          <a-radio-group v-model="chioce.type" @change="onChoiceChange">
+            <a-radio-button value="ALL">全部</a-radio-button>
+            <a-radio-button value="0">单挖</a-radio-button>
+            <a-radio-button value="1">双挖</a-radio-button>
           </a-radio-group>
         </li>
         <li>
           <label class="chooseTitle">合约状态:</label>
-          <a-radio-group v-model="chioce.workType">
-            <a-radio-button value="all">全部</a-radio-button>
-            <a-radio-button value="YCX">已撤销</a-radio-button>
-            <a-radio-button value="ZRCG">转让成功</a-radio-button>
+          <a-radio-group v-model="chioce.workType" @change="onChoiceChange">
+            <a-radio-button value="ALL">全部</a-radio-button>
+            <a-radio-button value="0">待转</a-radio-button>
+            <a-radio-button value="1">已成功转接</a-radio-button>
+            <a-radio-button value="2">撤回</a-radio-button>
           </a-radio-group>
         </li>
       </ul>
@@ -26,7 +26,10 @@
         :columns="columns"
         :dataSource="datas"
         :rowKey="record => record.id"
-        :pagination="{total: totalNum}"
+        :pagination="{
+          total: totalNum,
+          onChange: onPageChange, 
+        }"
         :loading="tableLoading"
       >
         <span
@@ -77,8 +80,8 @@ export default {
     return {
       chioce: {
         //  筛选选项
-        type: 'all', //  矿机类型
-        workType: 'all', //  合约状态
+        type: 'ALL', //  矿机类型
+        workType: 'ALL', //  合约状态
       },
       datas: [], //  表格数据
       columns: [], //  表头
@@ -129,6 +132,20 @@ export default {
     mult: () => mult,
   },
   methods: {
+    //  筛选数据
+    onChoiceChange() {
+      this.tableLoading = true;
+      //  获取选项发送请求，获取数据
+      myTransferList({
+        page: '1',
+        isBhpPos: this.chioce.type,
+        state: this.chioce.workType,
+      }).then(resp => {
+        this.datas = resp.datas.lists;
+        // console.log(this.datas);
+        this.tableLoading = false;
+      });
+    },
     //  页码变化
     onPageChange(page) {
       this.tableLoading = true;
@@ -136,6 +153,8 @@ export default {
       //  获取选项发送请求，获取数据
       myTransferList({
         page: page,
+        isBhpPos: this.chioce.type,
+        state: this.chioce.workType,
       }).then(resp => {
         this.datas = resp.datas.lists;
         // console.log(this.datas);

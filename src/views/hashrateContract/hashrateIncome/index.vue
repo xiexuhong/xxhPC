@@ -118,6 +118,7 @@ export default {
         this.tableLoading = false;
       });
     },
+    //  每页显示条数
     onShowPageSizeChange(current, size) {
       this.tableLoading = true;
       //  获取选项发送请求，获取数据

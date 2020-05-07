@@ -18,6 +18,13 @@ const routes = [
     // },
     children: childrenRoute,
   },
+  {
+    path: '/contract',
+    component: () => import('@/components/contract'),
+    meta: {
+      requireAuth: true, // 判断此路由是否需要登录
+    },
+  },
 ];
 
 const router = new VueRouter({

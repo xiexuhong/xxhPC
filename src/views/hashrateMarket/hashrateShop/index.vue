@@ -1,103 +1,105 @@
 <template>
   <!-- 算力市场/算力商城首页 -->
-  <div class="hashContainer">
-    <div class="hashContent" v-for="(power, index) in powerList" :key="power.machine_id">
-      <a-row type="flex" justify="center" align="top">
-        <a-col :span="19">
-          <a-row>
-            <a-col :span="24">
-              <ul class="hashHeader">
-                <li>
-                  <img src="@/assets/image/hashrateBtc.png" alt="icon" />
-                </li>
-                <li>{{ power.name }}</li>
-                <li>合约限期</li>
-                <li>{{ power.constract_date_num }}天</li>
-              </ul>
-            </a-col>
-          </a-row>
-          <a-row class="hashBody">
-            <a-col :span="8">
-              <ul>
-                <li>单份价格</li>
-                <li style="color:#ffab32">
-                  <span
-                    v-for="(deposit, index) in power.deposit_arr"
-                    :key="deposit.name"
-                    style="display: inline-block"
-                  >
-                    <span v-show="index != 0">&nbsp;=&nbsp;</span>
-                    <span>{{ deposit.value }}</span>
-                    <small>{{ deposit.name }}</small>
-                  </span>
-                </li>
-              </ul>
-            </a-col>
-            <a-col :span="8">
-              <ul>
-                <li>单份合约算力</li>
-                <li>{{ power.unit_power }}</li>
-              </ul>
-            </a-col>
-            <a-col :span="8">
-              <ul>
-                <li>日挖矿收益</li>
-                <li>约0.18USD/份</li>
-              </ul>
-            </a-col>
-          </a-row>
-          <a-row class="hashBody">
-            <a-col :span="8">
-              <ul>
-                <li>剩余算力</li>
-                <li>{{ mult(power.base_power, power.num_left) }}T</li>
-              </ul>
-            </a-col>
-            <a-col :span="8">
-              <ul>
-                <li>单次下单限额</li>
-                <li>{{ power.once_limit }}T</li>
-              </ul>
-            </a-col>
-            <a-col :span="8">
-              <ul>
-                <li>开挖时间</li>
-                <li>{{ power.time_income }}</li>
-              </ul>
-            </a-col>
-          </a-row>
-        </a-col>
-        <a-col :span="5">
-          <a-row class="showDetail">
-            <a-col :span="24">
-              <!-- <a href="#">查看详情 ></a> -->
-              <router-link
-                to="/hashrateMarket/hashrateShop/contractDetail"
-                @click.native="setSingleList(index)"
-              >查看详情 ></router-link>
-            </a-col>
-          </a-row>
-          <a-row class="charge">
-            <a-col :span="24">
-              <a-button v-show="mult(power.base_power, power.num_left) > 0" size="large" block>
+  <a-spin :spinning="spinning" :delay="200">
+    <div class="hashContainer">
+      <div class="hashContent" v-for="(power, index) in powerList" :key="power.machine_id">
+        <a-row type="flex" justify="center" align="top">
+          <a-col :span="19">
+            <a-row>
+              <a-col :span="24">
+                <ul class="hashHeader">
+                  <li>
+                    <img src="@/assets/image/hashrateBtc.png" alt="icon" />
+                  </li>
+                  <li>{{ power.name }}</li>
+                  <li>合约限期</li>
+                  <li>{{ power.constract_date_num }}天</li>
+                </ul>
+              </a-col>
+            </a-row>
+            <a-row class="hashBody">
+              <a-col :span="8">
+                <ul>
+                  <li>单份价格</li>
+                  <li style="color:#ffab32">
+                    <span
+                      v-for="(deposit, index) in power.deposit_arr"
+                      :key="deposit.name"
+                      style="display: inline-block"
+                    >
+                      <span v-show="index != 0">&nbsp;=&nbsp;</span>
+                      <span>{{ deposit.value }}</span>
+                      <small>{{ deposit.name }}</small>
+                    </span>
+                  </li>
+                </ul>
+              </a-col>
+              <a-col :span="8">
+                <ul>
+                  <li>单份合约算力</li>
+                  <li>{{ power.unit_power }}</li>
+                </ul>
+              </a-col>
+              <a-col :span="8">
+                <ul>
+                  <li>日挖矿收益</li>
+                  <li>约0.18USD/份</li>
+                </ul>
+              </a-col>
+            </a-row>
+            <a-row class="hashBody">
+              <a-col :span="8">
+                <ul>
+                  <li>剩余算力</li>
+                  <li>{{ mult(power.base_power, power.num_left) }}T</li>
+                </ul>
+              </a-col>
+              <a-col :span="8">
+                <ul>
+                  <li>单次下单限额</li>
+                  <li>{{ power.once_limit }}T</li>
+                </ul>
+              </a-col>
+              <a-col :span="8">
+                <ul>
+                  <li>开挖时间</li>
+                  <li>{{ power.time_income }}</li>
+                </ul>
+              </a-col>
+            </a-row>
+          </a-col>
+          <a-col :span="5">
+            <a-row class="showDetail">
+              <a-col :span="24">
+                <!-- <a href="#">查看详情 ></a> -->
                 <router-link
-                  to="/hashrateMarket/hashrateShop/orderDetail"
+                  to="/hashrateMarket/hashrateShop/contractDetail"
                   @click.native="setSingleList(index)"
-                >立即购买</router-link>
-              </a-button>
-              <a-button
-                v-show="mult(power.base_power, power.num_left) <= 0"
-                class="disabled"
-                size="large"
-                block
-                disabled
-              >已售罄</a-button>
-            </a-col>
-          </a-row>
-        </a-col>
-      </a-row>
+                >查看详情 ></router-link>
+              </a-col>
+            </a-row>
+            <a-row class="charge">
+              <a-col :span="24">
+                <a-button v-show="mult(power.base_power, power.num_left) > 0" size="large" block>
+                  <router-link
+                    to="/hashrateMarket/hashrateShop/orderDetail"
+                    @click.native="setSingleList(index)"
+                  >立即购买</router-link>
+                </a-button>
+                <a-button
+                  v-show="mult(power.base_power, power.num_left) <= 0"
+                  class="disabled"
+                  size="large"
+                  block
+                  disabled
+                >已售罄</a-button>
+              </a-col>
+            </a-row>
+          </a-col>
+        </a-row>
+      </div>
     </div>
-  </div>
+  </a-spin>
 </template>
 
 <script>
@@ -108,13 +110,16 @@ export default {
   data() {
     return {
       powerList: [], //获取算力列表
+      spinning: false, //  数据加载loading
     };
   },
   created() {
+    this.spinning = true;
     //获取算力列表
     getPowerList().then(resp => {
       // console.log(resp.datas.machine_list);
       this.powerList = resp.datas.machine_list;
+      this.spinning = false;
     });
   },
   computed: {

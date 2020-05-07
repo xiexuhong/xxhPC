@@ -2,27 +2,27 @@
   <div class="contractItemContainer">
     <div class="contractItemChoose">
       <ul>
-        <!-- TODO 接口未添加筛选参数，功能未实现 -->
         <li>
           <label class="chooseTitle">矿机类型:</label>
-          <a-radio-group v-model="chioce.type">
-            <a-radio-button value="all">全部</a-radio-button>
+          <a-radio-group v-model="chioce.type" @change="onChoiceChange">
+            <a-radio-button value="ALL">全部</a-radio-button>
             <a-radio-button value="PT">单挖</a-radio-button>
             <a-radio-button value="SW">双挖</a-radio-button>
           </a-radio-group>
         </li>
         <li>
           <label class="chooseTitle">合约状态:</label>
-          <a-radio-group v-model="chioce.workType">
-            <a-radio-button value="all">全部</a-radio-button>
-            <a-radio-button value="YCX">已撤销</a-radio-button>
-            <a-radio-button value="ZRCG">转让成功</a-radio-button>
+          <a-radio-group v-model="chioce.workType" @change="onChoiceChange">
+            <a-radio-button value="ALL">全部</a-radio-button>
+            <a-radio-button value="KW">开挖</a-radio-button>
+            <a-radio-button value="DW">待挖</a-radio-button>
+            <a-radio-button value="TZ">停租</a-radio-button>
           </a-radio-group>
         </li>
         <li>
-          <label class="chooseTitle">锁定期限:</label>
-          <a-radio-group v-model="chioce.workType">
-            <a-radio-button value="all">全部</a-radio-button>
+          <label class="chooseTitle">合约周期:</label>
+          <a-radio-group v-model="chioce.regularDateNum" @change="onChoiceChange">
+            <a-radio-button value="ALL">全部</a-radio-button>
             <a-radio-button value="30">30天</a-radio-button>
             <a-radio-button value="90">90天</a-radio-button>
             <a-radio-button value="180">180天</a-radio-button>
@@ -35,7 +35,11 @@
         :columns="columns"
         :dataSource="datas"
         :rowKey="record => record.id"
-        :pagination="{ total: totalNum }"
+        :pagination="{
+          total: totalNum,
+          onChange: onPageChange,
+        }"
+        :loading="tableLoading"
       >
         <popover slot="totalHashrate" slot-scope="text, record" :power="record" :num="record.num">
           <span class="totalHashrate">{{ mult(record.computingPower, record.num) }} T</span>
@@ -70,76 +74,113 @@
 </template>
 
 <script>
-import popover from '@/components/popover';
-import { myUndertakeList } from '@/script/api';
-import { mult } from '@/script/utils';
-import { Base64 } from 'js-base64';
+import popover from "@/components/popover";
+import { myUndertakeList } from "@/script/api";
+import { mult } from "@/script/utils";
+import { Base64 } from "js-base64";
 export default {
   components: {
-    popover,
+    popover
   },
   data() {
     return {
       chioce: {
         //  筛选选项
-        type: 'all', //  矿机类型
-        workType: 'all', //  合约状态
+        type: "ALL", //  矿机类型
+        workType: "ALL", //  合约状态
+        regularDateNum: "ALL"
       },
       datas: [], //  表格数据
       columns: [], //  表头
       totalNum: 0, //  总数据
+      tableLoading: false // 表格加载
     };
   },
   created() {
+    this.tableLoading = true;
     const columns = [
       {
-        title: '名称',
-        dataIndex: 'name',
+        title: "名称",
+        dataIndex: "name"
       },
       {
-        title: '金额',
-        dataIndex: 'goods_deposit',
-        scopedSlots: { customRender: 'goodsDeposit' },
+        title: "金额",
+        dataIndex: "goods_deposit",
+        scopedSlots: { customRender: "goodsDeposit" }
       },
       {
-        title: '到手总算力',
-        dataIndex: 'totalHashrate',
-        scopedSlots: { customRender: 'totalHashrate' },
+        title: "到手总算力",
+        dataIndex: "totalHashrate",
+        scopedSlots: { customRender: "totalHashrate" }
       },
       {
-        title: '合约期限',
-        dataIndex: 'regular_date_num',
-        scopedSlots: { customRender: 'regularDateNum' },
+        title: "合约期限",
+        dataIndex: "regular_date_num",
+        scopedSlots: { customRender: "regularDateNum" }
       },
       {
-        title: '合约状态',
-        dataIndex: 'state_format',
+        title: "合约状态",
+        dataIndex: "state_format"
       },
       {
-        title: '开挖时间',
-        dataIndex: 'time_income',
+        title: "开挖时间",
+        dataIndex: "time_income"
       },
       {
-        title: '下单时间',
-        dataIndex: 'time_creat',
+        title: "下单时间",
+        dataIndex: "time_creat"
       },
       {
-        title: '操作',
-        dataIndex: 'action',
-        scopedSlots: { customRender: 'action' },
-      },
+        title: "操作",
+        dataIndex: "action",
+        scopedSlots: { customRender: "action" }
+      }
     ];
     this.columns = columns;
     myUndertakeList().then(resp => {
       console.log(resp);
       this.datas = resp.datas.lists;
       this.totalNum = resp.datas.totalNum;
+      this.tableLoading = false;
     });
   },
   computed: {
     mult: () => mult,
-    Base64: () => Base64,
+    Base64: () => Base64
   },
+  methods: {
+     //  筛选数据
+    onChoiceChange() {
+      this.tableLoading = true;
+      //  获取选项发送请求，获取数据
+      myUndertakeList({
+        page: '1',
+        isBhpPos: this.chioce.type,
+        state: this.chioce.workType,
+        regularDateNum: this.chioce.regularDateNum
+      }).then(resp => {
+        this.datas = resp.datas.lists;
+        // console.log(this.datas);
+        this.tableLoading = false;
+      });
+    },
+    //  页码变化
+    onPageChange(page) {
+      this.tableLoading = true;
+      // this.page = page;
+      //  获取选项发送请求，获取数据
+      myUndertakeList({
+        page: page,
+        isBhpPos: this.chioce.type,
+        state: this.chioce.workType,
+        regularDateNum: this.chioce.regularDateNum
+      }).then(resp => {
+        this.datas = resp.datas.lists;
+        // console.log(this.datas);
+        this.tableLoading = false;
+      });
+    },
+  }
 };
 </script>
 

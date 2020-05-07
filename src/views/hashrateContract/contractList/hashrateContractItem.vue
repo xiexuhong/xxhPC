@@ -5,7 +5,7 @@
         <li>
           <label class="chooseTitle">矿机类型:</label>
           <a-radio-group v-model="chioce.type" @change="onChoiceChange">
-            <a-radio-button value="all">全部</a-radio-button>
+            <a-radio-button value="ALL">全部</a-radio-button>
             <a-radio-button value="PT">单挖</a-radio-button>
             <a-radio-button value="SW">双挖</a-radio-button>
           </a-radio-group>
@@ -13,7 +13,7 @@
         <li>
           <label class="chooseTitle">合约状态:</label>
           <a-radio-group v-model="chioce.workType" @change="onChoiceChange">
-            <a-radio-button value="all">全部</a-radio-button>
+            <a-radio-button value="ALL">全部</a-radio-button>
             <a-radio-button value="KW">在挖</a-radio-button>
             <a-radio-button value="DW">待挖</a-radio-button>
             <a-radio-button value="TZ">退单</a-radio-button>
@@ -22,7 +22,7 @@
         <li>
           <label class="chooseTitle">锁定期限:</label>
           <a-radio-group v-model="chioce.dateType" @change="onChoiceChange">
-            <a-radio-button value="all">全部</a-radio-button>
+            <a-radio-button value="ALL">全部</a-radio-button>
             <a-radio-button value="30">30天</a-radio-button>
             <a-radio-button value="90">90天</a-radio-button>
             <a-radio-button value="180">180天</a-radio-button>
@@ -31,7 +31,7 @@
         <li>
           <label class="chooseTitle">订单类型:</label>
           <a-radio-group v-model="chioce.payType" @change="onChoiceChange">
-            <a-radio-button value="all">全部</a-radio-button>
+            <a-radio-button value="ALL">全部</a-radio-button>
             <a-radio-button value="P">购买</a-radio-button>
             <a-radio-button value="S">承接</a-radio-button>
           </a-radio-group>
@@ -46,6 +46,7 @@
           pageSizeOptions: ['10', '20', '30', '40'],
           showSizeChanger: true,
           onChange: onPageChange,
+          onShowSizeChange: onShowPageSizeChange,
           total: totalNum,
         }"
         :rowKey="record => record.id"
@@ -112,6 +113,7 @@ export default {
       datas: [], //  单元格数据
       columns: [], //  表头
       totalNum: 0, //  列表总数
+      pageSize: 0, //  每页显示条数
       chioce: {
         //  筛选选项
         type: 'all', //  矿机类型
@@ -156,9 +158,8 @@ export default {
         dataIndex: 'time_income',
       },
       {
-        // TODO 本页面没有该字段，APP的该字段在每一条的详情页（另一条请求）
         title: '下单时间',
-        dataIndex: 'time_creat',
+        dataIndex: 'operateTime',
       },
       {
         title: '操作',
@@ -192,6 +193,7 @@ export default {
       //  获取选项发送请求，获取数据
       getContractList({
         page: '1',
+        pageSize: this.pageSize ? this.pageSize : '',
         type: this.chioce.type,
         work_type: this.chioce.workType,
         date_type: this.chioce.dateType,
@@ -203,13 +205,31 @@ export default {
       });
     },
     //  页码变化
-    onPageChange(page) {
+    onPageChange(page, pagesize) {
       this.tableLoading = true;
-      // this.page = page;
+      this.pageSize = pageSize;
       //  获取选项发送请求，获取数据
-      // TODO 是否需要pagesize
       getContractList({
         page: page,
+        pageSize: pagesize,
+        type: this.chioce.type,
+        work_type: this.chioce.workType,
+        date_type: this.chioce.dateType,
+        pay_type: this.chioce.payType,
+      }).then(resp => {
+        this.datas = resp.datas.rented_list;
+        // console.log(this.datas);
+        this.tableLoading = false;
+      });
+    },
+    //  每页显示条数
+    onShowPageSizeChange(current, size) {
+      this.tableLoading = true;
+      this.pageSize = size;
+      //  获取选项发送请求，获取数据
+      getContractList({
+        page: '1',
+        pageSize: size,
         type: this.chioce.type,
         work_type: this.chioce.workType,
         date_type: this.chioce.dateType,
