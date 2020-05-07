@@ -265,8 +265,9 @@ export const getContractList = data => post('/app2/index.php?act=order&op=mine',
 
 /**
  * @method 获取协议
+ * @param type -- 哪一条协议
  */
-export const getAgreement = data => post('/index.php?act=power&op=contract', data);
+export const getContract = data => post('/index.php?act=power&op=contract', data);
 
 /**
  * @method 获取剩余算力
@@ -321,11 +322,13 @@ export const reOrder = data => post('/app2/index.php?act=order&op=renewal', data
 /**
  * @method 转让列表
  * @param page -- 页数
+ * @param isBhpPos -- 矿机类型
+ * @param state -- 合约状态
  */
 export const myTransferList = data => post('/index.php?act=transfer&op=myTransferList', data);
 
 /**
- * @method 转让列表
+ * @method 确认撤销
  * @param page -- 页数
  */
 export const cancelTransfer = data => post('/index.php?act=transfer&op=cancelTransfer', data);
@@ -333,6 +336,9 @@ export const cancelTransfer = data => post('/index.php?act=transfer&op=cancelTra
 /**
  * @method 承接列表
  * @param page -- 页数
+ * @param isBhpPos -- 矿机类型
+ * @param state -- 合约状态
+ * @param regularDateNum -- 合约周期
  */
 export const myUndertakeList = data => post('/index.php?act=transfer&op=myUndertakeList', data);
 

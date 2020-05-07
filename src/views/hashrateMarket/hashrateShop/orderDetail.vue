@@ -73,10 +73,10 @@
                   <span>{{ power.time_income }}</span>
                 </a-col>
                 <a-col :span="6">
-                  <span class="contentTitle">算力來源:</span>
+                  <!-- <span class="contentTitle">算力來源:</span>
                   <span>京都資本</span>
-                  <!-- TODO  本页面没有算力来源字段 -->
-                  <!-- <span>{{ power.power_node_name }}</span>   undefined -->
+                  TODO  暂时不要
+                  <span>{{ power.power_node_name }}</span>   undefined-->
                 </a-col>
                 <a-col :span="5"></a-col>
               </a-row>
@@ -151,13 +151,18 @@
               </div>
             </div>
             <div class="hashrateAgreement">
-              <!-- TODO 协议跳转问题 -->
               <p>
                 <span>
                   <a-checkbox :indeterminate="indeterminate" @click="taggleIndeterminate">
                     我同意
-                    <a href>《【運算力】委託管理服務協議》</a>/
-                    <a href>《雲算力服務銷售協議》</a>
+                    <router-link
+                      target="_blank"
+                      :to="{path: '/contract', query: {type: '3'}}"
+                    >《【運算力】委託管理服務協議》</router-link>/
+                    <router-link
+                      target="_blank"
+                      :to="{path: '/contract', query: {type: '2'}}"
+                    >《雲算力服務銷售協議》</router-link>
                   </a-checkbox>
                 </span>
               </p>
@@ -172,10 +177,10 @@
                   width="350px"
                   @ok="confirmCharge"
                 >
-                  <!-- TODO 密码验证未做 -->
+                  <!-- TODO 图形验证 -->
                   <p>交易密码</p>
                   <p>
-                    <a-input />
+                    <a-input-password v-model="tradePassword" />
                   </p>
                   <router-link to="/account/forget_trade_pwd">
                     <p>忘记密码？</p>
@@ -192,7 +197,7 @@
 
 <script>
 import popover from '@/components/popover';
-import { getAgreement, getSurplusPower, rentPower } from '@/script/api';
+import { getSurplusPower, rentPower, getContract } from '@/script/api';
 import { mult } from '@/script/utils';
 import { mapGetters } from 'vuex';
 export default {
@@ -210,14 +215,10 @@ export default {
       unitPriceNum: 0, //  选择的交互方式
       surplusPower: [{ payment_avail: '' }, { payment_avail: '' }], //  可用余额,解决属性初次加载不存在的报错
       surplusPowerNum: [], //  可用余额依据不同选择方式的具体数额
+      tradePassword: '', //  交易密码
     };
   },
   created() {
-    //  获取协议
-    // getAgreement({ type: '1' }).then(resp => {
-    //   //  跨域
-    //   console.log(resp);
-    // });
     //  获取剩余算力，并赋值初始化
     getSurplusPower({ type: 'rent' }).then(resp => {
       // console.log(resp);
@@ -233,10 +234,6 @@ export default {
     mult: () => mult,
   },
   methods: {
-    // handleClickChange(visible) {
-    //   //点击气泡卡隐藏/显示
-    //   this.clicked = visible;
-    // },
     taggleIndeterminate() {
       //设置协议复选框选中状态样式
       this.indeterminate = !this.indeterminate;
@@ -274,23 +271,22 @@ export default {
     },
     //  确认购买
     confirmCharge() {
-      //交易密码验证            可能需要专门提出来写
-      if (true) return false;
-
       //提交购买
       rentPower({
         machine_id: this.power.machine_id, // 矿机id
         machine_type: this.power.type, // 矿机类型
         num: this.chargeAmount, // 租用数量
         payment_code: this.currencyValue, // 支付方式
-      }).then(resp => {
-        console.log(resp);
-        this.$message.info('恭喜您购买成功！！！');
-        //  购买成功，弹出交易框
-        this.chargeVisible = false;
-        //提交成功之后，返回到上个页面
-        this.$router.go(-1);
-      });
+      })
+        .then(resp => {
+          console.log(resp);
+          this.$message.info('恭喜您购买成功！！！');
+          //提交成功之后，返回到上个页面
+          this.$router.go(-1);
+        })
+        .finally(() => {
+          this.chargeVisible = false;
+        });
     },
   },
 };

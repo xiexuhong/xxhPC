@@ -1,85 +1,84 @@
 <template>
   <!-- 算力市场/算力商城首页 -->
-  <div class="hashContainer">
-    <div class="hashContent" v-show="totalNum == 0">算力上架中...</div>
-    <div class="hashContent" v-for="item in insuranceList" :key="item.id">
-      <a-row type="flex" justify="center" align="top">
-        <a-col :span="19">
-          <a-row>
-            <a-col :span="24">
-              <ul class="hashHeader">
-                <li>{{ item.name }}</li>
-                <li>合约周期</li>
-                <li>{{ item.period }}天</li>
-              </ul>
-            </a-col>
-          </a-row>
-          <a-row class="hashBody">
-            <a-col :span="8">
-              <ul>
-                <li>起购金额（每T）</li>
-                <li style="color:#ffab32">
-                  {{ item.price.final_price }}
-                  <small>{{ currency }}</small>
-                  / {{ item.price.final_usdt_price }}
-                  <small>USDT</small>
-                </li>
-              </ul>
-            </a-col>
-            <a-col :span="6">
-              <ul>
-                <li>剩余份额</li>
-                <li>{{ item.inventory }}份</li>
-              </ul>
-            </a-col>
-            <a-col :span="5">
-              <ul>
-                <li>止损率</li>
-                <li>{{ item.low_limit }}%</li>
-              </ul>
-            </a-col>
-            <a-col :span="5">
-              <ul>
-                <li>止赢率</li>
-                <li>{{ item.hign_limit }}%</li>
-              </ul>
-            </a-col>
-          </a-row>
-        </a-col>
-        <a-col :span="5">
-          <a-row class="showDetail">
-            <a-col :span="24">
-              <!-- <a href="#">查看详情 ></a> -->
-              <router-link
-                to="/hashrateMarket/valueAddService/contractDetail"
-                @click.native="onSingleInsurance(item)"
-                >查看详情 ></router-link
-              >
-            </a-col>
-          </a-row>
-          <a-row class="charge">
-            <a-col :span="24">
-              <a-button v-show="item.inventory > 0" size="large" block>
+  <a-spin :spinning="spinning" :delay="200">
+    <div class="hashContainer">
+      <div class="hashContent" v-show="totalNum == 0">算力上架中...</div>
+      <div class="hashContent" v-for="item in insuranceList" :key="item.id">
+        <a-row type="flex" justify="center" align="top">
+          <a-col :span="19">
+            <a-row>
+              <a-col :span="24">
+                <ul class="hashHeader">
+                  <li>{{ item.name }}</li>
+                  <li>合约周期</li>
+                  <li>{{ item.period }}天</li>
+                </ul>
+              </a-col>
+            </a-row>
+            <a-row class="hashBody">
+              <a-col :span="8">
+                <ul>
+                  <li>起购金额（每T）</li>
+                  <li style="color:#ffab32">
+                    {{ item.price.final_price }}
+                    <small>{{ currency }}</small>
+                    / {{ item.price.final_usdt_price }}
+                    <small>USDT</small>
+                  </li>
+                </ul>
+              </a-col>
+              <a-col :span="6">
+                <ul>
+                  <li>剩余份额</li>
+                  <li>{{ item.inventory }}份</li>
+                </ul>
+              </a-col>
+              <a-col :span="5">
+                <ul>
+                  <li>止损率</li>
+                  <li>{{ item.low_limit }}%</li>
+                </ul>
+              </a-col>
+              <a-col :span="5">
+                <ul>
+                  <li>止赢率</li>
+                  <li>{{ item.hign_limit }}%</li>
+                </ul>
+              </a-col>
+            </a-row>
+          </a-col>
+          <a-col :span="5">
+            <a-row class="showDetail">
+              <a-col :span="24">
+                <!-- <a href="#">查看详情 ></a> -->
                 <router-link
-                  to="/hashrateMarket/valueAddService/orderDetail"
+                  to="/hashrateMarket/valueAddService/contractDetail"
                   @click.native="onSingleInsurance(item)"
-                  >立即购买</router-link
-                >
-              </a-button>
-              <a-button
-                v-show="!item.inventory || item.inventory <= 0"
-                class="disabled"
-                size="large"
-                block
-                disabled
-                >已售罄</a-button
-              >
-            </a-col>
-          </a-row>
-        </a-col>
-      </a-row>
+                >查看详情 ></router-link>
+              </a-col>
+            </a-row>
+            <a-row class="charge">
+              <a-col :span="24">
+                <a-button v-show="item.inventory > 0" size="large" block>
+                  <router-link
+                    to="/hashrateMarket/valueAddService/orderDetail"
+                    @click.native="onSingleInsurance(item)"
+                  >立即购买</router-link>
+                </a-button>
+                <a-button
+                  v-show="!item.inventory || item.inventory <= 0"
+                  class="disabled"
+                  size="large"
+                  block
+                  disabled
+                >已售罄</a-button>
+              </a-col>
+            </a-row>
+          </a-col>
+        </a-row>
+      </div>
     </div>
-  </div>
+  </a-spin>
 </template>
 
 <script>
@@ -95,9 +94,11 @@ export default {
       insuranceList: [], //  增值服务详情列表
       totalNum: 0, //  增值服务详情列表
       currency: '', //  币种
+      spinning: false, //  数据加载loading
     };
   },
   created() {
+    // this.spinning = true;
     //  TODO 假数据
     this.insuranceList = indexData.datas.data;
     this.totalNum = indexData.datas.total;
@@ -107,6 +108,7 @@ export default {
     // getInsuranceList().then(resp => {
     //   // console.log(resp.datas.rented_list);
     //   this.insuranceList = resp.datas.rented_list;
+    // this.spinning = false
     // });
   },
   methods: {

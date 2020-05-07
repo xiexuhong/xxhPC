@@ -79,6 +79,7 @@
               pageSizeOptions: ['10', '20', '30', '40'],
               showSizeChanger: true,
             }"
+            :loading="tableLoading"
           >
             <span class="state" slot="state" style="color:#1EA584">挖矿中</span>
           </a-table>
@@ -281,15 +282,18 @@ export default {
     return {
       datass, //  数据列表
       columns, //  表格头
+      tableLoading: false, //  表格loading
     };
   },
   created() {
+    // this.tableLoading = true
     //TODO 假数据
     this.data = datas.datas;
     // console.log(Base64.decode(this.$route.query.ins_order_id));
     // myInsuranceDetail({ ins_order_id: Base64.decode(this.$route.query.ins_order_id) }).then(resp => {
     //   console.log(resp);
     //   this.datas = resp.datas;
+    // this.tableLoading = false
     // });
   },
 };

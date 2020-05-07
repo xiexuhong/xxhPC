@@ -37,11 +37,11 @@
                 <span class="key">單份合約算力:</span>
                 <span class="value">{{ power.unit_power }}</span>
               </li>
-              <li>
+              <!-- <li>
                 <span class="key">日挖礦收益:</span>
-                <!-- TODO 该字段没找到 -->
+                TODO 暂时不要
                 <span class="value">约0.18USD/份</span>
-              </li>
+              </li>-->
               <li>
                 <span class="key">剩餘算力:</span>
                 <span class="value">{{ mult(power.base_power, power.num_left) }}T</span>
