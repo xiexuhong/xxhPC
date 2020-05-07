@@ -2,7 +2,7 @@
     #messageList
         a-list(itemLayout="horizontal" :dataSource="list")
             a-list-item(slot="renderItem" slot-scope="item, index" :rowKey="item.article_id")
-                a.detail(slot="extra") 查看详情
+                a.detail(slot="extra" @click="goDetail(item.article_id)") 查看详情
                 a-list-item-meta(:title="item.article_title")
                     .content(slot="description")
                         .text {{item.article_abstract}}
@@ -51,6 +51,14 @@ export default {
     pageChange(curpage) {
       this.curpage = curpage;
       this.$store.dispatch('requestMessageList', { curpage });
+    },
+    goDetail(id) {
+      this.$router.push({
+        path: '/messageDetail',
+        query: {
+          id,
+        },
+      });
     },
   },
 };
