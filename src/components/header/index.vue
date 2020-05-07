@@ -41,10 +41,9 @@
         a-menu-item(key="/")
           a-icon(type="pie-chart")
           span 首页
-        a-menu-item(key="2")
+        a-menu-item(key="/hashrateMarket")
           a-icon(type="desktop")
-          span 
-            router-link(to="/hashrateMarket") 算力市场
+          span 算力市场
         a-menu-item(key="3")
           a-icon(type="inbox")
           span 资讯
@@ -54,6 +53,30 @@
         a-menu-item(key="/about")
           a-icon(type="pie-chart")
           span 关于我们
+        a-sub-menu(key="assets")
+          span(slot="title")
+            a-icon(type="user")
+            span 我的资产
+          a-menu-item(key="/asset/assetoverview") 资产总览
+          a-menu-item(key="/asset/available_assets") 可用资产
+          a-menu-item(key="/asset/digiccy") 数字货币
+          a-menu-item(key="/asset/assetbills") 资产账单
+        a-sub-menu(key="hashrateContract")
+          span(slot="title")
+            a-icon(type="notification")
+            span 我的账户
+          a-menu-item(key="/hashrateContract/contractList") 我的合约
+          a-menu-item(key="/hashrateContract/hashrateIncome") 算力收益
+          a-menu-item(key="/hashrateContract/hashrateTransfer") 算力转让
+        a-sub-menu(key="account")
+          span(slot="title")
+            a-icon(type="laptop")
+            span 我的账户
+          a-menu-item(key="/account/security") 账户&安全
+          a-menu-item(key="/account/bank_card") 银行卡管理
+          a-menu-item(key="/account/get_coin_addr") 提币地址管理
+          a-menu-item(key="/account/power_age") 算龄
+          a-menu-item(key="/invite") 推荐奖励
 </template>
 
 <script>
