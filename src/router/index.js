@@ -28,7 +28,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(r => r.meta.requireAuth)) {
-    if (Vue.ls.get('user').token) {
+    if (Vue.ls.get('user')?.token) {
       //判断是否已经登录
       next();
     } else {

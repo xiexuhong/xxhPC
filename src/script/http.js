@@ -15,14 +15,14 @@ http.interceptors.request.use(
     store.commit('changeLoadingStatus', true);
     if (config.method === 'post') {
       const data = config.data || {};
-      data['token'] = Vue.ls.get('user') && Vue.ls.get('user').token;
+      data['token'] = Vue.ls.get('user')?.token;
       data['app_version'] = '1.4.20';
       data['lang'] = Vue.ls.get('localeLanguage');
       config.data = data;
     }
     if (config.method === 'get') {
       const data = config.params || {};
-      data['token'] = Vue.ls.get('user') && Vue.ls.get('user').token;
+      data['token'] = Vue.ls.get('user')?.token;
       data['app_version'] = '1.4.20';
       data['lang'] = Vue.ls.get('localeLanguage');
       config.params = data;

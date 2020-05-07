@@ -21,7 +21,7 @@ export default {
   },
   watch: {
     lang(val) {
-      this.init();
+      location.reload();
     },
   },
   methods: {

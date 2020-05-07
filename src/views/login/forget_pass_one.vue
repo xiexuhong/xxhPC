@@ -4,7 +4,7 @@
     .form
       a-form(:form="form" @submit="next")
         a-form-item
-          a-input(v-decorator="['userName',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
+          a-input(v-decorator="['userName',{ rules: [{ required: true, message: 'Please input your username!' },{validator:validPhoneNumber}] },]" placeholder="Username")
             span.country(slot="addonBefore")
               CountrySelect
             a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
@@ -20,7 +20,9 @@
 import { mapGetters } from 'vuex';
 import CountrySelect from './countrySelect';
 import Captcha from 'captcha-mini';
+import { validMixin } from '@/mixins/validMixin';
 export default {
+  mixins: [validMixin],
   components: { CountrySelect },
   data() {
     return {

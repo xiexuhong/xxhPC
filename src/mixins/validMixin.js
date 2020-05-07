@@ -26,5 +26,12 @@ export const validMixin = {
       }
       callback();
     },
+    validPhoneNumber(rule, value, callback) {
+      if (value && !validPhone(value, this.country.short)) {
+        callback('请输入正确得手机号');
+      } else {
+        callback();
+      }
+    },
   },
 };

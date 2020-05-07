@@ -59,6 +59,12 @@ export const resetPassword = data => post('/index.php?act=user&op=findPwd', data
 export const getMessageList = data => post('/index.php?act=article&op=index', data);
 
 /**
+ * @method 获取消息详情
+ * @param article_id -- 文章id
+ */
+export const getMessageDetail = data => post('/index.php?act=article&op=getArticleInfoExt', data);
+
+/**
  * @method 消息全部已读
  */
 export const readAllMessage = () => post('/index.php?act=article&op=readAll');

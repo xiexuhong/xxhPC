@@ -4,7 +4,7 @@
     .form
       a-form(:form="form" @submit="login")
         a-form-item
-          a-input(v-decorator="['account',{ rules: [{ required: true, message: 'Please input your account!' }] },]" placeholder="account")
+          a-input(v-decorator="['account',{ rules: [{ required: true, message: 'Please input your account!' },{validator:validPhoneNumber}] },]" placeholder="account")
             span.country(slot="addonBefore")
               CountrySelect
             a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
@@ -24,7 +24,9 @@ import { mapGetters, mapMutations } from 'vuex';
 import CountrySelect from './countrySelect';
 import { extend } from '@/script/utils';
 import { login } from '@/script/api';
+import { validMixin } from '@/mixins/validMixin';
 export default {
+  mixins: [validMixin],
   components: { CountrySelect },
   data() {
     return {};

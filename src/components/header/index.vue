@@ -5,13 +5,15 @@
         .logo
           img(src="@/assets/image/logo.png")
         ul.menu
-          router-link(to="/")
+          router-link(to="/" :class="{actice:getActice('home')}")
             li 首页
-          router-link(to="/hashrateMarket")
+          router-link(to="/hashrateMarket" :class="{actice:getActice('hashrateMarket')}")
             li 算力市场
-          li 平台动态
-          li 帮助中心
-          router-link(to="/about")
+          router-link(to="/" :class="{actice:getActice('')}")
+            li 平台动态
+          router-link(to="/" :class="{actice:getActice('')}")
+            li 帮助中心
+          router-link(to="/about" :class="{actice:getActice('about')}")
             li 关于我们
       a-button(v-else type="primary" @click="toggleCollapsed")
         a-icon(:type="collapsed ? 'menu-unfold' : 'menu-fold'" )
@@ -98,6 +100,9 @@ export default {
   },
   mounted() {},
   methods: {
+    getActice(name) {
+      return this.$route.name === name;
+    },
     openMessage() {
       console.log(this.visible);
     },
@@ -146,6 +151,12 @@ export default {
       }
       .menu {
         display: flex;
+        a {
+          color: #fff;
+        }
+        .actice {
+          color: #1890ff;
+        }
         li {
           padding: 0 10px;
           cursor: pointer;
@@ -162,6 +173,9 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+    .ant-btn-link {
+      color: #fff;
     }
     img {
       display: block;

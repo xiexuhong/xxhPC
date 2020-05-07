@@ -27,11 +27,7 @@ export default {
       return data ? data.countrys : [];
     },
   },
-  watch: {
-    lang(val) {
-      this.init();
-    },
-  },
+  watch: {},
   methods: {
     ...mapMutations(['changeCountry']),
     chooseCountry(data) {

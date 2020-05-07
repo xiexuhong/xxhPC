@@ -4,7 +4,7 @@
     .form
       a-form(:form="form" @submit="register")
         a-form-item
-          a-input(v-decorator="['account',{ rules: [{ required: true, message: 'Please input your username!' }] },]" placeholder="Username")
+          a-input(v-decorator="['account',{ rules: [{ required: true, message: 'Please input your username!' },{validator:validPhoneNumber}] },]" placeholder="Username")
             span.country(slot="addonBefore")
               CountrySelect
             a-icon(slot="prefix" type="user" style="color: rgba(0,0,0,.25)")
@@ -32,15 +32,15 @@ import { mapGetters, mapMutations } from 'vuex';
 import CountrySelect from './countrySelect';
 import { checkSmsCode, register } from '@/script/api';
 import { smsMixin } from '@/mixins/smsMixin';
+import { validMixin } from '@/mixins/validMixin';
 export default {
   components: { CountrySelect },
-  mixins: [smsMixin],
+  mixins: [smsMixin, validMixin],
   computed: {
     ...mapGetters(['country', 'deviceType']),
   },
   data() {
     return {
-      confirmDirty: false,
       isRead: true,
     };
   },
@@ -51,25 +51,6 @@ export default {
         const { account } = await this.form.validateFields(['account']);
         this.sendSms(account, 1);
       })();
-    },
-    handleConfirmBlur(e) {
-      const value = e.target.value;
-      this.confirmDirty = this.confirmDirty || !!value;
-    },
-    compareToFirstPassword(rule, value, callback) {
-      const form = this.form;
-      if (value && value !== form.getFieldValue('password')) {
-        callback('Two passwords that you enter is inconsistent!');
-      } else {
-        callback();
-      }
-    },
-    validateToNextPassword(rule, value, callback) {
-      const form = this.form;
-      if (value && this.confirmDirty) {
-        form.validateFields(['confirm'], { force: true });
-      }
-      callback();
     },
     register(e) {
       e.preventDefault();

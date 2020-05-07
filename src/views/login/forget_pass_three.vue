@@ -16,11 +16,12 @@
 <script>
 import { mapGetters } from 'vuex';
 import { resetPassword } from '@/script/api';
+import { validMixin } from '@/mixins/validMixin';
 export default {
+  mixins: [validMixin],
   data() {
     return {
       tel: '',
-      confirmDirty: false,
     };
   },
   computed: {
@@ -41,25 +42,6 @@ export default {
           this.$router.push('/login/login');
         }
       });
-    },
-    handleConfirmBlur(e) {
-      const value = e.target.value;
-      this.confirmDirty = this.confirmDirty || !!value;
-    },
-    compareToFirstPassword(rule, value, callback) {
-      const form = this.form;
-      if (value && value !== form.getFieldValue('password')) {
-        callback('Two passwords that you enter is inconsistent!');
-      } else {
-        callback();
-      }
-    },
-    validateToNextPassword(rule, value, callback) {
-      const form = this.form;
-      if (value && this.confirmDirty) {
-        form.validateFields(['confirm'], { force: true });
-      }
-      callback();
     },
   },
   beforeCreate() {

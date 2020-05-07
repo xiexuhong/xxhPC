@@ -32,3 +32,12 @@ export const deepClone = (data, weak = new WeakMap()) => {
  * 合并对象
  */
 export const extend = (target, ...args) => Object.assign(target, ...args);
+
+/**
+ * 删除html文本里面得脚本
+ */
+export const deleteScrip = html => {
+  const rep = /<script\b[^>]*>([\s\S]*?)<\/script>/gm;
+  const rep2 = /<base\b[^>]*>/gm;
+  return html?.replace(rep, '').replace(rep2, '');
+};
