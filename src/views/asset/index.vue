@@ -39,11 +39,15 @@ export default {
       this.$store.state.asset.currency_list = datas.currency;
       this.$store.state.asset.defaultcurrency = datas.default;
     });
+    payment({type:"recharge"}).then((res)=>{
+      const {datas} = res;
+      this.$store.state.asset.payment_list = datas.list;   
+      this.$store.state.asset.currency_limit = datas.currency_limit;       
+    })
     window.addEventListener("beforeunload",()=>{
         sessionStorage.setItem("store",JSON.stringify(this.$store.state))
     })
     if (sessionStorage.getItem("store") ) {
-        console.log(this.$store);
         this.$store.replaceState(Object.assign({}, this.$store.state,JSON.parse(sessionStorage.getItem("store"))));
         console.log(this.$store);
     }

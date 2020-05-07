@@ -183,7 +183,7 @@ export const withdraw = data => post('/index.php?act=wallet&op=addWithdrawCash',
  * @method 提现
  */
 
-export const payment = data => get('/index.php?act=payment&op=index', data);
+export const payment = data => post('/index.php?act=payment&op=index', data);
 
 /**
  * @method 支付方式

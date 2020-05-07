@@ -13,7 +13,7 @@
                 <a-form-model-item :label="$t('withdraw.withdraw02')">
                     <a-dropdown>
                       <a-menu slot="overlay">
-                          <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+                          <a-menu-item :key="index" v-for="(item,index) in payment_list" @click="checkcurrency(index)"><a-icon type="user" />{{item.currency}}</a-menu-item>
                       </a-menu>
                       <a-button>{{form.currency}}<a-icon type="down" /> </a-button>
                     </a-dropdown>
@@ -27,7 +27,19 @@
                     v-model="form.bankcard"
                 >
                     <a-select-option v-for="(item,index) of data" :key="index">
-                      {{item.bank_info.account_number}}
+                      <div v-if="item.is_withdraw == 0" :data-type='item.is_withdraw'>
+                        <div>
+                            <p>{{$t('withdraw.withdraw16')}}</p>
+                        </div>
+                      </div>
+                      <div v-else>
+                          <div :data-type="item.is_withdraw" v-if="item.bank_info.length>0" :id="item.bank_info[0].account_id">
+                            <a-icon type="credit-card" />&nbsp;&nbsp;
+                            <span>{{$t('withdraw.withdraw17')}}</span>                          
+                            {{item.bank_info[0].account_number}}
+                            {{item.bank_info[0].account_name}}
+                          </div>
+                      </div>
                     </a-select-option>
                 </a-select>
                 <span class="ant-form-text fontcolor" @click="addBankCard()">{{$t('withdraw.withdraw06')}}</span>
@@ -101,11 +113,11 @@ export default {
      })
   },
   computed: {
-    ...mapGetters(['currency_list','currency','lang','total','asset_list','available','deviceType']),
+    ...mapGetters(['payment_list','currency','lang','total','asset_list','available','deviceType']),
   },
   methods: {
     checkcurrency(index) {
-        this.form.currency = this.currency_list[index];
+        this.form.currency = this.payment_list[index].currency;
         this.$store.state.asset.currency = this.form.currency;
         for (var i = 0; i < this.list.length; i++) {
             if (this.form.currency == this.list[i].currency) {
@@ -196,5 +208,13 @@ export default {
     .ant-btn{
       margin-right: 15px;
     }
-}
+    .ant-input {
+    max-width: 280px;
+    margin-right: 15px;
+    }
+    .ant-select {
+      max-width: 280px;
+      margin-right: 15px;
+    }
+  }
 </style>

@@ -29,6 +29,9 @@
               <p>{{ item }}</p>
             </a-list-item>
           </a-list>
+          <a-form-model-item :label="publicdata.message">
+            <a-input v-model="message" />
+          </a-form-model-item>
         </section>
         <footer>
           <a-button type="primary" @click="confirmTransfer()">
@@ -87,6 +90,7 @@ export default {
       isSuccess:false,
       publicdata:{},
       rechargeAmount:'',
+      message:"",
       order:[]
     };
   },
@@ -131,7 +135,7 @@ export default {
       this.isConfirmTransfer = false;
       var data = {
         amount:this.rechargeAmount,
-        true_name:"张东升",
+        message:this.message,
         currency:this.currency,
         client:"PC"
       }
@@ -163,6 +167,9 @@ export default {
       }
       .ant-list-split .ant-list-header {
         border:none;
+      }
+      .ant-form-item {
+          margin: 12px 0;
       }
       footer{
         display: flex;
