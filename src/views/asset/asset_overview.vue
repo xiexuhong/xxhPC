@@ -59,6 +59,7 @@ import { setup } from '@/locales';
 import {mapState, mapGetters,mapMutations } from 'vuex';
 import { getAssetList,ownCurrency,changeCurrency } from '@/script/api';
 import 'v-charts/lib/style.css'
+import { log } from 'util';
 export default {
   data() {
     this.chartSettings = {
@@ -81,8 +82,7 @@ export default {
                   },
               ],
               globalCoord: false // 缺省为 false
-          }
-            
+          }            
       },
     }
   
@@ -167,7 +167,6 @@ export default {
       ];
     this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
     this.getData(0);
-    console.log(this.$t('myCome.myCome03'));
   },
   computed: {
     ...mapGetters(['currency_list','defaultcurrency','lang','total','asset_list','deviceType']),
@@ -191,47 +190,50 @@ export default {
   },
   methods: {
     checkcurrency(index) {
-      this.$store.state.asset.defaultcurrency = this.currency_list[index];
-      changeCurrency({currency:this.defaultcurrency}).then((res) => {
-          console.log(res);
-          this.columns1 = [
+      var _this = this;
+      _this.$store.state.asset.defaultcurrency = _this.currency_list[index];
+      changeCurrency({currency:_this.defaultcurrency}).then((res) => {
+          _this.columns1 = [
             {
-              title: this.$t('assetoverview.assetoverview11'),
+              title: _this.$t('assetoverview.assetoverview11'),
               dataIndex: 'coin',
               key: 'coin',
             },
             {
-              title: this.$t('assetoverview.assetoverview12'),
+              title: _this.$t('assetoverview.assetoverview12'),
               dataIndex: 'total',
               key: 'total',
             },
             {
-              title: this.$t('assetoverview.assetoverview13')+`(${this.defaultcurrency})`,
+              title: _this.$t('assetoverview.assetoverview13')+`(${_this.defaultcurrency})`,
               dataIndex: 'valuation',
               key: 'valuation',
             },
             {
-              title: this.$t('assetoverview.assetoverview14'),
+              title: _this.$t('assetoverview.assetoverview14'),
               dataIndex: 'available',
               key: 'available',
             },
             {
-              title: this.$t('assetoverview.assetoverview15'),
+              title: _this.$t('assetoverview.assetoverview15'),
               dataIndex: 'freeze',
               key: 'freeze',
             },
           ];
-          this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
-      });
-      getAssetList().then((res)=>{
+          _this.columns = _this.deviceType==='desktop'?_this.columns1:_this.columns2;
+      }).then(()=>{
+        getAssetList().then((res)=>{
         const {datas} = res;
         if(datas.hasOwnProperty('error')){
             return
         }
-        this.$store.state.asset.total = this.gettotal(datas.asset.asset_total,datas.balance.balance_total,datas.deposit.valuation,datas.total);
-        this.$store.state.asset.coin_list = this.getcoin_list(datas.asset.asset_list);
-        this.$store.state.asset.balance_list = this.getbalance_list(datas.balance.balance_list);
+        console.log(datas);
+        _this.$store.state.asset.total = _this.gettotal(datas.asset.asset_total,datas.balance.balance_total,datas.deposit.valuation,datas.total);
+        _this.$store.state.asset.coin_list = _this.getcoin_list(datas.asset.asset_list);
+        _this.$store.state.asset.balance_list = _this.getbalance_list(datas.balance.balance_list);
       });
+      })
+      
     }, 
     getData(index){
       if(index == 0){

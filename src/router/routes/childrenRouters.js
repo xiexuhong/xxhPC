@@ -5,11 +5,10 @@ files.keys().forEach(key => {
 });
 
 export default [
-    {
-        path: '/asset',
-        name: 'Asset',
-        redirect: '/asset/assetoverview',
-        component:()=>import('@/views/asset/index'),
-        children:childrenRoute
-    }
-]
+  {
+    path: '/asset',
+    redirect: '/asset/assetoverview',
+    component: () => import('@/views/asset/index'),
+    children: childrenRoute,
+  },
+];

@@ -15,8 +15,12 @@ export default new Vuex.Store({
     deviceType: 'desktop',
     country: {},
     lang: 'ZH_CN',
+    showLoading: false,
   },
   mutations: {
+    changeLoadingStatus(state, data) {
+      state.showLoading = data;
+    },
     saveUser(state, data) {
       Vue.ls.set('user', data);
       state.user = data;
@@ -42,6 +46,7 @@ export default new Vuex.Store({
     deviceType: state => state.deviceType,
     country: state => state.country,
     lang: state => state.lang,
+    showLoading: state => state.showLoading,
   },
   modules: modules,
 });

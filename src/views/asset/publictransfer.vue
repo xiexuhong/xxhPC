@@ -11,40 +11,16 @@
         
         <section>
           <a-list class="transferorder">
-            <a-list-item>
-              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.name">{{$t('publictransfer.publictransfer10')}}</a>
-              <p>{{$t('publictransfer.publictransfer03')}}</p>
-              <p>{{publicdata.name}}</p>
+            <a-list-item v-for="(item,index) of publicdata.bank_info" :key="index">
+              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="item.value">{{$t('publictransfer.publictransfer10')}}</a>
+              <p>{{item.name}}</p>
+              <p>{{item.value}}</p>
             </a-list-item>
+            
             <a-list-item>
-              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.card_num">{{$t('publictransfer.publictransfer10')}}</a>
-              <p>{{$t('publictransfer.publictransfer04')}}</p>
-              <p>{{publicdata.card_num}}</p>
-            </a-list-item>
-            <a-list-item>
-              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.company_adress">{{$t('publictransfer.publictransfer10')}}</a>
-              <p>{{$t('publictransfer.publictransfer05')}}</p>
-              <p>{{publicdata.company_adress}}</p>
-            </a-list-item>
-            <a-list-item>
-              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.bank_name">{{$t('publictransfer.publictransfer10')}}</a>
-              <p>{{$t('publictransfer.publictransfer06')}}</p>
-              <p>{{publicdata.bank_name}}</p>
-            </a-list-item>
-            <a-list-item>
-              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.address">{{$t('publictransfer.publictransfer10')}}</a>
-              <p>{{$t('publictransfer.publictransfer07')}}</p>
-              <p>{{publicdata.address}}</p>
-            </a-list-item>
-            <a-list-item>
-              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="publicdata.code">{{$t('publictransfer.publictransfer10')}}</a>
-              <p>{{$t('publictransfer.publictransfer08')}}</p>
-              <p>{{publicdata.code}}</p>
-            </a-list-item>
-            <a-list-item>
-              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="amount">{{$t('publictransfer.publictransfer10')}}</a>
+              <a class="paste" slot="actions" data-clipboard-action="copy" :data-clipboard-text="rechargeAmount+currency">{{$t('publictransfer.publictransfer10')}}</a>
               <p>{{$t('publictransfer.publictransfer09')}}</p>
-              <p>{{amount}}{{defaultcurrency}}</p>
+              <p>{{rechargeAmount}}{{currency}}</p>
             </a-list-item>
           </a-list>
           <div class = "fontcolor">{{$t('publictransfer.publictransfer11')}}</div>
@@ -53,6 +29,9 @@
               <p>{{ item }}</p>
             </a-list-item>
           </a-list>
+          <a-form-model-item :label="publicdata.message">
+            <a-input v-model="message" />
+          </a-form-model-item>
         </section>
         <footer>
           <a-button type="primary" @click="confirmTransfer()">
@@ -85,9 +64,9 @@
             >
               <template v-slot:extra> 
                 <a-list class="transferorder" :dataSource="order">
-                  <a-list-item slot="renderItem" slot-scope="item, index" :key="index">
-                    <p>{{ item.title }}</p>
-                    <p>{{ item.content }}</p>
+                  <a-list-item slot="renderItem" slot-scope="item,index" :key="index">
+                    <p>{{item.title}}</p>
+                    <p>{{item.content}}</p>
                   </a-list-item>
                 </a-list>
                 <a-button type="primary" key="console"><router-link to="/asset/recharge">{{$t('publictransfer.publictransfer21')}}</router-link></a-button>
@@ -96,17 +75,11 @@
       </div>
     </div>
 </template>
-<<script>
+<script>
 import Clipboard from 'clipboard'
-import {getPublicMess} from '@/script/api'
 import { mapGetters } from "vuex";
+import {getPublicMess,getPublicOrder} from '@/script/api';
 
-const order = [
-  {title:'订单号',content:'Racing car sprays burning fuel into crowd.'},
-  {title:'充值方式',content:'Japanese princess to wed commoner.'},
-  {title:'充值金额',content:'Australian walks 100km after outback crash.'},
-  {title:'充值账户',content:'Man charged over missing wedding girl.'}
-];
 export default {
   data() {
     return {
@@ -116,16 +89,28 @@ export default {
       isConfirmTransfer: false,
       isSuccess:false,
       publicdata:{},
-      amount:'',
-      order
+      rechargeAmount:'',
+      message:"",
+      order:[]
     };
   },
   created(){
-    this.amount = this.$route.params.amount;
-    getPublicMess({currency:this.defaultcurrency}).then((res)=>{
+    //获取对公转账信息
+    getPublicMess({currency:this.currency}).then((res)=>{
       const {datas} = res;
-      this.publicdata=datas.bank_info;
+      this.publicdata = datas;
+    });
+    this.rechargeAmount = this.$route.params.amount;
+    window.addEventListener("beforeunload",()=>{
+        sessionStorage.setItem("rechargeAmount", JSON.stringify(this.rechargeAmount));
+        this.rechargeAmount = "";
     })
+    if (sessionStorage.getItem("rechargeAmount")&&!this.rechargeAmount) {
+        this.rechargeAmount = JSON.parse(sessionStorage.getItem("rechargeAmount"));
+    }
+  },
+  destroyed(){
+    sessionStorage.removeItem("rechargeAmount");
   },
   mounted() {
       var clipboard = new Clipboard('.paste');
@@ -137,7 +122,7 @@ export default {
       });
   },
   computed:{
-    ...mapGetters(['defaultcurrency'])
+    ...mapGetters(['currency'])
   },
   methods: {
     confirmTransfer(){
@@ -148,7 +133,18 @@ export default {
     },
     okConfirmTransfer(){
       this.isConfirmTransfer = false;
-      this.isSuccess = true;
+      var data = {
+        amount:this.rechargeAmount,
+        message:this.message,
+        currency:this.currency,
+        client:"PC"
+      }
+      getPublicOrder(data).then((res)=>{
+        for(var item in res.datas){
+            this.order.push({title:item,content:res.datas[item]});
+        }
+        this.isSuccess = true;
+      })
     }
   },
 };
@@ -172,6 +168,9 @@ export default {
       .ant-list-split .ant-list-header {
         border:none;
       }
+      .ant-form-item {
+          margin: 12px 0;
+      }
       footer{
         display: flex;
         flex-direction: column;
@@ -182,35 +181,6 @@ export default {
           margin: 2vw 0;
         }
       }
-      .cover{
-        position: fixed;
-        background-color: rgba(0,0,0,0.5);
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        .result{
-          width: 320px;
-          height: 270px;
-          padding: 10px;
-          background-color: #fff;
-          position: fixed;
-          top: 0;
-          bottom: 0;
-          right: 0;
-          left: 0;
-          margin: auto;
-          border-radius: 4px;
-        }
-      }
-      .result{
-        .transferorder{
-          width: 500px;
-          margin: 0 auto;
-          background-color: #f8f8f8;
-          padding: 2vw;
-          margin-bottom: 2vw;
-        }
-      }
+      
     }
 </style>

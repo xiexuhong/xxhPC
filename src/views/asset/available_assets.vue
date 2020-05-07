@@ -163,16 +163,18 @@ export default {
             },
           ];
           this.columns = this.deviceType==='desktop'?this.columns1:this.columns2;
-      });
-      getAssetList().then((res)=>{
-        const {datas} = res;
-        if(datas.hasOwnProperty('error')){
-            return
-        }
-        this.$store.state.asset.total = this.gettotal(datas.asset.asset_total,datas.balance.balance_total,datas.deposit.valuation,datas.total);
-        this.$store.state.asset.coin_list = this.getcoin_list(datas.asset.asset_list);
-        this.$store.state.asset.balance_list = this.getbalance_list(datas.balance.balance_list);
-      });
+      }).then(()=>{
+        getAssetList().then((res)=>{
+          const {datas} = res;
+          if(datas.hasOwnProperty('error')){
+              return
+          }
+          this.$store.state.asset.total = this.gettotal(datas.asset.asset_total,datas.balance.balance_total,datas.deposit.valuation,datas.total);
+          this.$store.state.asset.coin_list = this.getcoin_list(datas.asset.asset_list);
+          this.$store.state.asset.balance_list = this.getbalance_list(datas.balance.balance_list);
+        });
+      })
+      
     }, 
     getcoin_list:function(datas){
       var coin_list = [];

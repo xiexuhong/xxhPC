@@ -156,12 +156,34 @@ export const getCoinAddress = data => post('/index.php?act=asset&op=rechargeCoin
 /**
  * @method 获取充币地址
  */
+export const getAddressList = data => post('/index.php?act=coinAddress&op=addressList', data);
+
+/**
+ * @method 获取提币地址列表
+ */
+export const addAddress = data => post('/index.php?act=coinAddress&op=addressAdd', data);
+
+/**
+ * @method 添加提币地址
+ */
+export const delAddress = data => post('/index.php?act=coinAddress&op=addressDel', data);
+
+/**
+ * @method 删除提币地址
+ */
+
 export const recharge = data => post('/index.php?act=asset&op=recharge', data);
 
 /**
  * @method 充值
  */
-export const payment = data => get('/index.php?act=payment&op=index', data);
+export const withdraw = data => post('/index.php?act=wallet&op=addWithdrawCash', data);
+
+/**
+ * @method 提现
+ */
+
+export const payment = data => post('/index.php?act=payment&op=index', data);
 
 /**
  * @method 支付方式
@@ -175,6 +197,11 @@ export const getPublicMess = data => post('/index.php?act=wallet&op=getPublicBan
 
 /**
  * @method 获取对公转账信息
+ */
+export const getPublicOrder = data => post('/index.php?act=wallet&op=addBankTransfer', data);
+
+/**
+ * @method 对公转账订单保存
  */
 
 /**  获取算力列表

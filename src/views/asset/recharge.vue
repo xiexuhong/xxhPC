@@ -23,24 +23,22 @@
                     <a-form-model-item :label="$t('recharge.recharge04')">
                         <a-dropdown>
                             <a-menu slot="overlay">
-                                <a-menu-item :key="index" v-for="(item,index) in currency_list" @click="checkcurrency(index)"><a-icon type="user" />{{item}}</a-menu-item>
+                                <a-menu-item :key="index" v-for="(item,index) in payment_list" @click="checkcurrency(index)"><a-icon type="user" />{{item.currency}}</a-menu-item>
                             </a-menu>
                             <a-button >{{form.currency}}<a-icon type="down" /></a-button>
                         </a-dropdown>
                         <span class="ant-form-text">{{$t('recharge.recharge05')}}{{available}}{{form.currency}}</span>
                     </a-form-model-item>
                     <a-form-model-item :label="$t('recharge.recharge06')">
-                        <a-input v-model="form.amount" :placeholder="$t('recharge.recharge07')" />
-                        <span class="ant-form-text">{{$t('recharge.recharge08')}}{{amountrange}}{{form.currency}}</span>
+                        <a-input v-model="form.amount" :placeholder="$t('recharge.recharge07')" @blur="testNum()"/>
+                        <span class="ant-form-text" v-if="this.isLimitShow">{{$t('recharge.recharge08')}}{{limitMoney}}{{form.currency}}</span>
                     </a-form-model-item>
-                    <a-form-model-item :label="$t('recharge.recharge09')">
-                        <a-input v-model="form.name" :placeholder="$t('recharge.recharge10')" />
-                    </a-form-model-item>
-                    <a-form-model-item :label="$t('recharge.recharge11')">                            
+                    
+                    <a-form-model-item :label="$t('recharge.recharge11')" v-if="this.isSupport">                            
                         <a-button>{{$t('recharge.recharge12')}}</a-button>
                     </a-form-model-item>
                     <a-form-model-item>
-                        <a-button type="primary" @click="goPublic()">
+                        <a-button class="primary_btn" @click="goPublic()" :class="{disable_btn:!this.isSupport}">
                             {{$t('recharge.recharge13')}}
                         </a-button>
                     </a-form-model-item>
@@ -83,131 +81,100 @@ export default {
             form: {
                 currency:'',
                 amount: '',
-                name: '',
-                coinaddress:'ef48e4f8d8d52969qqw'
+                coinaddress:''
             },
             rechargeCoin:'',
-            rechargestyle: 'general',            
-            amountrange:'400~1000000',
-            list:[],
+            rechargestyle: 'general',  
             is_support:''
         };
     },
     created(){
         this.form.currency = this.currency;
-        getCoinAddress({coin: 'USDT_OMNI'}).then((res)=>{
+        getCoinAddress({coin:'USDT_OMNI'}).then((res)=>{
             const {datas} = res;
-            console.log(datas.error);
             if(datas.hasOwnProperty('error')){
                 this.form.coinaddress = '48845sfre7ef4ef4efs';
             }
             else{                
                 this.form.coinaddress = datas;
             }
+        }).catch((err)=>{
+            console.log(err);
         });
-        payment({type:'recharge'}).then((res)=>{
-            console.log(res.datas);
-            this.list = res.datas.list;
-            for (var i = 0; i < this.list.length; i++) {
-                if (this.form.currency == this.list[i].currency) {
-                    this.is_support = this.list[i].is_support;
-                }
-            }
-        })
+
     },
     mounted() {
         var clipboard = new Clipboard('.paste');
         var _this = this;
+        var timeout = null;    
         clipboard.on('success', function(e) {
-            debounce(handle,1000)
+            console.log(_this.$message);
+           if(timeout !== null){
+                clearTimeout(timeout);   
+           }       
+            timeout = setTimeout(()=>{
+               _this.$message.success('copy success', 1.5)
+            },500);  
         });
         clipboard.on('error', function(e) {
-            _this.$message.success('复制失败');
+            if(timeout !== null){
+                clearTimeout(timeout);   
+           }       
+            timeout = setTimeout(()=>{
+                _this.$message.success('copy failed', [1]);
+                _this.message.destroy();
+            },1000);  
         });
-        function debounce(fn, wait) {    
-            var timeout = null;    
-            return function() {        
-                if(timeout !== null)   clearTimeout(timeout);        
-                timeout = setTimeout(fn, wait);    
-            }
-        }
-        // 处理函数
-        function handle() {    
-            this.$message.success('复制成功');
-        }
     },
     computed:{
-    ...mapGetters(['currency_list','currency','lang','total','balance_list','available']),
-  },
+        ...mapGetters(['payment_list','currency_limit','isSupport','currency','lang','total','balance_list','available']),
+        isLimitShow () {
+            return Object.keys(this.currency_limit).indexOf(this.currency) > -1
+        },
+        limitMoney () {
+            if (this.isLimitShow) {
+                return `${this.currency_limit[this.currency].min_amount}~${this.currency_limit[this.currency].max_amount}`
+            } else {
+                return ''
+            }
+        }
+    },
     methods: {
         checkcurrency(index) {
-            this.form.currency = this.currency_list[index];
+            this.form.currency = this.payment_list[index].currency;
             this.$store.state.asset.currency = this.form.currency;
-            for (var i = 0; i < this.list.length; i++) {
-                if (this.form.currency == this.list[i].currency) {
-                    this.is_support = this.list[i].is_support;
-                }
-            }
         }, 
         testNum() {
-            var reg = /^\d$/;
-            var input = $("input[type='number']").val();
-            if (reg.test(input)) {
-              this.value = input;
+            let reg = /^\d{1,}$/;
+            if (!reg.test(this.form.amount)) {
+                this.$message.warning(this.$t('recharge.recharge19'), 1.5)
             }
         },
-        // goRecharge(){
-        //     if (this.is_support == true) {
-        //         var thiz = this;
-        //         var amount = this.form.amount;
-        //         var reg = /^\d$/;
-        //         if (reg.test(amount)) {
-        //             this.value = input;
-        //         }
-        //         var min, max, no_fee
-        //         if (this.isLimitShow) {
-        //             min = Number(this.limitData[this.selected]['min_amount'])
-        //             max = Number(this.limitData[this.selected]['max_amount'])
-        //             if (amount < min || amount > max) {
-        //                 app.toast(thiz.langArr.recharge21);
-        //                 return false
-        //             }
-        //             no_fee = this.limitData[this.selected]['no_fee_amount']
-        //         }
-        //         $radio = $('input[type="radio"]:checked');
-        //         var thiz = this;
-        //         if (amount !== '') {
-        //             if ($radio.attr("id") == "pertopub") {
-        //             app.goWin("transferOrder", {
-        //                 animation: {
-        //                 type: "push",
-        //                 subType: "from_right"
-        //                 },
-        //                 pageParam: {
-        //                 coin: this.selected,
-        //                 amount: amount,
-        //                 no_fee: no_fee
-        //                 }
-        //             });
-        //             return false;
-        //             }
-        //             var data = {
-        //                 currency: thiz.defaultcurrency,
-        //                 amount: amount,
-        //                 payment_code: $radio.attr("id")
-        //             };
-        //             recharge(data).then((res)=>{
-        //                 if (data.datas.create_order) {
-        //                     this.$router.push('/asset/publictransfer');
-        //                 }else {
-        //                 // console.log("未生成订单");
-        //                 }
-        //             })
-        //         }
-        //     }
-        // },
         goPublic(){
-            this.$router.push({name:'Publictransfer',params:{amount:this.form.amount}});     
+            if (this.isSupport == true) {
+                var thiz = this;
+                var amount = this.form.amount;
+                let reg = /^\d{1,}$/;
+                console.log(reg.test(amount))
+                if(!amount){
+                    this.$message.warning(this.$t('recharge.recharge19'), 1.5)
+                    return ;
+                }
+                if (!reg.test(amount)) {
+                    this.$message.warning(this.$t('recharge.recharge20'), 1.5)
+                    return ;
+                }
+                var min, max, no_fee
+                if (this.isLimitShow) {
+                    min = Number(this.currency_limit[this.currency]['min_amount'])
+                    max = Number(this.currency_limit[this.currency]['max_amount'])
+                    if (amount < min || amount > max) {
+                        this.$message.warning(this.$t('recharge.recharge21'), 1.5)
+                        return false
+                    }
+                }
+                this.$router.push({name:'Publictransfer',params:{amount:this.form.amount}});   
+            }  
         }
     },
 };
@@ -242,6 +209,18 @@ export default {
         }
         .btn{
             border: none;
+        }
+        .primary_btn {
+            background-color:#f7c048;
+            box-shadow: 0px 4px 27px 0px rgba(255, 164, 65, 0.33);
+            border-radius: 2px;
+            border-color: #f7c048;
+            color: #fff;
+        }
+        .disable_btn{
+            background-color: #7d7878;
+            border-color: #7d7878;
+            box-shadow: 0px 4px 27px 0px rgba(122, 122, 122, 0.33);
         }
     }
 </style>

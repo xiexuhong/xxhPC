@@ -9,21 +9,46 @@ const state = {
   coin_list:[],
   balance_list:[],
   total:{},
-  paymentlist:[],
+  payment_list:[],
+  currency_limit:[],
   currency:"",
-  coin:""
+  coin:"",
+  limit:""
 };
 const mutations = {};
 const actions = {};
 const getters = {
+  payment_list: state=>state.payment_list,
+  currency_limit: state=>state.currency_limit,
   currency_list: state =>state.currency_list,
   defaultcurrency: state =>state.defaultcurrency,
-  currency: state =>state.currency,
-  coin: state =>state.coin,
+  currency: state =>{
+    if(state.currency){
+      return state.currency;
+    }
+    else{
+      return state.defaultcurrency;
+    } 
+  },
+  coin: state =>{
+    if(state.coin){
+      return state.coin;
+    }
+    else{
+      return state.coin_list[0].coin;
+    }
+  },
   available:state=>{
-    for(let item of state.balance_list){
-      if(item.coin == state.currency){
-          return item.available;
+    for(let item of state.payment_list){
+      if(item.currency == state.currency){
+          return item.money_avail;
+      }
+    }
+  },
+  isSupport:state=>{
+    for(let item of state.payment_list){
+      if(item.currency == state.currency){
+          return item.is_support;
       }
     }
   },

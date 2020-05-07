@@ -4,7 +4,6 @@ export default [
   //我的账户
   {
     path: '/account',
-    name: 'Asset',
     component: () => import('@/views/asset/index'),
     children: [
       // account

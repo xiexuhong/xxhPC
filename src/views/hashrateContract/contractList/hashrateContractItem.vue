@@ -53,11 +53,11 @@
       >
         <span slot="deposit" slot-scope="text, record">
           {{
-            record.allow_cancel == 2
-              ? record.continue_total_deposit_coin
-              : record.work_state != 0
-              ? record.raw_total_deposit
-              : record.total_deposit
+          record.allow_cancel == 2
+          ? record.continue_total_deposit_coin
+          : record.work_state != 0
+          ? record.raw_total_deposit
+          : record.total_deposit
           }}{{ record.pay_currency }}
         </span>
         <span slot="regularDateNum" slot-scope="text">{{ text }}天</span>
@@ -78,8 +78,7 @@
                 orderId: Base64.encode(record.orderId),
               },
             }"
-            >退单</router-link
-          >
+          >退单</router-link>
           <router-link
             :to="{
               path: '/hashrateContract/contractList/orderReorder',
@@ -87,10 +86,11 @@
                 orderId: Base64.encode(record.orderId),
               },
             }"
-            >{{
-              record.isRegular == '1' && record.allow_renewal == true ? '续单' : '转期'
-            }}</router-link
           >
+            {{
+            record.isRegular == '1' && record.allow_renewal == true ? '续单' : '转期'
+            }}
+          </router-link>
         </span>
       </a-table>
     </div>
@@ -156,6 +156,7 @@ export default {
         dataIndex: 'time_income',
       },
       {
+        // TODO 本页面没有该字段，APP的该字段在每一条的详情页（另一条请求）
         title: '下单时间',
         dataIndex: 'time_creat',
       },
@@ -206,6 +207,7 @@ export default {
       this.tableLoading = true;
       // this.page = page;
       //  获取选项发送请求，获取数据
+      // TODO 是否需要pagesize
       getContractList({
         page: page,
         type: this.chioce.type,

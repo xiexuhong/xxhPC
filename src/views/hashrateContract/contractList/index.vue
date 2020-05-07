@@ -63,7 +63,7 @@ export default {
       this.powerCount = resp.datas.power_count;
       //  算力详情
       this.rentedList = resp.datas;
-      console.log(this.powerCount);
+      // console.log(this.powerCount);
       // console.log(this.rentedList);
     });
     // const { datas } = await getContractList({
