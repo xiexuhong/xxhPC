@@ -53,12 +53,8 @@ export default {
       this.$store.dispatch('requestMessageList', { curpage });
     },
     goDetail(id) {
-      this.$router.push({
-        path: '/messageDetail',
-        query: {
-          id,
-        },
-      });
+      this.$store.dispatch('requestMessageDetail', { article_id: id });
+      this.$router.push('/messageDetail');
     },
   },
 };
