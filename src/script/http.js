@@ -4,6 +4,11 @@ import { message } from 'ant-design-vue';
 import store from '@/store';
 import router from '@/router';
 import Vue from 'vue';
+import debounce from 'lodash/debounce';
+
+const toast = debounce(val => {
+  message.error(val);
+}, 300);
 
 const http = axios.create({
   baseURL: '', // TODO 生产环境添加
@@ -52,7 +57,7 @@ export const get = (url, data) =>
         store.commit('removeUser');
         router.push('/login/login');
       }
-      message.error(res.datas.error || res.err_code);
+      toast(res.datas.error || res.err_code);
       reject(res.datas.error);
     } else {
       reslove(res);
@@ -69,7 +74,7 @@ export const post = (url, data) =>
         store.commit('removeUser');
         router.push('/login/login');
       }
-      message.error(res.datas.error || res.err_code);
+      toast(res.datas.error || res.err_code);
       reject(res.datas.error);
     } else {
       reslove(res);
