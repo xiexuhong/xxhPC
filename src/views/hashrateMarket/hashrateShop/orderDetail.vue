@@ -157,36 +157,17 @@
                     我同意
                     <router-link
                       target="_blank"
-                      :to="{path: '/contract', query: {type: '3'}}"
+                      :to="{ path: '/contract', query: { type: '3' } }"
                     >《【運算力】委託管理服務協議》</router-link>/
                     <router-link
                       target="_blank"
-                      :to="{path: '/contract', query: {type: '2'}}"
+                      :to="{ path: '/contract', query: { type: '2' } }"
                     >《雲算力服務銷售協議》</router-link>
                   </a-checkbox>
                 </span>
               </p>
-              <a-button size="large" :disabled="!indeterminate" @click="onChargeClick">立即购买</a-button>
-              <div class="hashrateNodal">
-                <a-modal
-                  title="安全验证"
-                  centered
-                  v-model="chargeVisible"
-                  okText="确认购买"
-                  cancelText="取消"
-                  width="350px"
-                  @ok="confirmCharge"
-                >
-                  <!-- TODO 图形验证 -->
-                  <p>交易密码</p>
-                  <p>
-                    <a-input-password v-model="tradePassword" />
-                  </p>
-                  <router-link to="/account/forget_trade_pwd">
-                    <p>忘记密码？</p>
-                  </router-link>
-                </a-modal>
-              </div>
+              <!-- 行为验证 -->
+              <payValid :is_captcha="Number(power.is_captcha)" @pay="onChargeClick"></payValid>
             </div>
           </a-list>
         </div>
@@ -197,17 +178,17 @@
 
 <script>
 import popover from '@/components/popover';
+import payValid from '@/components/payValid';
 import { getSurplusPower, rentPower, getContract } from '@/script/api';
 import { mult } from '@/script/utils';
 import { mapGetters } from 'vuex';
 export default {
   components: {
     popover,
+    payValid,
   },
   data() {
     return {
-      // clicked: false, //点击气泡卡隐藏/显示
-      chargeVisible: false, //点击弹窗隐藏/显示
       indeterminate: false, //设置协议复选框选中状态样式
       chargeAmount: 1, //  购买份数
       rewardPower: 0.0, //  达标算力动率
@@ -215,7 +196,8 @@ export default {
       unitPriceNum: 0, //  选择的交互方式
       surplusPower: [{ payment_avail: '' }, { payment_avail: '' }], //  可用余额,解决属性初次加载不存在的报错
       surplusPowerNum: [], //  可用余额依据不同选择方式的具体数额
-      tradePassword: '', //  交易密码
+      // validateTokenNew: '', //  行为验证
+      // blackBox: '', //  行为验证
     };
   },
   created() {
@@ -227,7 +209,55 @@ export default {
       // console.log(this.surplusPower);
     });
 
-    console.log(this.power);
+    // console.log(this.power);
+  },
+  mounted() {
+    // //  行为验证
+    // if (this.power.is_captcha == 1) {
+    //   let _this = this;
+    //   window._fmOpt = {
+    //     display: 'popup', //popup方式渲染验证码
+    //     container: '#checkButton', //验证码button渲染的目标DOM，自动展现方式下必需，详情见后文
+    //     area: '.customForm', //对于custom模式，弹出窗口的加载容器，详情见后文
+    //     partner: 'renrenkj',
+    //     appName: 'renrenkj_h5',
+    //     width: '25%',
+    //     height: 'auto',
+    //     fmb: true,
+    //     initialTime: new Date().getTime(),
+    //     token:
+    //       'renrenkj' +
+    //       '-' +
+    //       new Date().getTime() +
+    //       '-' +
+    //       Math.random()
+    //         .toString(16)
+    //         .substr(2),
+    //     env: 1,
+    //     getinfo: function() {
+    //       return 'e3Y6ICIyLjUuMCIsIG9zOiAid2ViIiwgczogMTk5LCBlOiAianMgbm90IGRvd25sb2FkIn0=';
+    //     },
+    //   };
+    //   let fm = document.createElement('script');
+    //   fm.type = 'text/javascript';
+    //   fm.src =
+    //     ('https:' == document.location.protocol ? 'https://' : 'http://') +
+    //     'static.tongdun.net/captcha/main/tdc.js?ver=1.0&t=' +
+    //     (new Date().getTime() / 600000).toFixed(0);
+    //   let s = document.getElementsByTagName('script')[0];
+    //   s.parentNode.insertBefore(fm, s);
+    //   _fmOpt.onSuccess = function(validateToken) {
+    //     if (validateToken) {
+    //       _this.validateTokenNew = validateToken;
+    //       _this.blackBox = _fmOpt.getinfo();
+    //       _this.isChecked = true;
+    //     } else {
+    //       _fmOpt.reset();
+    //     }
+    //   };
+    // } else {
+    //   this.isChecked = true;
+    // }
   },
   computed: {
     ...mapGetters({ power: 'singleList' }),
@@ -257,36 +287,35 @@ export default {
       return (this.rewardPower = flat);
     },
     //  立即购买
-    onChargeClick() {
-      //  判断余额是否充足
-      if (
+    onChargeClick(data) {
+      //协议是否选中
+      if (!this.indeterminate) {
+        this.$message.info('请勾选协议！！！');
+      } else if (
+        //  判断余额是否充足
         this.surplusPowerNum < 0 ||
         this.surplusPowerNum < this.mult(this.unitPriceNum, this.chargeAmount, this.currencyValue)
       ) {
-        this.$message.info('您的余额不足，请及时充值！！！');
+        this.$message.info('余额不足，请及时充值！！！');
+        return false;
       } else {
-        //  余额充足，弹出交易框
-        this.chargeVisible = true;
-      }
-    },
-    //  确认购买
-    confirmCharge() {
-      //提交购买
-      rentPower({
-        machine_id: this.power.machine_id, // 矿机id
-        machine_type: this.power.type, // 矿机类型
-        num: this.chargeAmount, // 租用数量
-        payment_code: this.currencyValue, // 支付方式
-      })
-        .then(resp => {
+        //  余额充足，提交订单
+        rentPower({
+          machine_id: this.power.machine_id, // 矿机id
+          machine_type: this.power.type, // 矿机类型
+          num: this.chargeAmount, // 租用数量
+          payment_code: this.currencyValue, // 支付方式
+          yzm_token: data.token, //  行为验证
+          blackBox: data.black, //  行为验证
+        }).then(resp => {
           console.log(resp);
-          this.$message.info('恭喜您购买成功！！！');
+          this.$message.info('购买成功！！！');
           //提交成功之后，返回到上个页面
-          this.$router.go(-1);
-        })
-        .finally(() => {
-          this.chargeVisible = false;
+          setTimeout(() => {
+            this.$router.go(-1);
+          }, 500);
         });
+      }
     },
   },
 };
@@ -410,22 +439,6 @@ export default {
     }
   }
 }
-// .ant-popover-inner {
-//   .ant-popover-inner-content {
-//     .hashratePopover {
-//       li {
-//         width: 130px;
-//         display: flex;
-//         justify-content: space-between;
-//         span {
-//           display: inline-block;
-//           width: 45%;
-//         }
-//       }
-//     }
-//   }
-// }
-
 a {
   color: #ffab32;
 }
@@ -486,8 +499,10 @@ a {
           }
         }
       }
-      .hashrateAgreement .ant-btn {
-        width: 100%;
+      .hashrateAgreement {
+        .ant-btn {
+          width: 100%;
+        }
       }
     }
   }

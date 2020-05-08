@@ -63,7 +63,7 @@
           <span>{{ power.rawTotalDeposit }} {{ power.pay_currency }}</span>
         </span>
         <span class="reorderInfoItem">
-          到手总算力
+          <span>到手总算力</span>
           <popover
             :power="reorderMethods == 90 ? renewalInfo_90 : renewalInfo_180"
             :num="power.num"

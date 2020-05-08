@@ -5,11 +5,17 @@
       <p
         style="color:#999999;textAlign:center"
         v-if="power.additionalPower || power.additional_power"
-      >{{ mult(power.computingPower || power.computing_power) }}T = {{ mult(power.basePower || power.base_power) }} + {{ mult(power.additionalPower || power.additional_power) }}</p>
+      >
+        {{ mult(power.computingPower || power.computing_power) }}T =
+        {{ mult(power.basePower || power.base_power) }} +
+        {{ mult(power.additionalPower || power.additional_power) }}
+      </p>
       <p
         v-else-if="power.computingPower || power.computing_power"
         style="color:#999999;textAlign:center"
-      >{{ mult(power.computingPower || power.computing_power || 0, power.num) }}T</p>
+      >
+        {{ mult(power.computingPower || power.computing_power || 0, num) }}T
+      </p>
     </div>
     <div slot="content">
       <ul class="hashratePopover">
