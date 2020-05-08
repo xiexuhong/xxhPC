@@ -14,7 +14,7 @@ export default new Vuex.Store({
     user: {},
     deviceType: 'desktop',
     country: {},
-    lang: 'ZH_CN',
+    lang: 'ZH-CN',
     showLoading: false,
   },
   mutations: {

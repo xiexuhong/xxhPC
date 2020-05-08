@@ -1,12 +1,19 @@
-import { getMessageList, readAllMessage } from '@/script/api';
+import { getMessageList, readAllMessage, getMessageDetail } from '@/script/api';
+import { deleteScrip } from '@/script/utils';
 
 const state = {
   messageList: [],
   messageHeader: [],
   totalMessage: 0,
   unread_sum: 0,
+  messageDetail: '',
 };
 const actions = {
+  async requestMessageDetail({ commit }, data) {
+    const res = await getMessageDetail(data);
+    const html = deleteScrip(res);
+    commit('saveMessageDetail', html);
+  },
   async requestMessageList({ commit }, data) {
     const { datas } = await getMessageList(data);
     if (data.curpage === 1) commit('saveMessageHeader', datas.list);
@@ -18,6 +25,9 @@ const actions = {
   },
 };
 const mutations = {
+  saveMessageDetail(state, data) {
+    state.messageDetail = data;
+  },
   saveMessageHeader(state, data) {
     state.messageHeader = data.slice(0, 6);
   },
@@ -44,6 +54,7 @@ const getters = {
   messageHeader: state => state.messageHeader,
   totalMessage: state => state.totalMessage,
   unread_sum: state => state.unread_sum,
+  messageDetail: state => state.messageDetail,
 };
 
 export default {

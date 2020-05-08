@@ -5,20 +5,16 @@
           a-breadcrumb(separator=">")
             a-breadcrumb-item 系统通知
             a-breadcrumb-item 详情
-        .content(v-html="html")
+        .content(v-html="messageDetail")
 </template>
 <script>
 import { mapGetters } from 'vuex';
-import { getMessageDetail } from '@/script/api';
-import { deleteScrip } from '@/script/utils';
 export default {
   data() {
-    return {
-      html: '',
-    };
+    return {};
   },
   computed: {
-    ...mapGetters(['deviceType']),
+    ...mapGetters(['deviceType', 'messageDetail']),
     style() {
       if (this.deviceType === 'desktop') {
         return `min-height:calc(100vh - 350px);`;
@@ -34,15 +30,8 @@ export default {
       }
     },
   },
-  methods: {
-    async getDetail() {
-      const res = await getMessageDetail({ article_id: this.$route.query.id });
-      this.html = deleteScrip(res);
-    },
-  },
-  created() {
-    this.getDetail();
-  },
+  methods: {},
+  created() {},
 };
 </script>
 
