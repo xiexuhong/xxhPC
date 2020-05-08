@@ -1,10 +1,14 @@
 import { validPhone } from '@/script/formValid';
+import { mapGetters } from 'vuex';
 
 export const validMixin = {
   data() {
     return {
       confirmDirty: false,
     };
+  },
+  computed: {
+    ...mapGetters(['country']),
   },
   methods: {
     handleConfirmBlur(e) {
