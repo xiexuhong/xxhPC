@@ -31,16 +31,16 @@ export default {
             console.log(1);
             iframe.contentWindow.postMessage({ type: 'load', lang: this.lang }, '*');
           };
-          window.addEventListener('message', e => {
-            console.log('vue', e);
-            this.showValid = false;
-            this.$emit('pay', e.data.token);
-          });
+          window.addEventListener('message', this.getMessage);
         });
       }
     },
   },
   methods: {
+    getMessage(e) {
+      this.showValid = false;
+      this.$emit('pay', e.data.token);
+    },
     rent() {
       if (this.is_captcha === 1) {
         this.showValid = true;
@@ -50,7 +50,9 @@ export default {
     },
   },
   mounted() {},
-  beforeDestroy() {},
+  beforeDestroy() {
+    window.removeEventListener('message', this.getMessage);
+  },
 };
 </script>
 
