@@ -1,7 +1,7 @@
 <template lang="pug">
     #payValid
-        a-button(type="primary")(v-if="!showValid" @click="rent") 下单
-        iframe#myFrame(src="http://192.168.1.193:3000" v-else)
+        slot
+        iframe#myFrame(src="http://192.168.1.193:3000" v-if="visible")
 </template>
 
 <script>
@@ -9,26 +9,23 @@ import { mapGetters } from 'vuex';
 
 export default {
   props: {
-    is_captcha: {
-      type: Number,
-      default: 0,
+    visible: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
-    return {
-      showValid: false,
-    };
+    return {};
   },
   computed: {
     ...mapGetters(['lang']),
   },
   watch: {
-    showValid(val) {
+    visible(val) {
       if (val) {
         this.$nextTick(() => {
           const iframe = document.querySelector('#myFrame');
           iframe.onload = () => {
-            console.log(1);
             iframe.contentWindow.postMessage({ type: 'load', lang: this.lang }, '*');
           };
           window.addEventListener('message', this.getMessage);
@@ -38,15 +35,8 @@ export default {
   },
   methods: {
     getMessage(e) {
-      this.showValid = false;
+      this.$emit('update:visible', false);
       this.$emit('pay', { token: e.data.token, black: e.data.black });
-    },
-    rent() {
-      if (this.is_captcha === 1) {
-        this.showValid = true;
-      } else {
-        this.$emit('pay', '');
-      }
     },
   },
   mounted() {},
@@ -68,6 +58,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    background: rgba(204, 204, 204, 0.4);
   }
 }
 </style>
