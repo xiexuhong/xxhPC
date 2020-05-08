@@ -39,7 +39,7 @@ export default {
   methods: {
     getMessage(e) {
       this.showValid = false;
-      this.$emit('pay', e.data.token);
+      this.$emit('pay', { token: e.data.token, black: e.data.black });
     },
     rent() {
       if (this.is_captcha === 1) {
