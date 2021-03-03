@@ -26,7 +26,7 @@
     "@vue/cli-service": "^4.2.0",
     "babel-plugin-import": "^1.12.2",
     "node-sass": "^4.12.0",
-    "pug": "^2.0.4",
+    "pug": "^3.0.1",
     "pug-plain-loader": "^1.0.0",
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.11"
